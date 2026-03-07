@@ -1,0 +1,111 @@
+import { apiClient } from './client';
+
+export type AnalyticsPeriod = 'week' | 'month' | 'last_month' | '3_months' | '6_months' | 'year' | 'custom';
+
+export interface AnalyticsFilters {
+  period?: AnalyticsPeriod;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface StatValue {
+  value: number;
+  change: number;
+}
+
+export interface VehicleConsumption {
+  vehicle_id: number;
+  plate: string;
+  brand: string;
+  model: string;
+  vehicle_type: string;
+  fuel_type: string;
+  total_quantity: number;
+  fuel_cost: number;
+  maintenance_cost: number;
+  total_cost: number;
+  cost_change: number;
+  avg_consumption: number;
+  consumption_change: number;
+  expected_consumption: number;
+  efficiency_ratio: number;
+  distance: number;
+  cost_per_km: number;
+  refuel_count: number;
+  avg_price: number;
+  status: 'efficient' | 'warning' | 'critical';
+}
+
+export interface MonthlyTrend {
+  month: string;
+  label: string;
+  fuel_cost: number;
+  maintenance_cost: number;
+  total_cost: number;
+  quantity: number;
+  distance: number;
+  avg_consumption: number;
+}
+
+export interface CostBreakdown {
+  by_category: {
+    fuel: {
+      amount: number;
+      percentage: number;
+      change: number;
+    };
+    maintenance: {
+      amount: number;
+      percentage: number;
+      change: number;
+    };
+  };
+  maintenance_detail: {
+    parts: number;
+    labor: number;
+  };
+}
+
+export interface FleetAnalytics {
+  period: {
+    start: string;
+    end: string;
+    label: string;
+  };
+  summary: {
+    total_cost: StatValue;
+    fuel_cost: StatValue;
+    maintenance_cost: StatValue;
+    total_distance: StatValue;
+    total_quantity: StatValue;
+    avg_consumption: StatValue;
+    cost_per_km: StatValue;
+    vehicles_count: number;
+    efficiency_distribution: {
+      efficient: number;
+      warning: number;
+      critical: number;
+    };
+  };
+  cost_breakdown: CostBreakdown;
+  vehicle_consumption: VehicleConsumption[];
+  monthly_trends: MonthlyTrend[];
+  top_consumers: VehicleConsumption[];
+  top_costly: VehicleConsumption[];
+}
+
+export const analyticsApi = {
+  getFleetAnalytics: async (filters?: AnalyticsFilters): Promise<FleetAnalytics> => {
+    const params = new URLSearchParams();
+
+    if (filters?.period) params.append('period', filters.period);
+    if (filters?.start_date) params.append('start_date', filters.start_date);
+    if (filters?.end_date) params.append('end_date', filters.end_date);
+
+    const queryString = params.toString();
+    const url = queryString ? `/analytics/fleet/?${queryString}` : '/analytics/fleet/';
+
+    const response = await apiClient.get<FleetAnalytics>(url);
+    return response.data;
+  }
+};

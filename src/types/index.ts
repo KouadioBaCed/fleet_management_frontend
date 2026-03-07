@@ -1,0 +1,203 @@
+// Types pour l'application
+
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  logo?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  is_active: boolean;
+  subscription_type: 'trial' | 'basic' | 'professional' | 'enterprise';
+  max_vehicles: number;
+  max_drivers: number;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: 'admin' | 'supervisor' | 'driver';
+  phone_number?: string;
+  profile_picture?: string;
+  is_active_duty: boolean;
+  organization?: Organization;
+}
+
+export interface Vehicle {
+  id: number;
+  license_plate: string;
+  vin_number: string;
+  brand: string;
+  model: string;
+  year: number;
+  vehicle_type: 'sedan' | 'suv' | 'van' | 'truck';
+  color: string;
+  fuel_type: 'gasoline' | 'diesel' | 'electric' | 'hybrid';
+  fuel_capacity: number;
+  fuel_consumption: number;
+  status: 'available' | 'in_use' | 'maintenance' | 'out_of_service';
+  current_mileage: number;
+  photo?: string;
+  insurance_number?: string;
+  insurance_expiry?: string;
+  gps_device_id?: string;
+  notes?: string;
+  last_maintenance_date?: string;
+  next_maintenance_mileage?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Driver {
+  id: number;
+  employee_id: string;
+  full_name: string;
+  status: 'available' | 'on_mission' | 'on_break' | 'off_duty';
+  rating: number;
+  total_trips: number;
+  total_distance: number;
+  current_vehicle_plate?: string;
+  email?: string;
+  phone_number?: string;
+  // Extended fields
+  user?: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone_number?: string;
+    profile_picture?: string;
+  };
+  driver_license_number?: string;
+  driver_license_expiry?: string;
+  driver_license_category?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  hire_date?: string;
+  notes?: string;
+  photo?: string;
+  current_vehicle?: {
+    id: number;
+    license_plate: string;
+    brand: string;
+    model: string;
+  };
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Mission {
+  id: number;
+  mission_code: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'assigned' | 'in_progress' | 'completed' | 'cancelled';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  vehicle?: number;
+  vehicle_plate: string;
+  driver?: number;
+  driver_name: string;
+  scheduled_start: string;
+  scheduled_end: string;
+  origin_address: string;
+  origin_latitude?: number;
+  origin_longitude?: number;
+  destination_address: string;
+  destination_latitude?: number;
+  destination_longitude?: number;
+  estimated_distance: number;
+  responsible_person_name?: string;
+  responsible_person_phone?: string;
+  notes?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Trip {
+  id: number;
+  status: 'active' | 'paused' | 'completed' | 'cancelled';
+  start_time: string;
+  end_time?: string;
+  total_distance: number;
+  average_speed: number;
+  max_speed: number;
+  fuel_consumed: number;
+  has_incidents: boolean;
+}
+
+export interface GPSLocationPoint {
+  latitude: number;
+  longitude: number;
+  speed: number;
+  heading?: number;
+  recorded_at: string;
+}
+
+export interface LivePosition {
+  vehicleId: number;
+  vehiclePlate: string;
+  driverName: string;
+  latitude: number;
+  longitude: number;
+  speed: number;
+  heading: number;
+  timestamp: string;
+  tripId: number;
+  missionCode: string;
+}
+
+export interface Incident {
+  id: number;
+  trip: number;
+  driver: number;
+  vehicle: number;
+  incident_type: 'flat_tire' | 'breakdown' | 'accident' | 'fuel_issue' | 'traffic_violation' | 'other';
+  incident_type_display: string;
+  severity: 'minor' | 'moderate' | 'major' | 'critical';
+  severity_display: string;
+  title: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  address?: string;
+  photo1?: string;
+  photo2?: string;
+  photo3?: string;
+  is_resolved: boolean;
+  resolution_notes?: string;
+  resolved_at?: string;
+  resolved_by?: number;
+  resolved_by_name?: string;
+  estimated_cost?: number;
+  reported_at: string;
+  updated_at: string;
+  vehicle_plate?: string;
+  driver_name?: string;
+}
+
+export interface IncidentStats {
+  total: number;
+  resolved: number;
+  pending: number;
+  by_severity: {
+    minor: number;
+    moderate: number;
+    major: number;
+    critical: number;
+  };
+  by_type: {
+    flat_tire: number;
+    breakdown: number;
+    accident: number;
+    fuel_issue: number;
+    traffic_violation: number;
+    other: number;
+  };
+}
