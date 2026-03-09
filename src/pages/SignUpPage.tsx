@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Car, Mail, Loader2, AlertCircle, CheckCircle, ArrowLeft, User, Building2 } from 'lucide-react';
+import { Mail, Loader2, AlertCircle, CheckCircle, ArrowLeft, User, Building2 } from 'lucide-react';
 import { authApi } from '@/api/auth';
 
 export default function SignUpPage() {

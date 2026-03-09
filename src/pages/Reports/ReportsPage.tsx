@@ -415,7 +415,7 @@ export default function ReportsPage() {
               >
                 <Users className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="font-medium text-xs sm:text-sm max-w-[70px] sm:max-w-none truncate">
-                  {selectedDriver ? `${selectedDriver.first_name} ${selectedDriver.last_name}` : 'Conducteur'}
+                  {selectedDriver ? selectedDriver.full_name : 'Conducteur'}
                 </span>
                 {driverFilter ? (
                   <button
@@ -457,7 +457,7 @@ export default function ReportsPage() {
                           driverFilter === driver.id ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'
                         }`}
                       >
-                        {driver.first_name} {driver.last_name}
+                        {driver.full_name}
                       </button>
                     ))}
                   </div>
@@ -561,7 +561,7 @@ export default function ReportsPage() {
             )}
             {driverFilter && (
               <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium" style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}>
-                {selectedDriver?.first_name} {selectedDriver?.last_name}
+                {selectedDriver?.full_name}
               </span>
             )}
             <button
@@ -721,7 +721,7 @@ export default function ReportsPage() {
                 <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Top conducteurs</h2>
                 <div className="space-y-2 sm:space-y-3">
                   {data.top_drivers.length > 0 ? (
-                    data.top_drivers.map((driver, index) => (
+                    data.top_drivers.map((driver) => (
                       <div
                         key={driver.driver_id}
                         className="data-card flex items-center justify-between p-2.5 sm:p-3 rounded-lg sm:rounded-xl hover:shadow-sm transition-all"

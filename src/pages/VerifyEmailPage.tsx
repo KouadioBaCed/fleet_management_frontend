@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Car, Lock, Loader2, AlertCircle, CheckCircle, Eye, EyeOff, User, Phone } from 'lucide-react';
+import { Lock, Loader2, AlertCircle, CheckCircle, Eye, EyeOff, User, Phone } from 'lucide-react';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 

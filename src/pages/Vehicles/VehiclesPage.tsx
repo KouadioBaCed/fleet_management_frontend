@@ -10,7 +10,7 @@ import { vehiclesApi, type VehicleFilters, type VehicleStats } from '@/api/vehic
 import type { Vehicle } from '@/types';
 import {
   Car, Plus, Search, Filter, Fuel, Gauge, LayoutGrid, List,
-  MoreVertical, Eye, Edit, Trash2, RefreshCw, Loader2, X, AlertTriangle, RotateCw
+  Eye, Edit, Trash2, RefreshCw, Loader2, X, AlertTriangle, RotateCw
 } from 'lucide-react';
 
 type ViewMode = 'grid' | 'list';

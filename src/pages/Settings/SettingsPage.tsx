@@ -1,6 +1,5 @@
 import Layout from '@/components/Layout/Layout';
 import {
-  User,
   Bell,
   Shield,
   Palette,
@@ -59,8 +58,8 @@ export default function SettingsPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
-  const { preferences, isLoading, error, fetchPreferences, updatePreferences } = useSettingsStore();
-  const { user, logoutSilent } = useAuthStore();
+  const { preferences, isLoading, fetchPreferences, updatePreferences } = useSettingsStore();
+  const { logoutSilent } = useAuthStore();
   const navigate = useNavigate();
 
   // Local state for form
