@@ -247,7 +247,7 @@ export default function ProfilePage() {
     };
     reader.readAsDataURL(file);
 
-    // Upload immediat de la photo
+    // Upload immédiat de la photo
     await uploadProfilePicture(file);
   };
 
@@ -890,7 +890,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Statistiques detaillees */}
+                {/* Statistiques détaillées */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   <div className="space-y-2 sm:space-y-3">
                     <div className="flex justify-between items-center p-2.5 sm:p-3 bg-gray-50 rounded-lg">

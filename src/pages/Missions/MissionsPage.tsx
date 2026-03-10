@@ -147,8 +147,8 @@ export default function MissionsPage() {
     { value: 'scheduled_start', label: 'Date debut (ancien)', icon: ArrowUp },
     { value: '-created_at', label: 'Date creation (recent)', icon: ArrowDown },
     { value: 'created_at', label: 'Date creation (ancien)', icon: ArrowUp },
-    { value: '-priority', label: 'Priorite (haute)', icon: ArrowDown },
-    { value: 'priority', label: 'Priorite (basse)', icon: ArrowUp },
+    { value: '-priority', label: 'Priorité (haute)', icon: ArrowDown },
+    { value: 'priority', label: 'Priorité (basse)', icon: ArrowUp },
   ];
 
   const statsDisplay = [

@@ -276,11 +276,11 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Debut prevu</span>
+                        <span className="text-sm text-gray-600">Début prévu</span>
                         <span className="font-medium text-gray-900">{formatDateTime(trackingData.schedule.scheduled_start)}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Fin prevue</span>
+                        <span className="text-sm text-gray-600">Fin prévue</span>
                         <span className="font-medium text-gray-900">{formatDateTime(trackingData.schedule.scheduled_end)}</span>
                       </div>
                       {trackingData.schedule.actual_start && (
@@ -298,7 +298,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                   <div className="bg-gray-50 rounded-xl p-4">
                     <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
                       <MapPin className="w-5 h-5" style={{ color: '#6A8A82' }} />
-                      Itineraire
+                      Itinéraire
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">

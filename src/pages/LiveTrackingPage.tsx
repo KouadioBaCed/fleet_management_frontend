@@ -430,7 +430,7 @@ export default function LiveTrackingPage() {
                           <div className="flex items-center space-x-1">
                             <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-300" />
                             <span className="text-gray-400">
-                              <span className="hidden xs:inline">Fin prevue: </span><span style={{ color: '#B87333' }}>{formatTime(vehicle.scheduled_end)}</span>
+                              <span className="hidden xs:inline">Fin prévue :</span><span style={{ color: '#B87333' }}>{formatTime(vehicle.scheduled_end)}</span>
                             </span>
                           </div>
                         </div>

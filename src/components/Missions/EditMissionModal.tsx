@@ -25,19 +25,19 @@ interface EditMissionModalProps {
 }
 
 const PRIORITY_OPTIONS = [
-  { value: 'low', label: 'Faible', color: '#6B7280', bgColor: '#E8ECEC', description: 'Pas de delai specifique' },
-  { value: 'medium', label: 'Moyenne', color: '#6A8A82', bgColor: '#E8EFED', description: 'A realiser dans la journee' },
-  { value: 'high', label: 'Haute', color: '#B87333', bgColor: '#F5E8DD', description: 'A traiter en priorite' },
-  { value: 'urgent', label: 'Urgente', color: '#DC2626', bgColor: '#FEE2E2', description: 'Traitement immediat requis' },
+  { value: 'low', label: 'Faible', color: '#6B7280', bgColor: '#E8ECEC', description: 'Pas de délai spécifique' },
+  { value: 'medium', label: 'Moyenne', color: '#6A8A82', bgColor: '#E8EFED', description: 'À réaliser dans la journée' },
+  { value: 'high', label: 'Haute', color: '#B87333', bgColor: '#F5E8DD', description: 'À traiter en priorité' },
+  { value: 'urgent', label: 'Urgente', color: '#DC2626', bgColor: '#FEE2E2', description: 'Traitement immédiat requis' },
 ];
 
 type TabType = 'info' | 'route' | 'schedule' | 'priority' | 'contact';
 
 const TABS = [
   { id: 'info' as TabType, label: 'Informations', icon: FileText },
-  { id: 'route' as TabType, label: 'Itineraire', icon: MapPin },
+  { id: 'route' as TabType, label: 'Itinéraire', icon: MapPin },
   { id: 'schedule' as TabType, label: 'Planning', icon: Calendar },
-  { id: 'priority' as TabType, label: 'Priorite', icon: Flag },
+  { id: 'priority' as TabType, label: 'Priorité', icon: Flag },
   { id: 'contact' as TabType, label: 'Contact', icon: Phone },
 ];
 
@@ -63,7 +63,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
     notes: '',
   });
 
-  // Precharger les donnees de la mission
+  // Précharger les données de la mission
   useEffect(() => {
     if (mission && isOpen) {
       // Format datetime for input
@@ -130,7 +130,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
       handleClose();
     } catch (err: any) {
       console.error('Failed to update mission:', err);
-      setError(err.response?.data?.error || 'Erreur lors de la mise a jour');
+      setError(err.response?.data?.error || 'Erreur lors de la mise à jour');
     } finally {
       setIsSubmitting(false);
     }
@@ -209,7 +209,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
               <Bell className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#1E40AF' }} />
               <div>
                 <p className="text-sm" style={{ color: '#1E3A8A' }}>
-                  <strong>Information:</strong> Le conducteur {mission.driver_name} sera automatiquement notifie des modifications apportees a cette mission.
+                  <strong>Information:</strong> Le conducteur {mission.driver_name} sera automatiquement notifié des modifications apportées à cette mission.
                 </p>
               </div>
             </div>
@@ -244,7 +244,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
-                      placeholder="Decrivez la mission en detail..."
+                      placeholder="Décrivez la mission en détail..."
                       rows={4}
                       className="w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-opacity-20 outline-none transition-all resize-none text-gray-900 placeholder-gray-400"
                       style={{ borderColor: '#E8ECEC' }}
@@ -263,7 +263,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#6A8A82' }}>
                     <MapPin className="w-5 h-5 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point de depart</h4>
+                  <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point de départ</h4>
                 </div>
                 <div className="space-y-4">
                   <div>
@@ -318,7 +318,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#B87333' }}>
                     <MapPin className="w-5 h-5 text-white" />
                   </div>
-                  <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point d'arrivee</h4>
+                  <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point d'arrivée</h4>
                 </div>
                 <div className="space-y-4">
                   <div>
@@ -366,7 +366,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                      Distance estimee (km)
+                      Distance estimée (km)
                     </label>
                     <input
                       type="number"
@@ -390,7 +390,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
                 <div className="space-y-5">
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                      Debut prevu *
+                      Début prévu *
                     </label>
                     <input
                       type="datetime-local"
@@ -405,7 +405,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
 
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                      Fin prevue *
+                      Fin prévue *
                     </label>
                     <input
                       type="datetime-local"
@@ -422,7 +422,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
                 <div className="mt-4 p-4 rounded-lg flex items-start space-x-3" style={{ backgroundColor: '#DBEAFE' }}>
                   <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#1E40AF' }} />
                   <p className="text-sm" style={{ color: '#1E3A8A' }}>
-                    Assurez-vous que la date de fin est posterieure a la date de debut.
+                    Assurez-vous que la date de fin est postérieure à la date de début.
                   </p>
                 </div>
               </div>
@@ -433,7 +433,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
             <div className="space-y-5">
               <div className="bg-gray-50 rounded-xl p-5 border-2" style={{ borderColor: '#E8ECEC' }}>
                 <label className="block text-sm font-semibold mb-4" style={{ color: '#191919' }}>
-                  Priorite de la mission
+                  Priorité de la mission
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   {PRIORITY_OPTIONS.map((option) => (
@@ -492,7 +492,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                      Telephone
+                      Téléphone
                     </label>
                     <input
                       type="tel"
@@ -516,7 +516,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
                     name="notes"
                     value={formData.notes}
                     onChange={handleInputChange}
-                    placeholder="Ajoutez des informations supplementaires..."
+                    placeholder="Ajoutez des informations supplémentaires..."
                     rows={4}
                     className="w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-opacity-20 outline-none transition-all resize-none text-gray-900 placeholder-gray-400"
                     style={{ borderColor: '#E8ECEC' }}

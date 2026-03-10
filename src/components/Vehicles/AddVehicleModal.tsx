@@ -285,9 +285,9 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
           <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
             <div className="text-center mb-4 sm:mb-6">
               <h3 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2" style={{ color: '#191919' }}>
-                Photo du vehicule
+                Photo du véhicule
               </h3>
-              <p className="text-sm sm:text-base text-gray-600">Ajoutez une photo pour identifier facilement votre vehicule</p>
+              <p className="text-sm sm:text-base text-gray-600">Ajoutez une photo pour identifier facilement votre véhicule</p>
             </div>
             <div
               className={`border-2 border-dashed rounded-xl sm:rounded-2xl p-6 sm:p-12 text-center transition-all hover:border-sage cursor-pointer ${
@@ -325,10 +325,10 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                     <Upload className="w-10 h-10" style={{ color: errors.photo ? '#DC2626' : '#6A8A82' }} />
                   </div>
                   <p className="text-lg font-semibold mb-2" style={{ color: errors.photo ? '#DC2626' : '#6A8A82' }}>
-                    Cliquez pour telecharger une image
+                    Cliquez pour télécharger une image
                   </p>
-                  <p className="text-sm text-gray-500">PNG, JPG, JPEG ou WEBP jusqu'a 10MB</p>
-                  <p className="text-xs text-gray-400 mt-2">(Optionnel - vous pouvez passer cette etape)</p>
+                  <p className="text-sm text-gray-500">PNG, JPG, JPEG ou WEBP jusqu'à 10MB</p>
+                  <p className="text-xs text-gray-400 mt-2">(Optionnel - vous pouvez passer cette étape)</p>
                 </div>
               )}
               <input
@@ -348,7 +348,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
           <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
             <div className="text-center mb-4 sm:mb-6">
               <h3 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2" style={{ color: '#191919' }}>
-                Identification du vehicule
+                Identification du véhicule
               </h3>
               <p className="text-sm sm:text-base text-gray-600">Informations essentielles pour l'identification</p>
             </div>
@@ -372,7 +372,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Numero VIN (17 caracteres) *
+                    Numéro VIN (17 caractères) *
                   </label>
                   <input
                     type="text"
@@ -386,7 +386,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                     style={{ borderColor: errors.vin_number ? undefined : '#E8ECEC' }}
                   />
                   <div className="flex justify-between items-center mt-2">
-                    <p className="text-xs text-gray-500">Le VIN est un numero unique de 17 caracteres</p>
+                    <p className="text-xs text-gray-500">Le VIN est un numéro unique de 17 caractères</p>
                     <span className={`text-xs font-medium ${formData.vin_number.length === 17 ? 'text-green-600' : 'text-gray-400'}`}>
                       {formData.vin_number.length}/17
                     </span>
@@ -403,9 +403,9 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
           <div className="space-y-6 p-6">
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                Caracteristiques
+                Caractéristiques
               </h3>
-              <p className="text-gray-600">Details techniques du vehicule</p>
+              <p className="text-gray-600">Détails techniques du véhicule</p>
             </div>
             <div className="bg-gradient-to-br from-copper/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#F5E8DD' }}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -427,7 +427,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Modele *
+                    Modèle *
                   </label>
                   <input
                     type="text"
@@ -443,7 +443,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Annee *
+                    Année *
                   </label>
                   <input
                     type="number"
@@ -460,7 +460,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Type de vehicule *
+                    Type de véhicule *
                   </label>
                   <select
                     name="vehicle_type"
@@ -503,9 +503,9 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
           <div className="space-y-6 p-6">
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                Carburant & Etat
+                Carburant & État
               </h3>
-              <p className="text-gray-600">Informations sur le carburant et le kilometrage</p>
+              <p className="text-gray-600">Informations sur le carburant et le kilométrage</p>
             </div>
             <div className="space-y-5">
               <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
@@ -528,14 +528,14 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                     >
                       <option value="gasoline">Essence</option>
                       <option value="diesel">Diesel</option>
-                      <option value="electric">Electrique</option>
+                      <option value="electric">Électrique</option>
                       <option value="hybrid">Hybride</option>
                     </select>
                     {renderFieldError('fuel_type')}
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                      Capacite (L) *
+                      Capacité (L) *
                     </label>
                     <input
                       type="number"
@@ -575,11 +575,11 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
               <div className="bg-gradient-to-br from-copper/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#F5E8DD' }}>
                 <div className="flex items-center space-x-2 mb-4">
                   <Gauge className="w-5 h-5" style={{ color: '#B87333' }} />
-                  <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Kilometrage</h4>
+                  <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Kilométrage</h4>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Kilometrage actuel (km) *
+                    Kilométrage actuel (km) *
                   </label>
                   <input
                     type="number"
@@ -607,7 +607,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
                 Assurance & Finalisation
               </h3>
-              <p className="text-gray-600">Dernieres informations et notes complementaires</p>
+              <p className="text-gray-600">Dernières informations et notes complémentaires</p>
             </div>
             <div className="space-y-5">
               <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
@@ -618,7 +618,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                      Numero d'assurance *
+                      Numéro d'assurance *
                     </label>
                     <input
                       type="text"
@@ -679,7 +679,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                       name="notes"
                       value={formData.notes}
                       onChange={handleInputChange}
-                      placeholder="Ajoutez des notes supplementaires..."
+                      placeholder="Ajoutez des notes supplémentaires..."
                       rows={4}
                       className={`${getInputClassName('notes')} resize-none`}
                       style={{ borderColor: errors.notes ? undefined : '#E8ECEC' }}
@@ -845,7 +845,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-                      <span className="hidden sm:inline">Creation...</span>
+                      <span className="hidden sm:inline">Création...</span>
                     </>
                   ) : (
                     <>

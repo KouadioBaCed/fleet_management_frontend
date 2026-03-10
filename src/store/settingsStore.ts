@@ -49,9 +49,9 @@ const loadFromStorage = (): UserPreferences | null => {
 const defaultPreferences: UserPreferences = {
   distance_unit: 'km',
   fuel_unit: 'liters',
-  currency: 'USD',
+  currency: 'XOF',
   language: 'fr',
-  timezone: 'Africa/Kinshasa',
+  timezone: 'Africa/Abidjan',
   date_format: 'DD/MM/YYYY',
   email_notifications: true,
   sms_notifications: false,
@@ -116,7 +116,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   // Quick accessors with fallback to defaults
   getDistanceUnit: () => get().preferences?.distance_unit || 'km',
   getFuelUnit: () => get().preferences?.fuel_unit || 'liters',
-  getCurrency: () => get().preferences?.currency || 'USD',
+  getCurrency: () => get().preferences?.currency || 'XOF',
   getLanguage: () => get().preferences?.language || 'fr',
   getTheme: () => get().preferences?.theme || 'light',
 }));
@@ -124,7 +124,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 // Export helper hooks for common use cases
 export const useDistanceUnit = () => useSettingsStore((state) => state.preferences?.distance_unit || 'km');
 export const useFuelUnit = () => useSettingsStore((state) => state.preferences?.fuel_unit || 'liters');
-export const useCurrency = () => useSettingsStore((state) => state.preferences?.currency || 'USD');
+export const useCurrency = () => useSettingsStore((state) => state.preferences?.currency || 'XOF');
 export const useLanguage = () => useSettingsStore((state) => state.preferences?.language || 'fr');
 export const useTheme = () => useSettingsStore((state) => state.preferences?.theme || 'light');
 export const useNotificationSettings = () => useSettingsStore((state) => ({

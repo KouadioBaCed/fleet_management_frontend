@@ -34,7 +34,7 @@ interface VehicleFormData {
 }
 
 const TABS = [
-  { id: 'general', title: 'General', icon: Car },
+  { id: 'general', title: 'Général', icon: Car },
   { id: 'technical', title: 'Technique', icon: Gauge },
   { id: 'insurance', title: 'Assurance', icon: Shield },
   { id: 'photo', title: 'Photo', icon: ImageIcon },
@@ -124,7 +124,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
 
       if (!allowedTypes.includes(file.type)) {
-        setErrors(prev => ({ ...prev, photo: 'Format non supporte. Utilisez PNG, JPG ou WEBP.' }));
+        setErrors(prev => ({ ...prev, photo: 'Format non supporté. Utilisez PNG, JPG ou WEBP.' }));
         return;
       }
 
@@ -166,30 +166,30 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
       newErrors.license_plate = 'La plaque d\'immatriculation est requise';
     }
     if (!formData.vin_number.trim()) {
-      newErrors.vin_number = 'Le numero VIN est requis';
+      newErrors.vin_number = 'Le numéro VIN est requis';
     } else if (formData.vin_number.length !== 17) {
-      newErrors.vin_number = 'Le VIN doit contenir exactement 17 caracteres';
+      newErrors.vin_number = 'Le VIN doit contenir exactement 17 caractères';
     }
     if (!formData.brand.trim()) {
       newErrors.brand = 'La marque est requise';
     }
     if (!formData.model.trim()) {
-      newErrors.model = 'Le modele est requis';
+      newErrors.model = 'Le modèle est requis';
     }
     if (!formData.color.trim()) {
       newErrors.color = 'La couleur est requise';
     }
     if (!formData.fuel_capacity || parseFloat(formData.fuel_capacity) <= 0) {
-      newErrors.fuel_capacity = 'Capacite invalide';
+      newErrors.fuel_capacity = 'Capacité invalide';
     }
     if (!formData.fuel_consumption || parseFloat(formData.fuel_consumption) <= 0) {
       newErrors.fuel_consumption = 'Consommation invalide';
     }
     if (!formData.current_mileage || parseFloat(formData.current_mileage) < 0) {
-      newErrors.current_mileage = 'Kilometrage invalide';
+      newErrors.current_mileage = 'Kilométrage invalide';
     }
     if (!formData.insurance_number.trim()) {
-      newErrors.insurance_number = 'Le numero d\'assurance est requis';
+      newErrors.insurance_number = 'Le numéro d\'assurance est requis';
     }
     if (!formData.insurance_expiry) {
       newErrors.insurance_expiry = 'La date d\'expiration est requise';
@@ -255,7 +255,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
           setApiError('Une erreur est survenue lors de la modification');
         }
       } else {
-        setApiError('Erreur de connexion. Veuillez reessayer.');
+        setApiError('Erreur de connexion. Veuillez réessayer.');
       }
     } finally {
       setIsSubmitting(false);
@@ -378,7 +378,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Numero VIN *
+                  Numéro VIN *
                 </label>
                 <input
                   type="text"
@@ -416,7 +416,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Modele *
+                  Modèle *
                 </label>
                 <input
                   type="text"
@@ -430,7 +430,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Annee *
+                  Année *
                 </label>
                 <input
                   type="number"
@@ -449,7 +449,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Type de vehicule *
+                  Type de véhicule *
                 </label>
                 <select
                   name="vehicle_type"
@@ -506,14 +506,14 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
                   >
                     <option value="gasoline">Essence</option>
                     <option value="diesel">Diesel</option>
-                    <option value="electric">Electrique</option>
+                    <option value="electric">Électrique</option>
                     <option value="hybrid">Hybride</option>
                   </select>
                   {renderFieldError('fuel_type')}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Capacite (L) *
+                    Capacité (L) *
                   </label>
                   <input
                     type="number"
@@ -550,11 +550,11 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
             <div className="bg-gradient-to-br from-copper/5 to-transparent rounded-xl p-5 border-2" style={{ borderColor: '#F5E8DD' }}>
               <div className="flex items-center space-x-2 mb-4">
                 <Gauge className="w-5 h-5" style={{ color: '#B87333' }} />
-                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Kilometrage</h4>
+                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Kilométrage</h4>
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Kilometrage actuel (km) *
+                  Kilométrage actuel (km) *
                 </label>
                 <input
                   type="number"
@@ -602,7 +602,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Numero d'assurance *
+                    Numéro d'assurance *
                   </label>
                   <input
                     type="text"
@@ -641,7 +641,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
                 name="notes"
                 value={formData.notes}
                 onChange={handleInputChange}
-                placeholder="Ajoutez des notes supplementaires..."
+                placeholder="Ajoutez des notes supplémentaires..."
                 rows={4}
                 className={`${getInputClassName('notes')} resize-none`}
                 style={{ borderColor: '#E8ECEC' }}
@@ -696,9 +696,9 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
                     <Upload className="w-10 h-10" style={{ color: '#6A8A82' }} />
                   </div>
                   <p className="text-lg font-semibold mb-2" style={{ color: '#6A8A82' }}>
-                    Cliquez pour telecharger une image
+                    Cliquez pour télécharger une image
                   </p>
-                  <p className="text-sm text-gray-500">PNG, JPG, JPEG ou WEBP jusqu'a 10MB</p>
+                  <p className="text-sm text-gray-500">PNG, JPG, JPEG ou WEBP jusqu'à 10MB</p>
                 </div>
               )}
               <input
@@ -731,7 +731,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
             </div>
             <div>
               <h2 className="text-2xl font-bold" style={{ color: '#191919' }}>
-                Modifier le vehicule
+                Modifier le véhicule
               </h2>
               <p className="text-sm text-gray-500 font-mono">{vehicle.license_plate} - {vehicle.brand} {vehicle.model}</p>
             </div>
@@ -804,7 +804,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
               {hasChanges && (
                 <span className="text-sm text-amber-600 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  Modifications non enregistrees
+                  Modifications non enregistrées
                 </span>
               )}
               <button

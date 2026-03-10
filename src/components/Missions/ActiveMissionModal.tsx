@@ -470,7 +470,7 @@ export default function ActiveMissionModal({
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                      Kilometrage final
+                      Kilométrage final
                     </h3>
                     <p className="text-gray-600">
                       Notez le kilometrage actuel affiche sur le tableau de bord.
@@ -494,7 +494,7 @@ export default function ActiveMissionModal({
 
                   {trip?.start_mileage && (
                     <div className="bg-gray-50 rounded-xl p-4 inline-block">
-                      <p className="text-sm text-gray-500">Kilometrage initial</p>
+                      <p className="text-sm text-gray-500">Kilométrage initial</p>
                       <p className="text-xl font-bold" style={{ color: '#191919' }}>{trip.start_mileage} km</p>
                       {endMileage && parseFloat(endMileage) >= trip.start_mileage && (
                         <p className="text-sm font-semibold text-green-600 mt-1">
@@ -616,7 +616,7 @@ export default function ActiveMissionModal({
                         <Gauge className="w-5 h-5 text-red-500" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 uppercase tracking-wide">Kilometrage final</p>
+                        <p className="text-xs text-gray-500 uppercase tracking-wide">Kilométrage final</p>
                         <p className="font-bold text-lg" style={{ color: '#191919' }}>{endMileage} km</p>
                       </div>
                     </div>

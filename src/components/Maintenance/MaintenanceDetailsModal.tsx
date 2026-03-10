@@ -119,7 +119,7 @@ export default function MaintenanceDetailsModal({
                 <span className="text-xs font-semibold text-gray-600">COÛT TOTAL</span>
               </div>
               <p className="text-lg font-bold" style={{ color: '#B87333' }}>
-                ${Number(maintenance.total_cost).toFixed(2)}
+                {Number(maintenance.total_cost).toFixed(2)} FCFA
               </p>
             </div>
           </div>
@@ -132,13 +132,13 @@ export default function MaintenanceDetailsModal({
                 <div>
                   <p className="text-xs text-gray-500">Main d'œuvre</p>
                   <p className="text-base font-semibold" style={{ color: '#191919' }}>
-                    ${Number(maintenance.labor_cost).toFixed(2)}
+                    {Number(maintenance.labor_cost).toFixed(2)} FCFA
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Pièces détachées</p>
                   <p className="text-base font-semibold" style={{ color: '#191919' }}>
-                    ${Number(maintenance.parts_cost).toFixed(2)}
+                    {Number(maintenance.parts_cost).toFixed(2)} FCFA
                   </p>
                 </div>
               </div>

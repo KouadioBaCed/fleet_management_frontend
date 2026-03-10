@@ -2,7 +2,7 @@ import { apiClient } from './client';
 
 export type DistanceUnit = 'km' | 'miles';
 export type FuelUnit = 'liters' | 'gallons';
-export type Currency = 'USD' | 'EUR' | 'CDF' | 'XAF' | 'GBP';
+export type Currency = 'XOF';
 export type Language = 'fr' | 'en';
 export type Theme = 'light' | 'dark' | 'auto';
 export type DateFormat = 'DD/MM/YYYY' | 'MM/DD/YYYY' | 'YYYY-MM-DD';
@@ -105,11 +105,7 @@ export const getFuelLabel = (unit: FuelUnit): string => {
 
 export const getCurrencySymbol = (currency: Currency): string => {
   const symbols: Record<Currency, string> = {
-    USD: '$',
-    EUR: '€',
-    CDF: 'FC',
-    XAF: 'FCFA',
-    GBP: '£',
+    XOF: 'FCFA',
   };
   return symbols[currency] || currency;
 };

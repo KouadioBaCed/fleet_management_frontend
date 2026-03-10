@@ -284,7 +284,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
             <p className="font-bold" style={{ color: '#191919' }}>{vehicle.brand} {vehicle.model}</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Annee</p>
+            <p className="text-xs text-gray-500 mb-1">Année</p>
             <p className="font-bold text-xl" style={{ color: '#191919' }}>{vehicle.year}</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
@@ -305,10 +305,10 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
       <div className="bg-white rounded-2xl border-2 p-5" style={{ borderColor: '#E8ECEC' }}>
         <h4 className="text-sm font-bold uppercase tracking-wide text-gray-500 mb-4 flex items-center gap-2">
           <Gauge className="w-4 h-4" />
-          Kilometrage
+          Kilométrage
         </h4>
         <div className="bg-gradient-to-r from-sage/10 to-transparent rounded-xl p-4">
-          <p className="text-xs text-gray-500 mb-1">Kilometrage actuel</p>
+          <p className="text-xs text-gray-500 mb-1">Kilométrage actuel</p>
           <p className="font-bold text-3xl" style={{ color: '#6A8A82' }}>{formatMileage(vehicle.current_mileage)}</p>
         </div>
       </div>

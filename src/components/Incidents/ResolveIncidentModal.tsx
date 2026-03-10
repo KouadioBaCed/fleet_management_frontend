@@ -326,7 +326,7 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
                     className="px-3 py-1.5 rounded-full text-sm font-bold"
                     style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}
                   >
-                    ${totalCost.toFixed(2)}
+                    {totalCost.toFixed(2)} FCFA
                   </span>
                 )}
                 {showCostBreakdown ? (
@@ -422,7 +422,7 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
                     className="text-2xl font-bold"
                     style={{ color: '#B87333' }}
                   >
-                    ${totalCost.toFixed(2)}
+                    {totalCost.toFixed(2)} FCFA
                   </span>
                 </div>
               </div>

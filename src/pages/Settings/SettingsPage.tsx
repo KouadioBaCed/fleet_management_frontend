@@ -66,12 +66,12 @@ export default function SettingsPage() {
   const [units, setUnits] = useState({
     distance_unit: 'km' as DistanceUnit,
     fuel_unit: 'liters' as FuelUnit,
-    currency: 'USD' as Currency,
+    currency: 'XOF' as Currency,
   });
 
   const [language, setLanguage] = useState({
     language: 'fr' as Language,
-    timezone: 'Africa/Kinshasa',
+    timezone: 'Africa/Abidjan',
     date_format: 'DD/MM/YYYY' as DateFormat,
   });
 
@@ -423,11 +423,7 @@ export default function SettingsPage() {
                       </h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
                         {[
-                          { value: 'USD', label: 'Dollar US', symbol: '$' },
-                          { value: 'EUR', label: 'Euro', symbol: '€' },
-                          { value: 'CDF', label: 'Franc congolais', symbol: 'FC' },
-                          { value: 'XAF', label: 'Franc CFA', symbol: 'FCFA' },
-                          { value: 'GBP', label: 'Livre sterling', symbol: '£' },
+                          { value: 'XOF', label: 'Franc CFA (FCFA)', symbol: 'FCFA' },
                         ].map((currency) => (
                           <button
                             key={currency.value}

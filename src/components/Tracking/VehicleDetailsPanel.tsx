@@ -354,11 +354,11 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
               {/* Horaires */}
               <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-3 sm:pt-4 border-t" style={{ borderColor: '#E8ECEC' }}>
                 <div className="text-center p-2 sm:p-3 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
-                  <p className="text-[10px] sm:text-xs text-gray-500 mb-1">Depart prevu</p>
+                  <p className="text-[10px] sm:text-xs text-gray-500 mb-1">Départ prévu</p>
                   <p className="font-semibold text-xs sm:text-sm" style={{ color: '#6A8A82' }}>{formatTime(vehicle.scheduled_start)}</p>
                 </div>
                 <div className="text-center p-2 sm:p-3 rounded-lg" style={{ backgroundColor: '#F5E8DD' }}>
-                  <p className="text-[10px] sm:text-xs text-gray-500 mb-1">Arrivee prevue</p>
+                  <p className="text-[10px] sm:text-xs text-gray-500 mb-1">Arrivée prévue</p>
                   <p className="font-semibold text-xs sm:text-sm" style={{ color: '#B87333' }}>{formatTime(vehicle.scheduled_end)}</p>
                 </div>
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-gray-100">
@@ -375,7 +375,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                     <p className="font-semibold text-red-700">Mission en retard</p>
                     <p className="text-sm text-red-600 mt-1">
                       Retard de {vehicle.delay_status.delay_minutes} minutes
-                      {vehicle.delay_status.delay_type === 'arrival' && ' sur l\'heure d\'arrivee prevue'}
+                      {vehicle.delay_status.delay_type === 'arrival' && ' sur l\'heure d\'arrivée prévue'}
                     </p>
                   </div>
                 </div>

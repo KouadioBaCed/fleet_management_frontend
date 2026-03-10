@@ -206,7 +206,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
               <span className="text-[10px] sm:text-sm font-medium text-gray-600">Main d'oeuvre</span>
             </div>
             <p className="text-sm sm:text-2xl font-bold" style={{ color: '#6A8A82' }}>
-              ${cumulative_costs.labor_cost.toFixed(2)}
+              {cumulative_costs.labor_cost.toFixed(2)} FCFA
             </p>
           </div>
           <div className="p-2 sm:p-5 text-center border-r sm:border-r-0" style={{ borderColor: '#E8ECEC' }}>
@@ -217,7 +217,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
               <span className="text-[10px] sm:text-sm font-medium text-gray-600">Pièces</span>
             </div>
             <p className="text-sm sm:text-2xl font-bold" style={{ color: '#B87333' }}>
-              ${cumulative_costs.parts_cost.toFixed(2)}
+              {cumulative_costs.parts_cost.toFixed(2)} FCFA
             </p>
           </div>
           <div className="p-2 sm:p-5 text-center" style={{ backgroundColor: '#F8FAF9' }}>
@@ -228,7 +228,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
               <span className="text-[10px] sm:text-sm font-medium text-gray-600 whitespace-nowrap">Total Cumulé</span>
             </div>
             <p className="text-base sm:text-3xl font-bold" style={{ color: '#1E40AF' }}>
-              ${cumulative_costs.total_cost.toFixed(2)}
+              {cumulative_costs.total_cost.toFixed(2)} FCFA
             </p>
           </div>
         </div>
@@ -271,7 +271,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                     </div>
                   </div>
                   <span className="text-xs sm:text-sm font-bold flex-shrink-0" style={{ color: config.text }}>
-                    ${type.total_cost.toFixed(0)}
+                    {type.total_cost.toFixed(0)} FCFA
                   </span>
                 </div>
               );
@@ -303,7 +303,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                         {month.month.split(' ')[0].slice(0, 3)}
                       </p>
                       <p className="text-[9px] sm:text-xs font-bold" style={{ color: '#1E40AF' }}>
-                        ${month.total_cost.toFixed(0)}
+                        {month.total_cost.toFixed(0)} FCFA
                       </p>
                     </div>
                   </div>
@@ -396,7 +396,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                           </span>
                         </div>
                         <p className="text-sm font-bold" style={{ color: '#1E40AF' }}>
-                          ${intervention.total_cost.toFixed(2)}
+                          {intervention.total_cost.toFixed(2)} FCFA
                         </p>
                       </div>
                     </div>
@@ -420,7 +420,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                       </div>
                       <div className="text-right min-w-[100px]">
                         <p className="text-lg font-bold" style={{ color: '#1E40AF' }}>
-                          ${intervention.total_cost.toFixed(2)}
+                          {intervention.total_cost.toFixed(2)} FCFA
                         </p>
                       </div>
                     </div>
@@ -501,19 +501,19 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                         <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl text-center" style={{ backgroundColor: '#E8EFED' }}>
                           <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Main d'oeuvre</p>
                           <p className="font-bold text-xs sm:text-base" style={{ color: '#6A8A82' }}>
-                            ${intervention.labor_cost.toFixed(2)}
+                            {intervention.labor_cost.toFixed(2)} FCFA
                           </p>
                         </div>
                         <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl text-center" style={{ backgroundColor: '#F5E8DD' }}>
                           <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Pièces</p>
                           <p className="font-bold text-xs sm:text-base" style={{ color: '#B87333' }}>
-                            ${intervention.parts_cost.toFixed(2)}
+                            {intervention.parts_cost.toFixed(2)} FCFA
                           </p>
                         </div>
                         <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl text-center" style={{ backgroundColor: '#DBEAFE' }}>
                           <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Total</p>
                           <p className="font-bold text-xs sm:text-base" style={{ color: '#1E40AF' }}>
-                            ${intervention.total_cost.toFixed(2)}
+                            {intervention.total_cost.toFixed(2)} FCFA
                           </p>
                         </div>
                       </div>

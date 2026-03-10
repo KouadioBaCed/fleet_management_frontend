@@ -48,7 +48,7 @@ export default function DeleteVehicleModal({ isOpen, onClose, onConfirm, vehicle
             </div>
             <div>
               <h2 className="text-2xl font-bold" style={{ color: '#191919' }}>
-                Supprimer le vehicule
+                Supprimer le véhicule
               </h2>
             </div>
           </div>
@@ -68,11 +68,11 @@ export default function DeleteVehicleModal({ isOpen, onClose, onConfirm, vehicle
               <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-bold text-red-900 mb-2">
-                  Attention : Cette action est irreversible
+                  Attention : Cette action est irréversible
                 </h3>
                 <p className="text-sm text-red-800">
-                  Vous etes sur le point de supprimer definitivement ce vehicule de votre flotte.
-                  Toutes les donnees associees seront perdues.
+                  Vous êtes sur le point de supprimer définitivement ce véhicule de votre flotte.
+                  Toutes les données associées seront perdues.
                 </p>
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function DeleteVehicleModal({ isOpen, onClose, onConfirm, vehicle
 
             <div className="space-y-2 pt-4 border-t" style={{ borderColor: '#E8ECEC' }}>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Annee</span>
+                <span className="text-sm text-gray-500">Année</span>
                 <span className="font-semibold" style={{ color: '#191919' }}>{vehicle.year}</span>
               </div>
               <div className="flex items-center justify-between">
@@ -113,7 +113,7 @@ export default function DeleteVehicleModal({ isOpen, onClose, onConfirm, vehicle
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Kilometrage</span>
+                <span className="text-sm text-gray-500">Kilométrage</span>
                 <span className="font-semibold" style={{ color: '#191919' }}>
                   {new Intl.NumberFormat('fr-FR').format(Math.round(vehicle.current_mileage))} km
                 </span>
@@ -143,7 +143,7 @@ export default function DeleteVehicleModal({ isOpen, onClose, onConfirm, vehicle
               ) : (
                 <>
                   <Trash2 className="w-5 h-5" />
-                  <span>Oui, supprimer definitivement</span>
+                  <span>Oui, supprimer définitivement</span>
                 </>
               )}
             </button>

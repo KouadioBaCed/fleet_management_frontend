@@ -340,7 +340,7 @@ export default function MaintenanceCalendar({ events, isLoading, onMonthChange, 
                   <div className="min-w-0">
                     <p className="text-[10px] sm:text-xs text-gray-500">Coût estimé</p>
                     <p className="font-semibold text-sm sm:text-base" style={{ color: '#B87333' }}>
-                      ${selectedEvent.total_cost.toFixed(2)}
+                      {selectedEvent.total_cost.toFixed(2)} FCFA
                     </p>
                   </div>
                 </div>

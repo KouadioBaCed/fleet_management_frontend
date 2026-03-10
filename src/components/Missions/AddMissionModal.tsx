@@ -50,17 +50,17 @@ interface FormErrors {
 
 const STEPS = [
   { id: 1, title: 'Informations', icon: FileText },
-  { id: 2, title: 'Itineraire', icon: MapPin },
+  { id: 2, title: 'Itinéraire', icon: MapPin },
   { id: 3, title: 'Planning', icon: Calendar },
   { id: 4, title: 'Assignation', icon: User },
   { id: 5, title: 'Finalisation', icon: Check },
 ];
 
 const PRIORITY_OPTIONS = [
-  { value: 'low', label: 'Faible', color: '#6B7280', bgColor: '#E8ECEC', description: 'Pas de delai specifique' },
-  { value: 'medium', label: 'Moyenne', color: '#6A8A82', bgColor: '#E8EFED', description: 'A realiser dans la journee' },
-  { value: 'high', label: 'Haute', color: '#B87333', bgColor: '#F5E8DD', description: 'A traiter en priorite' },
-  { value: 'urgent', label: 'Urgente', color: '#DC2626', bgColor: '#FEE2E2', description: 'Traitement immediat requis' },
+  { value: 'low', label: 'Faible', color: '#6B7280', bgColor: '#E8ECEC', description: 'Pas de délai spécifique' },
+  { value: 'medium', label: 'Moyenne', color: '#6A8A82', bgColor: '#E8EFED', description: 'À réaliser dans la journée' },
+  { value: 'high', label: 'Haute', color: '#B87333', bgColor: '#F5E8DD', description: 'À traiter en priorité' },
+  { value: 'urgent', label: 'Urgente', color: '#DC2626', bgColor: '#FEE2E2', description: 'Traitement immédiat requis' },
 ];
 
 export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissionModalProps) {
@@ -325,9 +325,9 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
       case 1:
         if (!formData.mission_code.trim()) newErrors.mission_code = 'Le code mission est requis';
         if (!formData.title.trim()) newErrors.title = 'Le titre est requis';
-        if (formData.title.trim().length < 3) newErrors.title = 'Le titre doit contenir au moins 3 caracteres';
+        if (formData.title.trim().length < 3) newErrors.title = 'Le titre doit contenir au moins 3 caractères';
         if (!formData.description.trim()) newErrors.description = 'La description est requise';
-        if (formData.description.trim().length < 10) newErrors.description = 'La description doit contenir au moins 10 caracteres';
+        if (formData.description.trim().length < 10) newErrors.description = 'La description doit contenir au moins 10 caractères';
         break;
 
       case 2:
@@ -491,7 +491,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                     style={{ borderColor: errors.mission_code ? undefined : '#E8ECEC' }}
                   />
                   {renderError('mission_code')}
-                  <p className="text-xs text-gray-500 mt-1">Code genere automatiquement, modifiable si besoin</p>
+                  <p className="text-xs text-gray-500 mt-1">Code généré automatiquement, modifiable si besoin</p>
                 </div>
 
                 <div>
@@ -520,7 +520,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
-                    placeholder="Decrivez la mission en detail: objectif, instructions particulieres, marchandises..."
+                    placeholder="Décrivez la mission en détail : objectif, instructions particulières, marchandises..."
                     rows={4}
                     className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all resize-none text-gray-900 placeholder-gray-400 ${
                       errors.description ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
@@ -528,7 +528,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                     style={{ borderColor: errors.description ? undefined : '#E8ECEC' }}
                   />
                   {renderError('description')}
-                  <p className="text-xs text-gray-500 mt-1">{formData.description.length}/500 caracteres</p>
+                  <p className="text-xs text-gray-500 mt-1">{formData.description.length}/500 caractères</p>
                 </div>
               </div>
             </div>
@@ -709,7 +709,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
           <div className="space-y-6 p-6">
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                Horaires prevus
+                Horaires prévus
               </h3>
               <p className="text-gray-600">Planifiez le debut et la fin de la mission</p>
             </div>
@@ -718,7 +718,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
                     <Clock className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
-                    Debut prevu *
+                    Début prévu *
                   </label>
                   <input
                     type="datetime-local"
@@ -736,7 +736,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
                     <Clock className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
-                    Fin prevue *
+                    Fin prévue *
                   </label>
                   <input
                     type="datetime-local"
@@ -773,7 +773,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
               <div className="mt-4 p-4 rounded-lg flex items-start space-x-3" style={{ backgroundColor: '#DBEAFE' }}>
                 <Calendar className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#1E40AF' }} />
                 <p className="text-sm" style={{ color: '#1E3A8A' }}>
-                  Les dates seront utilisees pour planifier la mission et verifier la disponibilite des ressources.
+                  Les dates seront utilisées pour planifier la mission et vérifier la disponibilité des ressources.
                 </p>
               </div>
             </div>
@@ -922,16 +922,16 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
                 Finalisation
               </h3>
-              <p className="text-gray-600">Priorite et informations complementaires</p>
+              <p className="text-gray-600">Priorité et informations complémentaires</p>
             </div>
 
             <div className="space-y-5">
-              {/* Priorite */}
+              {/* Priorité */}
               <div className="bg-gradient-to-br from-copper/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#F5E8DD' }}>
                 <div className="flex items-center gap-2 mb-4">
                   <Flag className="w-5 h-5" style={{ color: '#B87333' }} />
                   <label className="text-sm font-bold" style={{ color: '#191919' }}>
-                    Priorite de la mission *
+                    Priorité de la mission *
                   </label>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -1054,7 +1054,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                     <p className="font-semibold">{formData.estimated_distance ? `${formData.estimated_distance} km` : '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Priorite</p>
+                    <p className="text-gray-500">Priorité</p>
                     <p className="font-semibold" style={{ color: PRIORITY_OPTIONS.find(p => p.value === formData.priority)?.color }}>
                       {PRIORITY_OPTIONS.find(p => p.value === formData.priority)?.label}
                     </p>

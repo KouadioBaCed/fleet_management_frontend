@@ -200,7 +200,7 @@ export default function CancelMissionModal({ isOpen, onClose, onConfirm, mission
               <textarea
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
-                placeholder="Decrivez le motif d'annulation..."
+                placeholder="Décrivez le motif d'annulation..."
                 rows={3}
                 className="w-full px-4 py-3 rounded-xl border-2 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 outline-none transition-all resize-none"
                 style={{ borderColor: '#E8ECEC' }}

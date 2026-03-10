@@ -669,7 +669,7 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
                 <div>
                   <p className="text-gray-500">Coût</p>
                   <p className="font-semibold" style={{ color: '#B87333' }}>
-                    ${formData.total_cost || '0'}
+                    {formData.total_cost || '0'} FCFA
                   </p>
                 </div>
               </div>
