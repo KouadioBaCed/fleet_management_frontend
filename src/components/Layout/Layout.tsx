@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps) {
     const path = location.pathname;
     const titles: Record<string, string> = {
       '/': 'Tableau de bord',
-      '/vehicles': 'Vehicules',
+      '/vehicles': 'Véhicules',
       '/drivers': 'Conducteurs',
       '/missions': 'Missions',
       '/tracking': 'Suivi GPS',

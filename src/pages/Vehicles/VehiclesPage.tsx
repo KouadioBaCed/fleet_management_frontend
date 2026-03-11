@@ -86,8 +86,8 @@ export default function VehiclesPage() {
       setVehicles(response.results);
       setStats(response.stats);
     } catch (err) {
-      console.error('Failed to fetch vehicles:', err);
-      setError('Impossible de charger les vehicules');
+      console.error('Failed to fetch véhicles:', err);
+      setError('Impossible de charger les véhicules');
     } finally {
       setLoading(false);
     }
@@ -186,9 +186,9 @@ export default function VehiclesPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#1f2937' }}>
-              Vehicules
+              Véhicules
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-1">Gerez votre flotte de vehicules</p>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Gerez votre flotte de véhicules</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button

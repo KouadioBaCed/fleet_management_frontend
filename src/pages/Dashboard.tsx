@@ -54,7 +54,7 @@ export default function Dashboard() {
 
     return [
       {
-        title: 'Vehicules',
+        title: 'Véhicules',
         value: stats.vehicles.total.toString(),
         subtitle: `${stats.vehicles.available} disponibles`,
         icon: Car,
