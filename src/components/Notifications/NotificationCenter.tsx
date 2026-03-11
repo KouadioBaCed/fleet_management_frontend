@@ -191,6 +191,44 @@ export default function NotificationCenter() {
     return () => clearInterval(interval);
   }, [fetchNotifications, fetchUnreadCount]);
 
+  // Connexion WebSocket pour les notifications temps reel
+  useEffect(() => {
+    const wsUrl = (import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/live-map/')
+      .replace('/ws/live-map/', '/ws/notifications/');
+
+    let ws: WebSocket | null = null;
+    let reconnectTimeout: ReturnType<typeof setTimeout>;
+
+    const connect = () => {
+      ws = new WebSocket(wsUrl);
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'new_notification') {
+            // Ajouter la notification en temps reel
+            const { addNotification } = useNotificationStore.getState();
+            addNotification(data.notification);
+          }
+        } catch (e) {
+          console.error('Erreur parsing notification WebSocket:', e);
+        }
+      };
+
+      ws.onclose = () => {
+        // Reconnecter apres 5 secondes
+        reconnectTimeout = setTimeout(connect, 5000);
+      };
+    };
+
+    connect();
+
+    return () => {
+      if (ws) ws.close();
+      clearTimeout(reconnectTimeout);
+    };
+  }, []);
+
   // Fermer le dropdown si on clique en dehors
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

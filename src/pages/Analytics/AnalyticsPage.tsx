@@ -4,7 +4,7 @@ import {
   BarChart3,
   TrendingUp,
   TrendingDown,
-  DollarSign,
+  Coins,
   Fuel,
   Gauge,
   Car,
@@ -207,7 +207,7 @@ export default function AnalyticsPage() {
                 <div className="stat-accent" style={{ backgroundColor: '#D97706' }} />
                 <div className="flex items-center justify-between mb-2 sm:mb-3">
                   <div className="stat-icon" style={{ backgroundColor: 'rgba(217,119,6,0.1)' }}>
-                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#D97706' }} />
+                    <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#D97706' }} />
                   </div>
                   <div className={`flex items-center text-[10px] sm:text-sm font-medium ${data.summary.total_cost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
                     {data.summary.total_cost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
@@ -472,7 +472,7 @@ export default function AnalyticsPage() {
                 <h4 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-4 text-gray-800">Coût / km</h4>
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center" style={{ backgroundColor: '#DBEAFE' }}>
-                    <DollarSign className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
+                    <Coins className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
                   </div>
                   <div>
                     <p className="text-lg sm:text-2xl font-bold text-blue-600">{data.summary.cost_per_km.value.toFixed(3)}</p>
@@ -685,7 +685,7 @@ export default function AnalyticsPage() {
               {/* Most Costly */}
               <div className="data-table-container p-4 sm:p-6">
                 <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-                  <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
+                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
                   <h3 className="font-semibold text-sm sm:text-base text-gray-800">Véhicules les Plus Coûteux</h3>
                 </div>
                 <div className="space-y-2 sm:space-y-3">

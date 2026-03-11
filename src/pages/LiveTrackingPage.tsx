@@ -180,7 +180,7 @@ export default function LiveTrackingPage() {
             <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800">
               Suivi GPS en temps reel
             </h1>
-            <p className="text-gray-500 mt-1 text-sm sm:text-base">Suivez vos vehicules en direct sur la carte</p>
+            <p className="text-gray-500 mt-1 text-sm sm:text-base">Suivez vos véhicules en direct sur la carte</p>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Connection status */}
@@ -237,7 +237,7 @@ export default function LiveTrackingPage() {
               </div>
               <div className="min-w-0">
                 <p className="stat-value" style={{ color: '#6A8A82' }}>{vehicles.length}</p>
-                <p className="stat-label">Vehicules actifs</p>
+                <p className="stat-label">Véhicules actifs</p>
               </div>
             </div>
           </div>
@@ -325,9 +325,9 @@ export default function LiveTrackingPage() {
                 <div className="data-empty-icon mb-4">
                   <Car className="w-6 h-6" style={{ color: '#6A8A82' }} />
                 </div>
-                <p className="text-lg sm:text-xl font-semibold mb-2 text-center text-gray-800">Aucun vehicule actif</p>
+                <p className="text-lg sm:text-xl font-semibold mb-2 text-center text-gray-800">Aucun véhicule actif</p>
                 <p className="text-gray-400 text-center text-sm sm:text-base">
-                  Les vehicules apparaitront ici lorsqu'ils auront des missions en cours.
+                  Les véhicules apparaitront ici lorsqu'ils auront des missions en cours.
                 </p>
               </div>
             ) : (
@@ -346,11 +346,11 @@ export default function LiveTrackingPage() {
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(106,138,130,0.1)' }}>
                   <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: '#6A8A82' }} />
                 </div>
-                <span>Vehicules actifs ({vehicles.length})</span>
+                <span>Véhicules actifs ({vehicles.length})</span>
               </h3>
 
               {vehicles.length === 0 ? (
-                <p className="text-gray-400 text-xs sm:text-sm text-center py-6 sm:py-8">Aucun vehicule en mission</p>
+                <p className="text-gray-400 text-xs sm:text-sm text-center py-6 sm:py-8">Aucun véhicule en mission</p>
               ) : (
                 <div className="space-y-3 max-h-[400px] lg:max-h-[600px] overflow-y-auto pr-1 sm:pr-2">
                   {vehicles.map((vehicle) => {

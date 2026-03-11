@@ -8,7 +8,7 @@ import DeleteMaintenanceModal from '@/components/Maintenance/DeleteMaintenanceMo
 import MaintenanceCalendar from '@/components/Maintenance/MaintenanceCalendar';
 import MileageAlerts from '@/components/Maintenance/MileageAlerts';
 import MaintenanceHistory from '@/components/Maintenance/MaintenanceHistory';
-import { Wrench, Plus, Calendar, Clock, Car, DollarSign, CheckCircle, AlertCircle, Search, Filter, LayoutGrid, List, MoreVertical, Eye, Edit, Trash2, CalendarDays, Gauge, Play, X, Loader2, History } from 'lucide-react';
+import { Wrench, Plus, Calendar, Clock, Car, Coins, CheckCircle, AlertCircle, Search, Filter, LayoutGrid, List, MoreVertical, Eye, Edit, Trash2, CalendarDays, Gauge, Play, X, Loader2, History } from 'lucide-react';
 import { maintenanceApi, type Maintenance, type MaintenanceStats, type CalendarEvent, type MileageAlert } from '@/api/maintenance';
 import { useCurrency } from '@/store/settingsStore';
 import { getCurrencySymbol } from '@/api/settings';
@@ -126,7 +126,7 @@ export default function MaintenancePage() {
     { label: 'Total', value: stats?.total || 0, color: '#6A8A82', icon: Wrench },
     { label: 'Planifiées', value: stats?.by_status.scheduled || 0, color: '#6A8A82', icon: Calendar },
     { label: 'En Cours', value: stats?.by_status.in_progress || 0, color: '#B87333', icon: Clock },
-    { label: 'Ce mois', value: `${(stats?.this_month_cost || 0).toFixed(0)} ${currencySymbol}`, color: '#1E40AF', icon: DollarSign },
+    { label: 'Ce mois', value: `${(stats?.this_month_cost || 0).toFixed(0)} ${currencySymbol}`, color: '#1E40AF', icon: Coins },
   ];
 
   // Pagination
@@ -582,7 +582,7 @@ export default function MaintenancePage() {
                               </span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <DollarSign className="w-4 h-4" style={{ color: '#6A8A82' }} />
+                              <Coins className="w-4 h-4" style={{ color: '#6A8A82' }} />
                               <span className="font-medium" style={{ color: '#1f2937' }}>
                                 {Number(record.total_cost).toFixed(2)} {currencySymbol}
                               </span>
@@ -608,7 +608,7 @@ export default function MaintenancePage() {
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <DollarSign className="w-3 h-3" style={{ color: '#6A8A82' }} />
+                            <Coins className="w-3 h-3" style={{ color: '#6A8A82' }} />
                             <span className="font-medium" style={{ color: '#1f2937' }}>
                               {Number(record.total_cost).toFixed(0)} {currencySymbol}
                             </span>

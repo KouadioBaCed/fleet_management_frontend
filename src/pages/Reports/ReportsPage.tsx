@@ -10,7 +10,7 @@ import {
   Fuel,
   MapPin,
   Clock,
-  DollarSign,
+  Coins,
   ChevronDown,
   Car,
   Users,
@@ -239,7 +239,7 @@ export default function ReportsPage() {
       title: 'Coûts totaux',
       value: `${data.stats.total_cost.value.toFixed(2)} ${currencySymbol}`,
       change: data.stats.total_cost.change,
-      icon: DollarSign,
+      icon: Coins,
       color: '#A86323'
     },
   ] : [];
@@ -784,7 +784,7 @@ export default function ReportsPage() {
                         </div>
                         <div className="text-right w-14 sm:w-20 flex-shrink-0">
                           <p className="font-semibold text-xs sm:text-sm" style={{ color: type.color }}>
-                            ${typeData.cost.toFixed(0)}
+                            {typeData.cost.toFixed(0)} {currencySymbol}
                           </p>
                           <p className="text-[10px] sm:text-xs text-gray-400">{typeData.quantity.toFixed(0)}L</p>
                         </div>

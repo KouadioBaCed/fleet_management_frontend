@@ -12,7 +12,7 @@ import {
   Search,
   Filter,
   Car,
-  DollarSign,
+  Coins,
   Droplets,
   Gauge,
   MapPin,
@@ -184,7 +184,7 @@ export default function FuelPage() {
       label: t('fuel.totalCost'),
       value: `${(stats?.total_cost || 0).toFixed(2)} ${currencySymbol}`,
       color: '#B87333',
-      icon: DollarSign,
+      icon: Coins,
     },
     {
       label: t('fuel.avgConsumption'),
@@ -636,7 +636,7 @@ export default function FuelPage() {
                               </span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <DollarSign className="w-4 h-4" style={{ color: '#6A8A82' }} />
+                              <Coins className="w-4 h-4" style={{ color: '#6A8A82' }} />
                               <span className="text-gray-600">
                                 {Number(record.unit_price).toFixed(3)} {currencySymbol}/L
                               </span>
@@ -665,7 +665,7 @@ export default function FuelPage() {
                             <span className="font-semibold" style={{ color: '#3B82F6' }}>{Number(record.quantity).toFixed(1)}L</span>
                           </div>
                           <div className="flex flex-col items-center p-2 rounded-lg" style={{ backgroundColor: '#F5E8DD' }}>
-                            <DollarSign className="w-3 h-3 mb-0.5" style={{ color: '#B87333' }} />
+                            <Coins className="w-3 h-3 mb-0.5" style={{ color: '#B87333' }} />
                             <span className="font-semibold" style={{ color: '#B87333' }}>{Number(record.total_cost).toFixed(0)}{currencySymbol}</span>
                           </div>
                           <div className="flex flex-col items-center p-2 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
