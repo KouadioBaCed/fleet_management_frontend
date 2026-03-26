@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import Layout from '@/components/Layout/Layout';
 import Pagination from '@/components/common/Pagination';
+import DropdownMenu from '@/components/common/DropdownMenu';
 import AddMaintenanceModal from '@/components/Maintenance/AddMaintenanceModal';
 import MaintenanceDetailsModal from '@/components/Maintenance/MaintenanceDetailsModal';
 import EditMaintenanceModal from '@/components/Maintenance/EditMaintenanceModal';
@@ -637,67 +638,68 @@ export default function MaintenancePage() {
                         </div>
 
                         {/* Action Button */}
-                        <div className="relative flex-shrink-0 self-end sm:self-center">
-                          <button
-                            onClick={() => setOpenMenuId(openMenuId === record.id ? null : record.id)}
-                            className="p-2 sm:p-3 rounded-lg font-semibold transition-all hover:shadow-sm flex items-center justify-center"
-                            style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
-                          >
-                            <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
-                          </button>
-
-                          {/* Actions Menu */}
-                          {openMenuId === record.id && (
-                            <div className="absolute right-0 top-full mt-2 w-52 soft-dropdown overflow-hidden z-10">
+                        <div className="flex-shrink-0 self-end sm:self-center">
+                          <DropdownMenu
+                            isOpen={openMenuId === record.id}
+                            onToggle={() => setOpenMenuId(openMenuId === record.id ? null : record.id)}
+                            button={
                               <button
-                                onClick={() => handleViewDetails(record)}
-                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left"
+                                className="p-2 sm:p-3 rounded-lg font-semibold transition-all hover:shadow-sm flex items-center justify-center"
+                                style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
                               >
-                                <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} />
-                                <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Voir détails</span>
+                                <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
                               </button>
+                            }
+                            width={208}
+                          >
+                            <button
+                              onClick={() => handleViewDetails(record)}
+                              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left"
+                            >
+                              <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} />
+                              <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Voir détails</span>
+                            </button>
 
-                              {record.status === 'scheduled' && (
-                                <button
-                                  onClick={() => handleStartMaintenance(record)}
-                                  className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left border-t-2"
-                                  style={{ borderColor: '#E8ECEC' }}
-                                >
-                                  <Play className="w-4 h-4" style={{ color: '#059669' }} />
-                                  <span className="text-sm font-medium" style={{ color: '#059669' }}>Démarrer</span>
-                                </button>
-                              )}
-
-                              {record.status === 'in_progress' && (
-                                <button
-                                  onClick={() => handleCompleteMaintenance(record)}
-                                  className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left border-t-2"
-                                  style={{ borderColor: '#E8ECEC' }}
-                                >
-                                  <CheckCircle className="w-4 h-4" style={{ color: '#1E40AF' }} />
-                                  <span className="text-sm font-medium" style={{ color: '#1E40AF' }}>Terminer</span>
-                                </button>
-                              )}
-
+                            {record.status === 'scheduled' && (
                               <button
-                                onClick={() => handleEdit(record)}
+                                onClick={() => handleStartMaintenance(record)}
                                 className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left border-t-2"
                                 style={{ borderColor: '#E8ECEC' }}
                               >
-                                <Edit className="w-4 h-4" style={{ color: '#B87333' }} />
-                                <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Modifier</span>
+                                <Play className="w-4 h-4" style={{ color: '#059669' }} />
+                                <span className="text-sm font-medium" style={{ color: '#059669' }}>Démarrer</span>
                               </button>
+                            )}
 
+                            {record.status === 'in_progress' && (
                               <button
-                                onClick={() => handleDelete(record)}
-                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-all text-left border-t-2"
+                                onClick={() => handleCompleteMaintenance(record)}
+                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left border-t-2"
                                 style={{ borderColor: '#E8ECEC' }}
                               >
-                                <Trash2 className="w-4 h-4 text-red-600" />
-                                <span className="text-sm font-medium text-red-600">Supprimer</span>
+                                <CheckCircle className="w-4 h-4" style={{ color: '#1E40AF' }} />
+                                <span className="text-sm font-medium" style={{ color: '#1E40AF' }}>Terminer</span>
                               </button>
-                            </div>
-                          )}
+                            )}
+
+                            <button
+                              onClick={() => handleEdit(record)}
+                              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left border-t-2"
+                              style={{ borderColor: '#E8ECEC' }}
+                            >
+                              <Edit className="w-4 h-4" style={{ color: '#B87333' }} />
+                              <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Modifier</span>
+                            </button>
+
+                            <button
+                              onClick={() => handleDelete(record)}
+                              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-all text-left border-t-2"
+                              style={{ borderColor: '#E8ECEC' }}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-600" />
+                              <span className="text-sm font-medium text-red-600">Supprimer</span>
+                            </button>
+                          </DropdownMenu>
                         </div>
                       </div>
                     </div>

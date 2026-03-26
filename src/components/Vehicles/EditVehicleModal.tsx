@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Upload, Car, FileText, Gauge, Droplet, Shield, Radio, Check, Loader2, AlertCircle, ImageIcon, Save } from 'lucide-react';
+import { X, Upload, Car, FileText, Gauge, Droplet, Shield, Radio, Check, Loader2, AlertCircle, ImageIcon, Save, Wrench } from 'lucide-react';
 import type { Vehicle } from '@/types';
 import { vehiclesApi } from '@/api/vehicles';
 
@@ -26,6 +26,8 @@ interface VehicleFormData {
   fuel_capacity: string;
   fuel_consumption: string;
   current_mileage: string;
+  maintenance_frequency_km: string;
+  maintenance_frequency_months: string;
   insurance_number: string;
   insurance_expiry: string;
   gps_device_id: string;
@@ -54,6 +56,8 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
     fuel_capacity: '',
     fuel_consumption: '',
     current_mileage: '',
+    maintenance_frequency_km: '',
+    maintenance_frequency_months: '',
     insurance_number: '',
     insurance_expiry: '',
     gps_device_id: '',
@@ -98,6 +102,8 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
         fuel_capacity: fullVehicle.fuel_capacity?.toString() || '',
         fuel_consumption: fullVehicle.fuel_consumption?.toString() || '',
         current_mileage: fullVehicle.current_mileage?.toString() || '',
+        maintenance_frequency_km: fullVehicle.maintenance_frequency_km?.toString() || '',
+        maintenance_frequency_months: fullVehicle.maintenance_frequency_months?.toString() || '',
         insurance_number: fullVehicle.insurance_number || '',
         insurance_expiry: fullVehicle.insurance_expiry || '',
         gps_device_id: fullVehicle.gps_device_id || '',
@@ -567,6 +573,51 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
                   style={{ borderColor: errors.current_mileage ? undefined : '#E8ECEC' }}
                 />
                 {renderFieldError('current_mileage')}
+              </div>
+            </div>
+
+            {/* Maintenance Frequency */}
+            <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-5 border-2" style={{ borderColor: '#E8EFED' }}>
+              <div className="flex items-center space-x-2 mb-4">
+                <Wrench className="w-5 h-5" style={{ color: '#6A8A82' }} />
+                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Frequence de maintenance</h4>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    Tous les (km)
+                  </label>
+                  <input
+                    type="number"
+                    name="maintenance_frequency_km"
+                    value={formData.maintenance_frequency_km}
+                    onChange={handleInputChange}
+                    placeholder="Ex: 10000"
+                    step="1000"
+                    min="0"
+                    className="w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all font-medium text-sm"
+                    style={{ borderColor: '#E8ECEC' }}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Laisser vide si non applicable</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    Tous les (mois)
+                  </label>
+                  <input
+                    type="number"
+                    name="maintenance_frequency_months"
+                    value={formData.maintenance_frequency_months}
+                    onChange={handleInputChange}
+                    placeholder="Ex: 6"
+                    step="1"
+                    min="1"
+                    max="60"
+                    className="w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all font-medium text-sm"
+                    style={{ borderColor: '#E8ECEC' }}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Laisser vide si non applicable</p>
+                </div>
               </div>
             </div>
 

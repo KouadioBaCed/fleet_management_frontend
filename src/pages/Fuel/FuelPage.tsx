@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import Layout from '@/components/Layout/Layout';
 import Pagination from '@/components/common/Pagination';
 import DeleteConfirmModal from '@/components/common/DeleteConfirmModal';
-import AddFuelModal from '@/components/Fuel/AddFuelModal';
 import EditFuelModal from '@/components/Fuel/EditFuelModal';
 import FuelDetailsModal from '@/components/Fuel/FuelDetailsModal';
 import FuelAnalytics from '@/components/Fuel/FuelAnalytics';
@@ -29,6 +28,7 @@ import {
   List,
   PieChart
 } from 'lucide-react';
+import DropdownMenu from '@/components/common/DropdownMenu';
 import { fuelApi, type FuelRecord, type FuelStats, type CreateFuelData, type UpdateFuelData } from '@/api/fuel';
 import { vehiclesApi } from '@/api/vehicles';
 import { useCurrency } from '@/store/settingsStore';
@@ -62,7 +62,6 @@ export default function FuelPage() {
   const [vehicleFilter, setVehicleFilter] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -111,12 +110,6 @@ export default function FuelPage() {
   }, [records, currentPage]);
 
   // Handlers
-  const handleAddFuel = async (data: CreateFuelData) => {
-    await fuelApi.create(data);
-    setIsAddModalOpen(false);
-    fetchRecords();
-  };
-
   const handleEditFuel = async (id: number, data: UpdateFuelData) => {
     await fuelApi.update(id, data);
     setIsEditModalOpen(false);
@@ -214,14 +207,6 @@ export default function FuelPage() {
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mt-1">{t('fuel.subtitle')}</p>
           </div>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center space-x-2 text-white transition-all duration-300 hover:-translate-y-0.5 w-full sm:w-auto justify-center btn-primary"
-          >
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="sm:hidden">Nouveau</span>
-            <span className="hidden sm:inline">Nouveau ravitaillement</span>
-          </button>
         </div>
 
         {/* Stats */}
@@ -573,42 +558,44 @@ export default function FuelPage() {
                           </div>
 
                           {/* Mobile: Actions */}
-                          <div className="relative flex-shrink-0 sm:hidden">
-                            <button
-                              onClick={() => setOpenMenuId(openMenuId === record.id ? null : record.id)}
-                              className="p-2 rounded-lg transition-all hover:shadow-sm"
-                              style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                          <div className="flex-shrink-0 sm:hidden">
+                            <DropdownMenu
+                              isOpen={openMenuId === record.id}
+                              onToggle={() => setOpenMenuId(openMenuId === record.id ? null : record.id)}
+                              button={
+                                <button
+                                  className="p-2 rounded-lg transition-all hover:shadow-sm"
+                                  style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                                >
+                                  <MoreVertical className="w-4 h-4" />
+                                </button>
+                              }
+                              width={160}
                             >
-                              <MoreVertical className="w-4 h-4" />
-                            </button>
-
-                            {openMenuId === record.id && (
-                              <div className="absolute right-0 top-full mt-2 w-40 soft-dropdown overflow-hidden z-10">
-                                <button
-                                  onClick={() => handleOpenDetails(record)}
-                                  className="w-full flex items-center space-x-3 px-3 py-2.5 hover:bg-gray-50 transition-all text-left"
-                                >
-                                  <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} />
-                                  <span className="text-xs font-medium" style={{ color: '#1f2937' }}>Voir détails</span>
-                                </button>
-                                <button
-                                  onClick={() => handleOpenEdit(record)}
-                                  className="w-full flex items-center space-x-3 px-3 py-2.5 hover:bg-gray-50 transition-all text-left border-t"
-                                  style={{ borderColor: '#E8ECEC' }}
-                                >
-                                  <Edit className="w-4 h-4" style={{ color: '#B87333' }} />
-                                  <span className="text-xs font-medium" style={{ color: '#1f2937' }}>Modifier</span>
-                                </button>
-                                <button
-                                  onClick={() => handleOpenDelete(record)}
-                                  className="w-full flex items-center space-x-3 px-3 py-2.5 hover:bg-red-50 transition-all text-left border-t"
-                                  style={{ borderColor: '#E8ECEC' }}
-                                >
-                                  <Trash2 className="w-4 h-4 text-red-600" />
-                                  <span className="text-xs font-medium text-red-600">Supprimer</span>
-                                </button>
-                              </div>
-                            )}
+                              <button
+                                onClick={() => handleOpenDetails(record)}
+                                className="w-full flex items-center space-x-3 px-3 py-2.5 hover:bg-gray-50 transition-all text-left"
+                              >
+                                <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} />
+                                <span className="text-xs font-medium" style={{ color: '#1f2937' }}>Voir détails</span>
+                              </button>
+                              <button
+                                onClick={() => handleOpenEdit(record)}
+                                className="w-full flex items-center space-x-3 px-3 py-2.5 hover:bg-gray-50 transition-all text-left border-t"
+                                style={{ borderColor: '#E8ECEC' }}
+                              >
+                                <Edit className="w-4 h-4" style={{ color: '#B87333' }} />
+                                <span className="text-xs font-medium" style={{ color: '#1f2937' }}>Modifier</span>
+                              </button>
+                              <button
+                                onClick={() => handleOpenDelete(record)}
+                                className="w-full flex items-center space-x-3 px-3 py-2.5 hover:bg-red-50 transition-all text-left border-t"
+                                style={{ borderColor: '#E8ECEC' }}
+                              >
+                                <Trash2 className="w-4 h-4 text-red-600" />
+                                <span className="text-xs font-medium text-red-600">Supprimer</span>
+                              </button>
+                            </DropdownMenu>
                           </div>
                         </div>
 
@@ -722,42 +709,44 @@ export default function FuelPage() {
                         </div>
 
                         {/* Desktop: Actions */}
-                        <div className="relative flex-shrink-0 hidden sm:block">
-                          <button
-                            onClick={() => setOpenMenuId(openMenuId === record.id ? null : record.id)}
-                            className="p-3 rounded-lg font-semibold transition-all hover:shadow-sm flex items-center justify-center"
-                            style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                        <div className="flex-shrink-0 hidden sm:block">
+                          <DropdownMenu
+                            isOpen={openMenuId === record.id}
+                            onToggle={() => setOpenMenuId(openMenuId === record.id ? null : record.id)}
+                            button={
+                              <button
+                                className="p-3 rounded-lg font-semibold transition-all hover:shadow-sm flex items-center justify-center"
+                                style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                              >
+                                <MoreVertical className="w-5 h-5" />
+                              </button>
+                            }
+                            width={176}
                           >
-                            <MoreVertical className="w-5 h-5" />
-                          </button>
-
-                          {openMenuId === record.id && (
-                            <div className="absolute right-0 top-full mt-2 w-44 soft-dropdown overflow-hidden z-10">
-                              <button
-                                onClick={() => handleOpenDetails(record)}
-                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left"
-                              >
-                                <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} />
-                                <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Voir détails</span>
-                              </button>
-                              <button
-                                onClick={() => handleOpenEdit(record)}
-                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left border-t"
-                                style={{ borderColor: '#E8ECEC' }}
-                              >
-                                <Edit className="w-4 h-4" style={{ color: '#B87333' }} />
-                                <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Modifier</span>
-                              </button>
-                              <button
-                                onClick={() => handleOpenDelete(record)}
-                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-all text-left border-t"
-                                style={{ borderColor: '#E8ECEC' }}
-                              >
-                                <Trash2 className="w-4 h-4 text-red-600" />
-                                <span className="text-sm font-medium text-red-600">Supprimer</span>
-                              </button>
-                            </div>
-                          )}
+                            <button
+                              onClick={() => handleOpenDetails(record)}
+                              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left"
+                            >
+                              <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} />
+                              <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Voir détails</span>
+                            </button>
+                            <button
+                              onClick={() => handleOpenEdit(record)}
+                              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-all text-left border-t"
+                              style={{ borderColor: '#E8ECEC' }}
+                            >
+                              <Edit className="w-4 h-4" style={{ color: '#B87333' }} />
+                              <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Modifier</span>
+                            </button>
+                            <button
+                              onClick={() => handleOpenDelete(record)}
+                              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-all text-left border-t"
+                              style={{ borderColor: '#E8ECEC' }}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-600" />
+                              <span className="text-sm font-medium text-red-600">Supprimer</span>
+                            </button>
+                          </DropdownMenu>
                         </div>
                       </div>
                     </div>
@@ -781,13 +770,6 @@ export default function FuelPage() {
           </>
         )}
       </div>
-
-      {/* Add Modal */}
-      <AddFuelModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSubmit={handleAddFuel}
-      />
 
       {/* Edit Modal */}
       <EditFuelModal

@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { Vehicle } from '@/types';
+import type { Vehicle, VehicleDocument, DocumentAlert } from '@/types';
 
 export interface VehicleFilters {
   status?: 'available' | 'in_use' | 'maintenance' | 'out_of_service';
@@ -197,6 +197,36 @@ export const vehiclesApi = {
 
   unassignDriver: async (id: number): Promise<{ message: string }> => {
     const response = await apiClient.post(`/vehicles/${id}/unassign_driver/`);
+    return response.data;
+  },
+};
+
+export const vehicleDocumentsApi = {
+  getByVehicle: async (vehicleId: number): Promise<VehicleDocument[]> => {
+    const response = await apiClient.get<VehicleDocument[]>(`/vehicles/${vehicleId}/documents/`);
+    return response.data;
+  },
+
+  create: async (vehicleId: number, data: FormData): Promise<VehicleDocument> => {
+    const response = await apiClient.post<VehicleDocument>(`/vehicles/${vehicleId}/documents/`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  update: async (vehicleId: number, documentId: number, data: FormData): Promise<VehicleDocument> => {
+    const response = await apiClient.put<VehicleDocument>(`/vehicles/${vehicleId}/documents/${documentId}/`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  delete: async (vehicleId: number, documentId: number): Promise<void> => {
+    await apiClient.delete(`/vehicles/${vehicleId}/documents/${documentId}/`);
+  },
+
+  getAlerts: async (): Promise<DocumentAlert[]> => {
+    const response = await apiClient.get<DocumentAlert[]>('/vehicles/document-alerts/');
     return response.data;
   },
 };

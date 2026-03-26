@@ -41,6 +41,7 @@ export interface MonthlyTrend {
   label: string;
   fuel_cost: number;
   maintenance_cost: number;
+  incident_cost: number;
   total_cost: number;
   quantity: number;
   distance: number;
@@ -59,11 +60,69 @@ export interface CostBreakdown {
       percentage: number;
       change: number;
     };
+    incidents: {
+      amount: number;
+      percentage: number;
+      change: number;
+    };
   };
   maintenance_detail: {
     parts: number;
     labor: number;
   };
+}
+
+export interface DriverAnalyticsItem {
+  id: number;
+  full_name: string;
+  employee_id: string;
+  photo: string | null;
+  status: string;
+  rating: number;
+  total_missions: number;
+  completed_missions: number;
+  cancelled_missions: number;
+  late_count: number;
+  late_rate: number;
+  incident_count: number;
+  incident_rate: number;
+}
+
+export interface VehicleAnalyticsItem {
+  id: number;
+  license_plate: string;
+  brand: string;
+  model: string;
+  current_mileage: number;
+  fuel_type: string;
+  status: string;
+  avg_consumption: number;
+  total_fuel_quantity: number;
+  fuel_cost: number;
+  maintenance_cost: number;
+  preventive_count: number;
+  preventive_cost: number;
+  corrective_count: number;
+  corrective_cost: number;
+  incident_count: number;
+  mission_count: number;
+  total_cost: number;
+}
+
+export interface IncidentTypeStats {
+  count: number;
+  cost: number;
+  avg_cost: number;
+}
+
+export interface IncidentLocation {
+  id: number;
+  lat: number;
+  lng: number;
+  type: string;
+  severity: string;
+  title: string;
+  address: string;
 }
 
 export interface FleetAnalytics {
@@ -76,6 +135,9 @@ export interface FleetAnalytics {
     total_cost: StatValue;
     fuel_cost: StatValue;
     maintenance_cost: StatValue;
+    incident_cost: StatValue;
+    incident_count: number;
+    incident_resolved: number;
     total_distance: StatValue;
     total_quantity: StatValue;
     avg_consumption: StatValue;
@@ -92,6 +154,45 @@ export interface FleetAnalytics {
   monthly_trends: MonthlyTrend[];
   top_consumers: VehicleConsumption[];
   top_costly: VehicleConsumption[];
+  driver_analytics: DriverAnalyticsItem[];
+  driver_status_distribution: {
+    available: number;
+    on_mission: number;
+    on_break: number;
+    off_duty: number;
+  };
+  vehicle_analytics: VehicleAnalyticsItem[];
+  incident_analytics: {
+    by_type: Record<string, IncidentTypeStats>;
+    avg_cost: number;
+    total_count: number;
+    resolved_count: number;
+    locations: IncidentLocation[];
+  };
+  financial: {
+    cost_per_driver: Array<{
+      id: number;
+      full_name: string;
+      fuel_cost: number;
+      incident_cost: number;
+      total_cost: number;
+    }>;
+    mission_costs: Array<{
+      mission_code: string;
+      title: string;
+      driver_name: string | null;
+      vehicle_plate: string | null;
+      fuel_cost: number;
+    }>;
+    budget_summary: {
+      fuel: number;
+      maintenance: number;
+      incidents: number;
+      total: number;
+      maintenance_parts: number;
+      maintenance_labor: number;
+    };
+  };
 }
 
 export const analyticsApi = {

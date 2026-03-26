@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Wrench, Calendar, Car, DollarSign, FileText, Gauge, MapPin, ChevronDown, ChevronUp, Check, Loader2, Shield, AlertTriangle, Package, Clock } from 'lucide-react';
+import { X, Wrench, Calendar, Car, Coins, FileText, Gauge, MapPin, ChevronDown, ChevronUp, Check, Loader2, Shield, AlertTriangle, Package, Clock } from 'lucide-react';
 import { vehiclesApi } from '@/api/vehicles';
 import { useCurrency } from '@/store/settingsStore';
 import { getCurrencySymbol } from '@/api/settings';
@@ -151,9 +151,6 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
     if (!formData.maintenance_type) newErrors.maintenance_type = 'Sélectionnez un type de maintenance';
     if (!formData.scheduled_date) newErrors.scheduled_date = 'Sélectionnez une date';
     if (!formData.description.trim()) newErrors.description = 'Entrez une description';
-    if (!formData.service_provider.trim()) newErrors.service_provider = 'Entrez le prestataire';
-    if (!formData.total_cost) newErrors.total_cost = 'Entrez le coût total';
-    if (!formData.mileage_at_service) newErrors.mileage_at_service = 'Entrez le kilométrage';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -425,9 +422,8 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
           {/* Step 4: Costs */}
           <div>
             <label className="flex items-center space-x-2 text-sm font-semibold mb-3" style={{ color: '#191919' }}>
-              <DollarSign className="w-4 h-4" style={{ color: '#B87333' }} />
+              <Coins className="w-4 h-4" style={{ color: '#B87333' }} />
               <span>4. Coûts</span>
-              <span className="text-red-500">*</span>
             </label>
 
             <button
@@ -441,7 +437,7 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
             >
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#F5E8DD' }}>
-                  <DollarSign className="w-5 h-5" style={{ color: '#B87333' }} />
+                  <Coins className="w-5 h-5" style={{ color: '#B87333' }} />
                 </div>
                 <div className="text-left">
                   <p className="font-semibold text-gray-900">Détail des coûts</p>
@@ -497,7 +493,7 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Coût total *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Coût total</label>
               <div className="relative">
                 <input
                   type="number"
@@ -507,7 +503,6 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
                   placeholder="0.00"
                   min="0"
                   step="0.01"
-                  required
                   className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 outline-none transition-all text-gray-900 placeholder-gray-400 ${
                     errors.total_cost ? 'border-red-400' : ''
                   }`}
@@ -555,7 +550,7 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   <MapPin className="w-4 h-4 inline mr-1" />
-                  Prestataire / Garage *
+                  Prestataire / Garage
                 </label>
                 <input
                   type="text"
@@ -563,7 +558,6 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
                   value={formData.service_provider}
                   onChange={handleChange}
                   placeholder="Nom du garage ou atelier"
-                  required
                   className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all text-gray-900 placeholder-gray-400 ${
                     errors.service_provider ? 'border-red-400' : ''
                   }`}
@@ -578,7 +572,7 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   <Gauge className="w-4 h-4 inline mr-1" />
-                  Kilométrage actuel *
+                  Kilométrage actuel
                 </label>
                 <div className="relative">
                   <input
@@ -587,7 +581,6 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
                     value={formData.mileage_at_service}
                     onChange={handleChange}
                     placeholder="Ex: 45000"
-                    required
                     className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all pr-12 text-gray-900 placeholder-gray-400 ${
                       errors.mileage_at_service ? 'border-red-400' : ''
                     }`}
@@ -669,7 +662,7 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
                 <div>
                   <p className="text-gray-500">Coût</p>
                   <p className="font-semibold" style={{ color: '#B87333' }}>
-                    {formData.total_cost || '0'} FCFA
+                    {formData.total_cost || '0'} {currencySymbol}
                   </p>
                 </div>
               </div>

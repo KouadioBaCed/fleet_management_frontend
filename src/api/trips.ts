@@ -39,6 +39,17 @@ export interface PauseData {
   longitude?: number;
 }
 
+export interface TripStop {
+  id: number;
+  reason: string;
+  reason_display: string;
+  notes: string;
+  stopped_at: string;
+  duration_seconds: number;
+  latitude: number | null;
+  longitude: number | null;
+}
+
 export const tripsApi = {
   getAll: async () => {
     const response = await apiClient.get<Trip[]>('/trips/');
@@ -110,6 +121,14 @@ export const tripsApi = {
 
   getRoute: async (id: number) => {
     const response = await apiClient.get<any[]>(`/trips/${id}/route/`);
+    return response.data;
+  },
+
+  getStops: async (id: number) => {
+    const response = await apiClient.get<{
+      stops: TripStop[];
+      stops_count: number;
+    }>(`/trips/${id}/stops/`);
     return response.data;
   },
 

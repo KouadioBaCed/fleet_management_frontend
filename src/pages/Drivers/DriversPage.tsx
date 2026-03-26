@@ -1,5 +1,5 @@
 import Layout from '@/components/Layout/Layout';
-import { Plus, Search, Star, Phone, Mail, Users, Filter, LayoutGrid, List, MoreVertical, Loader2, AlertTriangle, RefreshCw, PieChart } from 'lucide-react';
+import { Plus, Search, Star, Phone, Mail, Users, Filter, LayoutGrid, List, MoreVertical, Loader2, AlertTriangle, RefreshCw, PieChart, ChevronRight } from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import AddDriverModal from '@/components/Drivers/AddDriverModal';
@@ -9,12 +9,13 @@ import DeleteDriverModal from '@/components/Drivers/DeleteDriverModal';
 import ChangeDriverStatusModal from '@/components/Drivers/ChangeDriverStatusModal';
 import DriverAnalytics from '@/components/Drivers/DriverAnalytics';
 import Pagination from '@/components/common/Pagination';
+import DropdownMenu from '@/components/common/DropdownMenu';
 import { driversApi, type DriverStats } from '@/api/drivers';
 import type { Driver } from '@/types';
 
 type ViewMode = 'grid' | 'list';
 type PageMode = 'list' | 'analytics';
-type StatusFilter = 'all' | 'available' | 'on_mission' | 'on_break' | 'off_duty';
+type StatusFilter = 'all' | 'available' | 'on_mission' | 'unavailable';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -62,7 +63,7 @@ export default function DriversPage() {
     setError(null);
     try {
       const response = await driversApi.getAll({
-        status: statusFilter !== 'all' ? statusFilter : undefined,
+        status: statusFilter === 'unavailable' ? 'on_break,off_duty' : statusFilter !== 'all' ? statusFilter : undefined,
         search: debouncedSearch || undefined,
         ordering: '-created_at',
       });
@@ -97,15 +98,16 @@ export default function DriversPage() {
   const statusConfig: any = {
     available: { bg: '#E8EFED', text: '#6A8A82', label: 'Disponible', dot: '#6A8A82' },
     on_mission: { bg: '#F5E8DD', text: '#B87333', label: 'En mission', dot: '#B87333' },
-    on_break: { bg: '#E8ECEC', text: '#6B7280', label: 'En pause', dot: '#6B7280' },
-    off_duty: { bg: '#FEE2E2', text: '#DC2626', label: 'Hors service', dot: '#DC2626' },
+    on_break: { bg: '#FEE2E2', text: '#DC2626', label: 'Indisponible', dot: '#DC2626' },
+    off_duty: { bg: '#FEE2E2', text: '#DC2626', label: 'Indisponible', dot: '#DC2626' },
+    unavailable: { bg: '#FEE2E2', text: '#DC2626', label: 'Indisponible', dot: '#DC2626' },
   };
 
   const statsDisplay = [
     { label: 'Total Chauffeurs', value: stats.total.toString(), color: '#6A8A82' },
     { label: 'Disponibles', value: stats.available.toString(), color: '#6A8A82' },
     { label: 'En Mission', value: stats.on_mission.toString(), color: '#B87333' },
-    { label: 'En Pause', value: stats.on_break.toString(), color: '#6B7280' },
+    { label: 'Indisponibles', value: (stats.on_break + stats.off_duty).toString(), color: '#DC2626' },
   ];
 
   // Pagination calculations (client-side pagination of API results)
@@ -199,9 +201,9 @@ export default function DriversPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#1f2937' }}>
-              Chauffeurs
+              Conducteur
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-1">Gérez votre équipe de chauffeurs</p>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Gérez votre équipe de conducteur</p>
           </div>
           <button
             onClick={() => setIsAddModalOpen(true)}
@@ -314,8 +316,7 @@ export default function DriversPage() {
                       { value: 'all', label: 'Tous', count: stats.total },
                       { value: 'available', label: 'Disponibles', count: stats.available },
                       { value: 'on_mission', label: 'En mission', count: stats.on_mission },
-                      { value: 'on_break', label: 'En pause', count: stats.on_break },
-                      { value: 'off_duty', label: 'Hors service', count: stats.off_duty },
+                      { value: 'unavailable', label: 'Indisponibles', count: stats.on_break + stats.off_duty },
                     ].map((option) => (
                       <button
                         key={option.value}
@@ -504,7 +505,7 @@ export default function DriversPage() {
 
                     <div className="flex items-center justify-between p-2.5 sm:p-4 rounded-lg sm:rounded-xl mb-3 sm:mb-5" style={{ backgroundColor: '#E8EFED' }}>
                       <div>
-                        <p className="text-[10px] sm:text-xs font-medium text-gray-600 uppercase tracking-wide">Trajets</p>
+                        <p className="text-[10px] sm:text-xs font-medium text-gray-600 uppercase tracking-wide">Missions</p>
                         <p className="text-lg sm:text-2xl font-bold mt-0.5 sm:mt-1" style={{ color: '#6A8A82' }}>{driver.total_trips}</p>
                       </div>
                       <div className="flex items-center space-x-1 sm:space-x-2">
@@ -513,47 +514,53 @@ export default function DriversPage() {
                       </div>
                     </div>
 
-                    <div className="relative">
-                      <button
-                        onClick={() => setOpenMenuId(openMenuId === driver.id ? null : driver.id)}
-                        className="w-full py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 hover:shadow-sm flex items-center justify-center text-sm"
-                        style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
-                      >
-                        <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </button>
+                    <button
+                      onClick={() => handleViewDetails(driver)}
+                      className="w-full flex items-center justify-center gap-2 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all hover:shadow-sm mb-3 sm:mb-5"
+                      style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}
+                    >
+                      Voir plus
+                      <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    </button>
 
-                      {/* Dropdown Menu */}
-                      {openMenuId === driver.id && (
-                        <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg sm:rounded-xl shadow-md z-10 overflow-hidden" style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
-                          <button
-                            onClick={() => handleViewDetails(driver)}
-                            className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium hover:bg-gray-50 transition-all"
-                            style={{ color: '#1f2937' }}
-                          >
-                            Détails
-                          </button>
-                          <button
-                            onClick={() => handleStatusClick(driver)}
-                            className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium hover:bg-gray-50 transition-all"
-                            style={{ color: '#B87333' }}
-                          >
-                            Changer statut
-                          </button>
-                          <button
-                            onClick={() => handleEditDriver(driver)}
-                            className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium hover:bg-gray-50 transition-all"
-                            style={{ color: '#6A8A82' }}
-                          >
-                            Modifier
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(driver)}
-                            className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium hover:bg-red-50 transition-all text-red-600"
-                          >
-                            Supprimer
-                          </button>
-                        </div>
-                      )}
+                    <div className="flex justify-end">
+                    <DropdownMenu
+                      isOpen={openMenuId === driver.id}
+                      onToggle={() => setOpenMenuId(openMenuId === driver.id ? null : driver.id)}
+                      button={
+                        <button className="p-2 rounded-lg transition-all hover:bg-gray-100">
+                          <MoreVertical className="w-5 h-5 text-gray-500" />
+                        </button>
+                      }
+                    >
+                      <button
+                        onClick={() => handleViewDetails(driver)}
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium hover:bg-gray-50 transition-all"
+                        style={{ color: '#1f2937' }}
+                      >
+                        Détails
+                      </button>
+                      <button
+                        onClick={() => handleStatusClick(driver)}
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium hover:bg-gray-50 transition-all"
+                        style={{ color: '#B87333' }}
+                      >
+                        Changer statut
+                      </button>
+                      <button
+                        onClick={() => handleEditDriver(driver)}
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium hover:bg-gray-50 transition-all"
+                        style={{ color: '#6A8A82' }}
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(driver)}
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium hover:bg-red-50 transition-all text-red-600"
+                      >
+                        Supprimer
+                      </button>
+                    </DropdownMenu>
                     </div>
                   </div>
                 </div>
@@ -619,7 +626,7 @@ export default function DriversPage() {
                             <Star className="w-3 h-3" style={{ color: '#B87333', fill: '#B87333' }} />
                             {Number(driver.rating).toFixed(1)}
                           </span>
-                          <span className="text-[10px] text-gray-500">{driver.total_trips} trajets</span>
+                          <span className="text-[10px] text-gray-500">{driver.total_trips} missions</span>
                         </div>
                       </div>
 
@@ -706,7 +713,7 @@ export default function DriversPage() {
                       {/* Stats */}
                       <div className="hidden lg:flex items-center gap-6 px-5">
                         <div className="text-center">
-                          <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">Trajets</p>
+                          <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">Missions</p>
                           <p className="text-xl font-bold mt-0.5" style={{ color: '#6A8A82' }}>{driver.total_trips}</p>
                         </div>
                         <div className="flex items-center gap-1.5">
@@ -721,52 +728,47 @@ export default function DriversPage() {
                           <Star className="w-4 h-4" style={{ color: '#B87333', fill: '#B87333' }} />
                           <span className="text-sm font-bold" style={{ color: '#1f2937' }}>{Number(driver.rating).toFixed(1)}</span>
                         </div>
-                        <span className="text-xs text-gray-500">{driver.total_trips} trajets</span>
+                        <span className="text-xs text-gray-500">{driver.total_trips} missions</span>
                       </div>
 
                       {/* Action Button */}
-                      <div className="relative">
+                      <DropdownMenu
+                        isOpen={openMenuId === driver.id}
+                        onToggle={() => setOpenMenuId(openMenuId === driver.id ? null : driver.id)}
+                        button={
+                          <button className="p-2 rounded-lg transition-all hover:bg-gray-100 flex-shrink-0">
+                            <MoreVertical className="w-5 h-5 text-gray-500" />
+                          </button>
+                        }
+                      >
                         <button
-                          onClick={() => setOpenMenuId(openMenuId === driver.id ? null : driver.id)}
-                          className="p-2 lg:p-2.5 rounded-lg font-semibold transition-all hover:shadow-sm flex-shrink-0 flex items-center justify-center"
-                          style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                          onClick={() => handleViewDetails(driver)}
+                          className="w-full px-3 lg:px-4 py-2.5 lg:py-3 text-left text-xs lg:text-sm font-medium hover:bg-gray-50 transition-all"
+                          style={{ color: '#1f2937' }}
                         >
-                          <MoreVertical className="w-4 h-4 lg:w-5 lg:h-5" />
+                          Détails
                         </button>
-
-                        {/* Dropdown Menu */}
-                        {openMenuId === driver.id && (
-                          <div className="absolute right-0 top-full mt-2 w-44 lg:w-48 bg-white rounded-xl shadow-md z-10 overflow-hidden" style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
-                            <button
-                              onClick={() => handleViewDetails(driver)}
-                              className="w-full px-3 lg:px-4 py-2.5 lg:py-3 text-left text-xs lg:text-sm font-medium hover:bg-gray-50 transition-all"
-                              style={{ color: '#1f2937' }}
-                            >
-                              Détails
-                            </button>
-                            <button
-                              onClick={() => handleStatusClick(driver)}
-                              className="w-full px-3 lg:px-4 py-2.5 lg:py-3 text-left text-xs lg:text-sm font-medium hover:bg-gray-50 transition-all"
-                              style={{ color: '#B87333' }}
-                            >
-                              Changer statut
-                            </button>
-                            <button
-                              onClick={() => handleEditDriver(driver)}
-                              className="w-full px-3 lg:px-4 py-2.5 lg:py-3 text-left text-xs lg:text-sm font-medium hover:bg-gray-50 transition-all"
-                              style={{ color: '#6A8A82' }}
-                            >
-                              Modifier
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(driver)}
-                              className="w-full px-3 lg:px-4 py-2.5 lg:py-3 text-left text-xs lg:text-sm font-medium hover:bg-red-50 transition-all text-red-600"
-                            >
-                              Supprimer
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                        <button
+                          onClick={() => handleStatusClick(driver)}
+                          className="w-full px-3 lg:px-4 py-2.5 lg:py-3 text-left text-xs lg:text-sm font-medium hover:bg-gray-50 transition-all"
+                          style={{ color: '#B87333' }}
+                        >
+                          Changer statut
+                        </button>
+                        <button
+                          onClick={() => handleEditDriver(driver)}
+                          className="w-full px-3 lg:px-4 py-2.5 lg:py-3 text-left text-xs lg:text-sm font-medium hover:bg-gray-50 transition-all"
+                          style={{ color: '#6A8A82' }}
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(driver)}
+                          className="w-full px-3 lg:px-4 py-2.5 lg:py-3 text-left text-xs lg:text-sm font-medium hover:bg-red-50 transition-all text-red-600"
+                        >
+                          Supprimer
+                        </button>
+                      </DropdownMenu>
                     </div>
                   </div>
                 );

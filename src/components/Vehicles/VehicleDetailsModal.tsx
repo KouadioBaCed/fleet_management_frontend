@@ -3,11 +3,12 @@ import {
   X, Car, Calendar, Gauge, Droplet, Shield, Radio, FileText, User,
   MapPin, Clock, Wrench, Phone, Mail, Star, TrendingUp, AlertTriangle,
   CheckCircle, XCircle, Loader2, RefreshCw, ChevronRight, CreditCard,
-  ImageIcon, UserPlus, UserMinus, Search
+  ImageIcon, UserPlus, UserMinus, Search, FolderOpen
 } from 'lucide-react';
 import type { Vehicle, Driver } from '@/types';
 import { vehiclesApi, type TripHistory, type MaintenanceHistory, type CurrentDriver } from '@/api/vehicles';
 import { driversApi } from '@/api/drivers';
+import VehicleDocumentsTab from './VehicleDocumentsTab';
 
 interface VehicleDetailsModalProps {
   isOpen: boolean;
@@ -69,6 +70,7 @@ const DRIVER_STATUS_COLORS: Record<string, { bg: string; text: string; label: st
 
 const TABS = [
   { id: 'general', label: 'Informations', icon: FileText },
+  { id: 'documents', label: 'Documents', icon: FolderOpen },
   { id: 'trips', label: 'Trajets', icon: MapPin },
   { id: 'maintenance', label: 'Maintenance', icon: Wrench },
   { id: 'driver', label: 'Conducteur', icon: User },
@@ -310,6 +312,45 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
         <div className="bg-gradient-to-r from-sage/10 to-transparent rounded-xl p-4">
           <p className="text-xs text-gray-500 mb-1">Kilométrage actuel</p>
           <p className="font-bold text-3xl" style={{ color: '#6A8A82' }}>{formatMileage(vehicle.current_mileage)}</p>
+        </div>
+      </div>
+
+      {/* Maintenance Schedule */}
+      <div className="bg-white rounded-2xl border-2 p-5" style={{ borderColor: vehicle.maintenance_overdue ? '#DC2626' : '#E8ECEC' }}>
+        <h4 className="text-sm font-bold uppercase tracking-wide text-gray-500 mb-4 flex items-center gap-2">
+          <Wrench className="w-4 h-4" style={{ color: vehicle.maintenance_overdue ? '#DC2626' : '#6A8A82' }} />
+          Maintenance
+          {vehicle.maintenance_overdue && (
+            <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}>
+              En retard
+            </span>
+          )}
+        </h4>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-gray-50 rounded-xl p-4">
+            <p className="text-xs text-gray-500 mb-1">Frequence (km)</p>
+            <p className="font-bold" style={{ color: '#191919' }}>
+              {vehicle.maintenance_frequency_km ? `${vehicle.maintenance_frequency_km.toLocaleString('fr-FR')} km` : 'Non defini'}
+            </p>
+          </div>
+          <div className="bg-gray-50 rounded-xl p-4">
+            <p className="text-xs text-gray-500 mb-1">Frequence (mois)</p>
+            <p className="font-bold" style={{ color: '#191919' }}>
+              {vehicle.maintenance_frequency_months ? `Tous les ${vehicle.maintenance_frequency_months} mois` : 'Non defini'}
+            </p>
+          </div>
+          <div className="bg-gray-50 rounded-xl p-4">
+            <p className="text-xs text-gray-500 mb-1">Derniere maintenance</p>
+            <p className="font-bold" style={{ color: '#191919' }}>
+              {vehicle.last_maintenance_date ? formatDate(vehicle.last_maintenance_date) : 'Aucune'}
+            </p>
+          </div>
+          <div className={`rounded-xl p-4 ${vehicle.needs_maintenance ? 'bg-red-50' : 'bg-gray-50'}`}>
+            <p className="text-xs text-gray-500 mb-1">Prochain entretien (km)</p>
+            <p className="font-bold" style={{ color: vehicle.needs_maintenance ? '#DC2626' : '#191919' }}>
+              {vehicle.next_maintenance_mileage ? `${parseFloat(vehicle.next_maintenance_mileage).toLocaleString('fr-FR')} km` : 'Non defini'}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -761,10 +802,16 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
     </div>
   );
 
+  const renderDocumentsTab = () => (
+    <VehicleDocumentsTab vehicleId={vehicleProp!.id} />
+  );
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'general':
         return renderGeneralTab();
+      case 'documents':
+        return renderDocumentsTab();
       case 'trips':
         return renderTripsTab();
       case 'maintenance':

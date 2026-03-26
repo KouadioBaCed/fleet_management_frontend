@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/authStore';
 interface UseWebSocketOptions {
   onMessage?: (data: any) => void;
   onError?: (error: Event) => void;
+  onConnect?: () => void;
   reconnect?: boolean;
 }
 
@@ -24,6 +25,7 @@ export const useWebSocket = (url: string, options: UseWebSocketOptions = {}) => 
     ws.onopen = () => {
       console.log('WebSocket connected');
       setIsConnected(true);
+      options.onConnect?.();
     };
 
     ws.onmessage = (event) => {

@@ -38,6 +38,14 @@ export interface VehiclePosition {
   scheduled_start?: string | null;
   scheduled_end?: string | null;
   actual_start?: string | null;
+  checkpoints?: {
+    id: number;
+    order: number;
+    address: string;
+    latitude: number;
+    longitude: number;
+    notes: string;
+  }[];
   delay_status: {
     is_delayed: boolean;
     delay_type: string | null;
@@ -74,7 +82,7 @@ const createVehicleIcon = (
   }
 
   const pulseClass = isMoving ? 'pulse-animation' : '';
-  const statusText = isMoving ? `${Math.round(speed)} km/h` : 'Arrêté';
+  const statusText = isMoving ? `${Math.round(speed)} km/h` : 'À l\'arrêt';
   const statusColor = isMoving ? '#6A8A82' : '#DC2626';
 
   return L.divIcon({
@@ -120,6 +128,20 @@ const createLocationIcon = (type: 'origin' | 'destination') => {
   });
 };
 
+const createCheckpointIcon = (index: number) => {
+  return L.divIcon({
+    className: 'custom-location-marker',
+    html: `
+      <div class="location-marker" style="background-color: #D4956B;">
+        <span class="location-label">${index + 1}</span>
+      </div>
+    `,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -28],
+  });
+};
+
 // Component to fit bounds
 function FitBoundsToVehicles({ vehicles }: { vehicles: VehiclePosition[] }) {
   const map = useMap();
@@ -135,6 +157,11 @@ function FitBoundsToVehicles({ vehicles }: { vehicles: VehiclePosition[] }) {
       }
       bounds.push([v.origin.latitude, v.origin.longitude]);
       bounds.push([v.destination.latitude, v.destination.longitude]);
+      if (v.checkpoints) {
+        v.checkpoints.forEach((cp) => {
+          bounds.push([cp.latitude, cp.longitude]);
+        });
+      }
     });
 
     if (bounds.length > 0) {
@@ -158,9 +185,10 @@ function CenterOnVehicle({ vehicle }: { vehicle: VehiclePosition | null }) {
         animate: true,
       });
     } else {
-      // No GPS yet: fit bounds to origin + destination so the full route is visible
+      // No GPS yet: fit bounds to origin + checkpoints + destination
       const bounds: [number, number][] = [
         [vehicle.origin.latitude, vehicle.origin.longitude],
+        ...(vehicle.checkpoints || []).map((cp): [number, number] => [cp.latitude, cp.longitude]),
         [vehicle.destination.latitude, vehicle.destination.longitude],
       ];
       map.fitBounds(bounds, { padding: [60, 60], maxZoom: 15, animate: true });
@@ -414,16 +442,13 @@ export default function LeafletTrackingMap({
           const isDelayed = vehicle.delay_status.is_delayed;
           const speed = vehicle.position?.speed || 0;
 
-          // Route line from origin to destination
+          // Route line: origin -> checkpoints (sorted) -> destination
+          const sortedCheckpoints = [...(vehicle.checkpoints || [])].sort((a, b) => a.order - b.order);
           const routeLine: [number, number][] = [
             [vehicle.origin.latitude, vehicle.origin.longitude],
+            ...sortedCheckpoints.map((cp): [number, number] => [cp.latitude, cp.longitude]),
             [vehicle.destination.latitude, vehicle.destination.longitude],
           ];
-
-          // If vehicle has position, add intermediate point
-          if (hasPosition && vehicle.position) {
-            routeLine.splice(1, 0, [vehicle.position.latitude, vehicle.position.longitude]);
-          }
 
           return (
             <div key={vehicle.mission_id}>
@@ -468,6 +493,27 @@ export default function LeafletTrackingMap({
                 </Popup>
               </Marker>
 
+              {/* Checkpoint markers */}
+              {sortedCheckpoints.map((cp, index) => (
+                <Marker
+                  key={`cp-${vehicle.mission_id}-${cp.id}`}
+                  position={[cp.latitude, cp.longitude]}
+                  icon={createCheckpointIcon(index)}
+                >
+                  <Popup>
+                    <div className="vehicle-popup">
+                      <div className="vehicle-popup-stat">
+                        <div className="vehicle-popup-stat-label">Point de passage {index + 1}</div>
+                        <div className="vehicle-popup-stat-value">{cp.address}</div>
+                        {cp.notes && (
+                          <div style={{ fontSize: '11px', color: '#6B7280', marginTop: '4px', fontStyle: 'italic' }}>{cp.notes}</div>
+                        )}
+                      </div>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+
               {/* Vehicle marker with driver name (if has position) */}
               {hasPosition && vehicle.position && (
                 <Marker
@@ -509,7 +555,7 @@ export default function LeafletTrackingMap({
                         <div className="vehicle-popup-stat">
                           <div className="vehicle-popup-stat-label">Statut</div>
                           <div className="vehicle-popup-stat-value" style={{ color: isMoving ? '#6A8A82' : '#DC2626' }}>
-                            {isMoving ? 'En mouvement' : 'À l\'arrêt'}
+                            {isMoving ? 'En cours' : 'À l\'arrêt'}
                           </div>
                         </div>
                         <div className="vehicle-popup-stat">

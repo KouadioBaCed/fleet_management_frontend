@@ -15,6 +15,7 @@ interface NotificationState {
   fetchUnreadCount: () => Promise<void>;
   markAsRead: (id: number) => Promise<void>;
   markAllAsRead: () => Promise<void>;
+  markAllSeenAndKeep: () => Promise<void>;
   deleteNotification: (id: number) => Promise<void>;
   deleteReadNotifications: () => Promise<void>;
   addNotification: (notification: Notification) => void;
@@ -67,9 +68,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationsApi.markAsRead(id);
       set((state) => ({
-        notifications: state.notifications.map((n) =>
-          n.id === id ? { ...n, is_read: true, read_at: new Date().toISOString() } : n
-        ),
+        notifications: state.notifications.filter((n) => n.id !== id),
         unreadCount: Math.max(0, state.unreadCount - 1),
       }));
     } catch (err) {
@@ -81,12 +80,23 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   markAllAsRead: async () => {
     try {
       await notificationsApi.markAllAsRead();
+      set({
+        notifications: [],
+        unreadCount: 0,
+        urgentCount: 0,
+        highCount: 0,
+      });
+    } catch (err) {
+      const error = err instanceof Error ? err.message : 'Erreur lors de la mise a jour';
+      set({ error });
+    }
+  },
+
+  markAllSeenAndKeep: async () => {
+    try {
+      await notificationsApi.markAllAsRead();
       set((state) => ({
-        notifications: state.notifications.map((n) => ({
-          ...n,
-          is_read: true,
-          read_at: new Date().toISOString(),
-        })),
+        notifications: state.notifications.map((n) => ({ ...n, is_read: true })),
         unreadCount: 0,
         urgentCount: 0,
         highCount: 0,

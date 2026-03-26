@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Wrench, Calendar, Car, DollarSign, FileText, Loader2, Gauge, MapPin, AlertTriangle } from 'lucide-react';
+import { X, Wrench, Calendar, Car, Coins, FileText, Loader2, Gauge, MapPin, AlertTriangle } from 'lucide-react';
 import { vehiclesApi } from '@/api/vehicles';
 import { useCurrency } from '@/store/settingsStore';
 import { getCurrencySymbol } from '@/api/settings';
@@ -431,7 +431,7 @@ export default function EditMaintenanceModal({ isOpen, onClose, onSubmit, mainte
 
             <div>
               <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                <DollarSign className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
+                <Coins className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
                 Coût total *
               </label>
               <div className="relative">

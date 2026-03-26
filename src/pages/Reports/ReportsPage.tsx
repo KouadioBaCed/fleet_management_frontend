@@ -2,22 +2,10 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Layout from '@/components/Layout/Layout';
 import html2pdf from 'html2pdf.js';
 import {
-  BarChart3,
   TrendingUp,
   TrendingDown,
   Download,
-  Calendar,
-  Fuel,
-  MapPin,
-  Clock,
-  Coins,
   ChevronDown,
-  Car,
-  Users,
-  AlertTriangle,
-  Wrench,
-  FileText,
-  FileSpreadsheet,
   Loader2,
   X,
   Filter
@@ -40,12 +28,12 @@ const PERIODS: { value: PeriodType; label: string }[] = [
   { value: 'custom', label: 'Période personnalisée' },
 ];
 
-const EXPORT_TYPES: { value: ExportType; label: string; icon: typeof FileText }[] = [
-  { value: 'all', label: 'Tout', icon: FileText },
-  { value: 'fuel', label: 'Carburant', icon: Fuel },
-  { value: 'trips', label: 'Trajets', icon: MapPin },
-  { value: 'maintenance', label: 'Maintenance', icon: Wrench },
-  { value: 'incidents', label: 'Incidents', icon: AlertTriangle },
+const EXPORT_TYPES: { value: ExportType; label: string; emoji: string }[] = [
+  { value: 'all', label: 'Tout', emoji: '\uD83D\uDCC4' },
+  { value: 'fuel', label: 'Carburant', emoji: '\u26FD' },
+  { value: 'trips', label: 'Trajets', emoji: '\uD83D\uDCCD' },
+  { value: 'maintenance', label: 'Maintenance', emoji: '\uD83D\uDD27' },
+  { value: 'incidents', label: 'Incidents', emoji: '\u26A0\uFE0F' },
 ];
 
 export default function ReportsPage() {
@@ -218,28 +206,28 @@ export default function ReportsPage() {
       title: 'Distance totale',
       value: `${data.stats.distance.value.toLocaleString()} km`,
       change: data.stats.distance.change,
-      icon: MapPin,
+      emoji: '\uD83D\uDCCD',
       color: '#6A8A82'
     },
     {
       title: 'Carburant',
       value: `${data.stats.fuel.value.toFixed(0)} L`,
       change: data.stats.fuel.change,
-      icon: Fuel,
+      emoji: '\u26FD',
       color: '#5A7A72'
     },
     {
       title: "Temps d'utilisation",
       value: `${data.stats.hours.value.toFixed(0)} h`,
       change: data.stats.hours.change,
-      icon: Clock,
+      emoji: '\u23F0',
       color: '#B87333'
     },
     {
       title: 'Coûts totaux',
       value: `${data.stats.total_cost.value.toFixed(2)} ${currencySymbol}`,
       change: data.stats.total_cost.change,
-      icon: Coins,
+      emoji: '\uD83D\uDCB0',
       color: '#A86323'
     },
   ] : [];
@@ -268,7 +256,7 @@ export default function ReportsPage() {
                 onClick={() => setShowPeriodMenu(!showPeriodMenu)}
                 className="soft-btn flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-4 py-2 sm:py-3"
               >
-                <Calendar className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
+                <span className="text-sm sm:text-base">{'\uD83D\uDCC5'}</span>
                 <span className="font-medium text-xs sm:text-sm max-w-[100px] sm:max-w-none truncate" style={{ color: '#6A8A82' }}>
                   {PERIODS.find(p => p.value === selectedPeriod)?.label}
                 </span>
@@ -347,7 +335,7 @@ export default function ReportsPage() {
                   color: vehicleFilter ? '#6A8A82' : '#6B7280'
                 }}
               >
-                <Car className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base">{'\uD83D\uDE97'}</span>
                 <span className="font-medium text-xs sm:text-sm max-w-[60px] sm:max-w-none truncate">
                   {selectedVehicle?.license_plate || 'Véhicule'}
                 </span>
@@ -413,7 +401,7 @@ export default function ReportsPage() {
                   color: driverFilter ? '#B87333' : '#6B7280'
                 }}
               >
-                <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base">{'\uD83D\uDC64'}</span>
                 <span className="font-medium text-xs sm:text-sm max-w-[70px] sm:max-w-none truncate">
                   {selectedDriver ? selectedDriver.full_name : 'Conducteur'}
                 </span>
@@ -514,7 +502,7 @@ export default function ReportsPage() {
                       disabled={isExporting}
                       className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-all"
                     >
-                      <FileText className="w-5 h-5 text-red-500" />
+                      <span className="text-lg">{'\uD83D\uDCC4'}</span>
                       <div className="text-left">
                         <p className="font-medium text-sm">Export PDF</p>
                         <p className="text-xs text-gray-500">Rapport visuel complet</p>
@@ -525,7 +513,7 @@ export default function ReportsPage() {
                       disabled={isExporting}
                       className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-all"
                     >
-                      <FileSpreadsheet className="w-5 h-5 text-green-600" />
+                      <span className="text-lg">{'\uD83D\uDCCA'}</span>
                       <div className="text-left">
                         <p className="font-medium text-sm">Export CSV</p>
                         <p className="text-xs text-gray-500">Compatible Excel</p>
@@ -536,7 +524,7 @@ export default function ReportsPage() {
                       disabled={isExporting}
                       className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-all"
                     >
-                      <FileText className="w-5 h-5 text-blue-500" />
+                      <span className="text-lg">{'\uD83D\uDCBE'}</span>
                       <div className="text-left">
                         <p className="font-medium text-sm">Export JSON</p>
                         <p className="text-xs text-gray-500">Données brutes</p>
@@ -594,7 +582,6 @@ export default function ReportsPage() {
             {/* Main Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
               {statsConfig.map((stat) => {
-                const Icon = stat.icon;
                 const isPositive = stat.change >= 0;
                 const isGoodTrend = stat.title === 'Carburant' || stat.title === 'Coûts totaux'
                   ? stat.change <= 0
@@ -605,7 +592,7 @@ export default function ReportsPage() {
                     <div className="stat-accent" style={{ backgroundColor: stat.color }} />
                     <div className="flex items-start justify-between mb-2">
                       <div className="stat-icon" style={{ backgroundColor: `${stat.color}12` }}>
-                        <Icon className="w-4 h-4" style={{ color: stat.color }} />
+                        <span className="text-base sm:text-lg">{stat.emoji}</span>
                       </div>
                       <div className={`flex items-center text-[10px] sm:text-xs font-medium ${isGoodTrend ? 'text-green-500' : 'text-red-400'}`}>
                         {isPositive ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
@@ -628,7 +615,7 @@ export default function ReportsPage() {
                     <h2 className="text-sm sm:text-lg font-semibold text-gray-800">Activité hebdomadaire</h2>
                     <p className="text-[10px] sm:text-sm text-gray-500">Trajets et distances parcourus</p>
                   </div>
-                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
+                  <span className="text-base sm:text-lg">{'\uD83D\uDCCA'}</span>
                 </div>
 
                 <div className="space-y-2 sm:space-y-3">

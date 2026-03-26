@@ -561,7 +561,7 @@ export default function ProfilePage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 transition-all text-sm sm:text-base text-gray-900 placeholder-gray-400"
-                    placeholder="votre@email.com"
+                    placeholder="votre.email@rewisecar.com"
                   />
                 </div>
 

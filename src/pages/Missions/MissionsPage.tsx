@@ -11,6 +11,7 @@ import TripHistoryModal from '@/components/Missions/TripHistoryModal';
 import StartMissionModal from '@/components/Missions/StartMissionModal';
 import ActiveMissionModal from '@/components/Missions/ActiveMissionModal';
 import Pagination from '@/components/common/Pagination';
+import DropdownMenu from '@/components/common/DropdownMenu';
 import { missionsApi, type MissionStats } from '@/api/missions';
 import type { Mission } from '@/types';
 import {
@@ -29,7 +30,6 @@ import {
   RefreshCw,
   AlertCircle,
   Play,
-  Pause,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
@@ -41,7 +41,7 @@ import {
   Route,
 } from 'lucide-react';
 
-type StatusFilter = 'all' | 'pending' | 'assigned' | 'in_progress' | 'completed' | 'cancelled';
+type StatusFilter = 'all' | 'pending' | 'in_progress' | 'completed';
 type PriorityFilter = 'all' | 'low' | 'medium' | 'high' | 'urgent';
 type SortOrder = 'scheduled_start' | '-scheduled_start' | 'created_at' | '-created_at' | 'priority' | '-priority';
 
@@ -95,8 +95,9 @@ export default function MissionsPage() {
     try {
       setLoading(true);
       setError(null);
+      const statusParam = statusFilter === 'pending' ? 'pending,assigned' : statusFilter !== 'all' ? statusFilter : undefined;
       const response = await missionsApi.getAll({
-        status: statusFilter !== 'all' ? statusFilter : undefined,
+        status: statusParam,
         priority: priorityFilter !== 'all' ? priorityFilter : undefined,
         search: debouncedSearch || undefined,
         ordering: sortOrder,
@@ -129,10 +130,10 @@ export default function MissionsPage() {
 
   const statusConfig: Record<string, { bg: string; text: string; label: string; dot: string }> = {
     pending: { bg: '#E8ECEC', text: '#6B7280', label: 'En attente', dot: '#6B7280' },
-    assigned: { bg: '#E8EFED', text: '#6A8A82', label: 'Assignee', dot: '#6A8A82' },
+    assigned: { bg: '#E8ECEC', text: '#6B7280', label: 'En attente', dot: '#6B7280' },
     in_progress: { bg: '#F5E8DD', text: '#B87333', label: 'En cours', dot: '#B87333' },
-    completed: { bg: '#DBEAFE', text: '#1E40AF', label: 'Terminee', dot: '#1E40AF' },
-    cancelled: { bg: '#FEE2E2', text: '#DC2626', label: 'Annulee', dot: '#DC2626' },
+    completed: { bg: '#D1FAE5', text: '#059669', label: 'Terminée', dot: '#059669' },
+    cancelled: { bg: '#FEE2E2', text: '#DC2626', label: 'Annulée', dot: '#DC2626' },
   };
 
   const priorityConfig: Record<string, { bg: string; text: string; label: string }> = {
@@ -153,9 +154,9 @@ export default function MissionsPage() {
 
   const statsDisplay = [
     { label: 'Total Missions', value: stats.total, color: '#6A8A82' },
+    { label: 'En Attente', value: stats.by_status.pending + stats.by_status.assigned, color: '#6B7280' },
     { label: 'En Cours', value: stats.by_status.in_progress, color: '#B87333' },
-    { label: 'Assignees', value: stats.by_status.assigned, color: '#6A8A82' },
-    { label: 'En Attente', value: stats.by_status.pending, color: '#6B7280' },
+    { label: 'Terminées', value: stats.by_status.completed, color: '#059669' },
   ];
 
   // Pagination calculations (client-side pagination of API results)
@@ -441,11 +442,9 @@ export default function MissionsPage() {
                     <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wide text-gray-500 mb-2 sm:mb-3 px-2">Statut de la mission</p>
                     {[
                       { value: 'all', label: 'Toutes les missions', count: stats.total },
-                      { value: 'pending', label: 'En attente', count: stats.by_status.pending },
-                      { value: 'assigned', label: 'Assignées', count: stats.by_status.assigned },
+                      { value: 'pending', label: 'En attente', count: stats.by_status.pending + stats.by_status.assigned },
                       { value: 'in_progress', label: 'En cours', count: stats.by_status.in_progress },
                       { value: 'completed', label: 'Terminées', count: stats.by_status.completed },
-                      { value: 'cancelled', label: 'Annulées', count: stats.by_status.cancelled },
                     ].map((option) => (
                       <button
                         key={option.value}
@@ -726,66 +725,65 @@ export default function MissionsPage() {
                           <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.dot }} />
                           {status.label}
                         </span>
-                        <div className="relative" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            onClick={() => setOpenMenuId(openMenuId === mission.id ? null : mission.id)}
-                            className="p-1 rounded-lg"
-                            style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                        <div className="inline-block" onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenu
+                            isOpen={openMenuId === mission.id}
+                            onToggle={() => setOpenMenuId(openMenuId === mission.id ? null : mission.id)}
+                            button={
+                              <button
+                                className="p-1 rounded-lg"
+                                style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                              >
+                                <MoreVertical className="w-3.5 h-3.5" />
+                              </button>
+                            }
+                            width={176}
                           >
-                            <MoreVertical className="w-3.5 h-3.5" />
-                          </button>
-                          {openMenuId === mission.id && (
-                            <div className="soft-dropdown absolute right-0 top-full mt-1 w-44 overflow-hidden z-20">
-                              <button onClick={() => handleViewDetails(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 text-left">
-                                <Eye className="w-3.5 h-3.5" style={{ color: '#6A8A82' }} />
-                                <span className="text-xs font-medium" style={{ color: '#1f2937' }}>Détails</span>
+                            <button onClick={() => handleViewDetails(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 text-left">
+                              <Eye className="w-3.5 h-3.5" style={{ color: '#6A8A82' }} />
+                              <span className="text-xs font-medium" style={{ color: '#1f2937' }}>Détails</span>
+                            </button>
+                            <button onClick={() => handleEdit(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
+                              <Edit className="w-3.5 h-3.5" style={{ color: '#B87333' }} />
+                              <span className="text-xs font-medium" style={{ color: '#1f2937' }}>Modifier</span>
+                            </button>
+                            {mission.status === 'pending' && (
+                              <button onClick={() => handleAssignMission(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-blue-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
+                                <UserPlus className="w-3.5 h-3.5 text-blue-600" />
+                                <span className="text-xs font-medium text-blue-600">Assigner</span>
                               </button>
-                              <button onClick={() => handleEdit(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-gray-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
-                                <Edit className="w-3.5 h-3.5" style={{ color: '#B87333' }} />
-                                <span className="text-xs font-medium" style={{ color: '#1f2937' }}>Modifier</span>
+                            )}
+                            {mission.status === 'assigned' && (
+                              <button onClick={() => handleStartMission(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-green-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
+                                <Play className="w-3.5 h-3.5 text-green-600" />
+                                <span className="text-xs font-medium text-green-600">Démarrer</span>
                               </button>
-                              {mission.status === 'pending' && (
-                                <button onClick={() => handleAssignMission(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-blue-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
-                                  <UserPlus className="w-3.5 h-3.5 text-blue-600" />
-                                  <span className="text-xs font-medium text-blue-600">Assigner</span>
+                            )}
+                            {mission.status === 'in_progress' && (
+                              <>
+                                <button onClick={() => handleTrackMission(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-teal-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
+                                  <Radio className="w-3.5 h-3.5" style={{ color: '#6A8A82' }} />
+                                  <span className="text-xs font-medium" style={{ color: '#6A8A82' }}>Suivi GPS</span>
                                 </button>
-                              )}
-                              {mission.status === 'assigned' && (
-                                <button onClick={() => handleStartMission(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-green-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
-                                  <Play className="w-3.5 h-3.5 text-green-600" />
-                                  <span className="text-xs font-medium text-green-600">Démarrer</span>
-                                </button>
-                              )}
-                              {mission.status === 'in_progress' && (
-                                <>
-                                  <button onClick={() => handleTrackMission(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-teal-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
-                                    <Radio className="w-3.5 h-3.5" style={{ color: '#6A8A82' }} />
-                                    <span className="text-xs font-medium" style={{ color: '#6A8A82' }}>Suivi GPS</span>
-                                  </button>
-                                  <button onClick={() => handleManageActive(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-amber-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
-                                    <Pause className="w-3.5 h-3.5 text-amber-600" />
-                                    <span className="text-xs font-medium text-amber-600">Pause</span>
-                                  </button>
-                                </>
-                              )}
-                              {(mission.status === 'pending' || mission.status === 'assigned' || mission.status === 'in_progress') && (
-                                <button onClick={() => handleCancelMission(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-red-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
-                                  <XCircle className="w-3.5 h-3.5 text-red-500" />
-                                  <span className="text-xs font-medium text-red-500">Annuler</span>
-                                </button>
-                              )}
-                              {mission.status === 'completed' && (
-                                <button onClick={() => handleViewTripHistory(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-blue-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
-                                  <Route className="w-3.5 h-3.5 text-blue-600" />
-                                  <span className="text-xs font-medium text-blue-600">Historique</span>
-                                </button>
-                              )}
-                              <button onClick={() => handleDelete(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-red-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
-                                <Trash2 className="w-3.5 h-3.5 text-red-600" />
-                                <span className="text-xs font-medium text-red-600">Supprimer</span>
+                              </>
+                            )}
+                            {(mission.status === 'pending' || mission.status === 'assigned' || mission.status === 'in_progress') && (
+                              <button onClick={() => handleCancelMission(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-red-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
+                                <XCircle className="w-3.5 h-3.5 text-red-500" />
+                                <span className="text-xs font-medium text-red-500">Annuler</span>
                               </button>
-                            </div>
-                          )}
+                            )}
+                            {mission.status === 'completed' && (
+                              <button onClick={() => handleViewTripHistory(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-blue-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
+                                <Route className="w-3.5 h-3.5 text-blue-600" />
+                                <span className="text-xs font-medium text-blue-600">Historique</span>
+                              </button>
+                            )}
+                            <button onClick={() => handleDelete(mission)} className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-red-50 text-left border-t" style={{ borderColor: '#E8ECEC' }}>
+                              <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                              <span className="text-xs font-medium text-red-600">Supprimer</span>
+                            </button>
+                          </DropdownMenu>
                         </div>
                       </div>
                     </div>
@@ -845,7 +843,7 @@ export default function MissionsPage() {
                       <th className="hidden lg:table-cell">Véhicule</th>
                       <th className="hidden xl:table-cell">Départ</th>
                       <th className="hidden xl:table-cell">Arrivée</th>
-                      <th className="text-center">Actions</th>
+                      <th className="text-center w-16">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -900,104 +898,95 @@ export default function MissionsPage() {
                           <td className="hidden xl:table-cell">
                             <p className="text-sm truncate max-w-[180px]" style={{ color: '#1f2937' }}>{mission.destination_address || '—'}</p>
                           </td>
-                          <td className="text-center" onClick={(e) => e.stopPropagation()}>
-                            <div className="relative inline-block">
+                          <td className="w-16 text-center" onClick={(e) => e.stopPropagation()}>
+                            <DropdownMenu
+                              isOpen={openMenuId === mission.id}
+                              onToggle={() => setOpenMenuId(openMenuId === mission.id ? null : mission.id)}
+                              button={
+                                <button
+                                  className="p-1.5 rounded-lg transition-all hover:shadow-sm"
+                                  style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                                >
+                                  <MoreVertical className="w-4 h-4" />
+                                </button>
+                              }
+                            >
                               <button
-                                onClick={() => setOpenMenuId(openMenuId === mission.id ? null : mission.id)}
-                                className="p-1.5 rounded-lg transition-all hover:shadow-sm"
-                                style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                                onClick={() => handleViewDetails(mission)}
+                                className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-gray-50 transition-all text-left"
                               >
-                                <MoreVertical className="w-4 h-4" />
+                                <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} />
+                                <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Détails</span>
                               </button>
-
-                              {openMenuId === mission.id && (
-                                <div className="soft-dropdown absolute right-0 top-full mt-1 w-48 overflow-hidden z-20">
-                                  <button
-                                    onClick={() => handleViewDetails(mission)}
-                                    className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-gray-50 transition-all text-left"
-                                  >
-                                    <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} />
-                                    <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Détails</span>
-                                  </button>
-                                  <button
-                                    onClick={() => handleEdit(mission)}
-                                    className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-gray-50 transition-all text-left border-t"
-                                    style={{ borderColor: '#E8ECEC' }}
-                                  >
-                                    <Edit className="w-4 h-4" style={{ color: '#B87333' }} />
-                                    <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Modifier</span>
-                                  </button>
-                                  {mission.status === 'pending' && (
-                                    <button
-                                      onClick={() => handleAssignMission(mission)}
-                                      className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-blue-50 transition-all text-left border-t"
-                                      style={{ borderColor: '#E8ECEC' }}
-                                    >
-                                      <UserPlus className="w-4 h-4 text-blue-600" />
-                                      <span className="text-sm font-medium text-blue-600">Assigner</span>
-                                    </button>
-                                  )}
-                                  {mission.status === 'assigned' && (
-                                    <button
-                                      onClick={() => handleStartMission(mission)}
-                                      className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-green-50 transition-all text-left border-t"
-                                      style={{ borderColor: '#E8ECEC' }}
-                                    >
-                                      <Play className="w-4 h-4 text-green-600" />
-                                      <span className="text-sm font-medium text-green-600">Démarrer</span>
-                                    </button>
-                                  )}
-                                  {mission.status === 'in_progress' && (
-                                    <>
-                                      <button
-                                        onClick={() => handleTrackMission(mission)}
-                                        className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-teal-50 transition-all text-left border-t"
-                                        style={{ borderColor: '#E8ECEC' }}
-                                      >
-                                        <Radio className="w-4 h-4" style={{ color: '#6A8A82' }} />
-                                        <span className="text-sm font-medium" style={{ color: '#6A8A82' }}>Suivi GPS</span>
-                                      </button>
-                                      <button
-                                        onClick={() => handleManageActive(mission)}
-                                        className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-amber-50 transition-all text-left border-t"
-                                        style={{ borderColor: '#E8ECEC' }}
-                                      >
-                                        <Pause className="w-4 h-4 text-amber-600" />
-                                        <span className="text-sm font-medium text-amber-600">Pause</span>
-                                      </button>
-                                    </>
-                                  )}
-                                  {(mission.status === 'pending' || mission.status === 'assigned' || mission.status === 'in_progress') && (
-                                    <button
-                                      onClick={() => handleCancelMission(mission)}
-                                      className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-red-50 transition-all text-left border-t"
-                                      style={{ borderColor: '#E8ECEC' }}
-                                    >
-                                      <XCircle className="w-4 h-4 text-red-500" />
-                                      <span className="text-sm font-medium text-red-500">Annuler</span>
-                                    </button>
-                                  )}
-                                  {mission.status === 'completed' && (
-                                    <button
-                                      onClick={() => handleViewTripHistory(mission)}
-                                      className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-blue-50 transition-all text-left border-t"
-                                      style={{ borderColor: '#E8ECEC' }}
-                                    >
-                                      <Route className="w-4 h-4 text-blue-600" />
-                                      <span className="text-sm font-medium text-blue-600">Historique</span>
-                                    </button>
-                                  )}
-                                  <button
-                                    onClick={() => handleDelete(mission)}
-                                    className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-red-50 transition-all text-left border-t"
-                                    style={{ borderColor: '#E8ECEC' }}
-                                  >
-                                    <Trash2 className="w-4 h-4 text-red-600" />
-                                    <span className="text-sm font-medium text-red-600">Supprimer</span>
-                                  </button>
-                                </div>
+                              <button
+                                onClick={() => handleEdit(mission)}
+                                className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-gray-50 transition-all text-left border-t"
+                                style={{ borderColor: '#E8ECEC' }}
+                              >
+                                <Edit className="w-4 h-4" style={{ color: '#B87333' }} />
+                                <span className="text-sm font-medium" style={{ color: '#1f2937' }}>Modifier</span>
+                              </button>
+                              {mission.status === 'pending' && (
+                                <button
+                                  onClick={() => handleAssignMission(mission)}
+                                  className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-blue-50 transition-all text-left border-t"
+                                  style={{ borderColor: '#E8ECEC' }}
+                                >
+                                  <UserPlus className="w-4 h-4 text-blue-600" />
+                                  <span className="text-sm font-medium text-blue-600">Assigner</span>
+                                </button>
                               )}
-                            </div>
+                              {mission.status === 'assigned' && (
+                                <button
+                                  onClick={() => handleStartMission(mission)}
+                                  className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-green-50 transition-all text-left border-t"
+                                  style={{ borderColor: '#E8ECEC' }}
+                                >
+                                  <Play className="w-4 h-4 text-green-600" />
+                                  <span className="text-sm font-medium text-green-600">Démarrer</span>
+                                </button>
+                              )}
+                              {mission.status === 'in_progress' && (
+                                <>
+                                  <button
+                                    onClick={() => handleTrackMission(mission)}
+                                    className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-teal-50 transition-all text-left border-t"
+                                    style={{ borderColor: '#E8ECEC' }}
+                                  >
+                                    <Radio className="w-4 h-4" style={{ color: '#6A8A82' }} />
+                                    <span className="text-sm font-medium" style={{ color: '#6A8A82' }}>Suivi GPS</span>
+                                  </button>
+                                </>
+                              )}
+                              {(mission.status === 'pending' || mission.status === 'assigned' || mission.status === 'in_progress') && (
+                                <button
+                                  onClick={() => handleCancelMission(mission)}
+                                  className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-red-50 transition-all text-left border-t"
+                                  style={{ borderColor: '#E8ECEC' }}
+                                >
+                                  <XCircle className="w-4 h-4 text-red-500" />
+                                  <span className="text-sm font-medium text-red-500">Annuler</span>
+                                </button>
+                              )}
+                              {mission.status === 'completed' && (
+                                <button
+                                  onClick={() => handleViewTripHistory(mission)}
+                                  className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-blue-50 transition-all text-left border-t"
+                                  style={{ borderColor: '#E8ECEC' }}
+                                >
+                                  <Route className="w-4 h-4 text-blue-600" />
+                                  <span className="text-sm font-medium text-blue-600">Historique</span>
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleDelete(mission)}
+                                className="w-full flex items-center space-x-2 px-4 py-2.5 hover:bg-red-50 transition-all text-left border-t"
+                                style={{ borderColor: '#E8ECEC' }}
+                              >
+                                <Trash2 className="w-4 h-4 text-red-600" />
+                                <span className="text-sm font-medium text-red-600">Supprimer</span>
+                              </button>
+                            </DropdownMenu>
                           </td>
                         </tr>
                       );

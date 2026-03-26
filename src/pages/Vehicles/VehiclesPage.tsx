@@ -5,12 +5,14 @@ import VehicleDetailsModal from '@/components/Vehicles/VehicleDetailsModal';
 import EditVehicleModal from '@/components/Vehicles/EditVehicleModal';
 import DeleteVehicleModal from '@/components/Vehicles/DeleteVehicleModal';
 import ChangeStatusModal from '@/components/Vehicles/ChangeStatusModal';
+import DocumentAlertsBanner from '@/components/Vehicles/DocumentAlertsBanner';
 import Pagination from '@/components/common/Pagination';
+import DropdownMenu from '@/components/common/DropdownMenu';
 import { vehiclesApi, type VehicleFilters, type VehicleStats } from '@/api/vehicles';
 import type { Vehicle } from '@/types';
 import {
   Car, Plus, Search, Filter, Fuel, Gauge, LayoutGrid, List,
-  Eye, Edit, Trash2, RefreshCw, Loader2, X, AlertTriangle, RotateCw
+  Eye, Edit, Trash2, RefreshCw, Loader2, X, AlertTriangle, RotateCw, MoreVertical
 } from 'lucide-react';
 
 type ViewMode = 'grid' | 'list';
@@ -188,7 +190,7 @@ export default function VehiclesPage() {
             <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#1f2937' }}>
               Véhicules
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-1">Gerez votre flotte de véhicules</p>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Gérez votre flotte de véhicules</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button
@@ -210,6 +212,14 @@ export default function VehiclesPage() {
             </button>
           </div>
         </div>
+
+        {/* Document Alerts Banner */}
+        <DocumentAlertsBanner
+          onViewVehicle={(vehicleId) => {
+            const v = vehicles.find(v => v.id === vehicleId);
+            if (v) handleViewDetails(v);
+          }}
+        />
 
         {/* Stats */}
         {stats && (
@@ -419,8 +429,38 @@ export default function VehiclesPage() {
                 return (
                   <div
                     key={vehicle.id}
-                    className="data-card hover:shadow-xl hover:-translate-y-1"
+                    className="data-card hover:shadow-xl hover:-translate-y-1 relative"
                   >
+                    {/* Menu ⋮ */}
+                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10">
+                      <DropdownMenu
+                        isOpen={openMenuId === vehicle.id}
+                        onToggle={() => setOpenMenuId(openMenuId === vehicle.id ? null : vehicle.id)}
+                        button={
+                          <button
+                            className="p-1.5 sm:p-2 rounded-lg bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm transition-all"
+                          >
+                            <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                          </button>
+                        }
+                        width={176}
+                      >
+                        <button onClick={() => handleViewDetails(vehicle)} className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 text-gray-700">
+                          <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} /> Détails
+                        </button>
+                        <button onClick={() => handleEdit(vehicle)} className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 text-gray-700">
+                          <Edit className="w-4 h-4" style={{ color: '#B87333' }} /> Modifier
+                        </button>
+                        <button onClick={() => handleChangeStatus(vehicle)} className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 text-gray-700">
+                          <RotateCw className="w-4 h-4" style={{ color: '#6A8A82' }} /> Changer statut
+                        </button>
+                        <div className="border-t border-gray-100 my-1" />
+                        <button onClick={() => handleDelete(vehicle)} className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-red-50 text-red-600">
+                          <Trash2 className="w-4 h-4" /> Supprimer
+                        </button>
+                      </DropdownMenu>
+                    </div>
+
                     {/* Vehicle Header */}
                     <div className="h-24 sm:h-32 relative overflow-hidden rounded-t-xl sm:rounded-t-2xl" style={{ backgroundColor: status.bg }}>
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -428,7 +468,7 @@ export default function VehiclesPage() {
                       </div>
                       <button
                         onClick={() => handleChangeStatus(vehicle)}
-                        className="absolute top-2 right-2 sm:top-4 sm:right-4 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold flex items-center space-x-1.5 sm:space-x-2 shadow-sm backdrop-blur-sm transition-all hover:shadow-sm hover:scale-105"
+                        className="absolute top-2 left-2 sm:top-4 sm:left-4 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold flex items-center space-x-1.5 sm:space-x-2 shadow-sm backdrop-blur-sm transition-all hover:shadow-sm hover:scale-105"
                         style={{ backgroundColor: status.bg, color: status.text }}
                         title="Cliquez pour changer le statut"
                       >
@@ -473,39 +513,14 @@ export default function VehiclesPage() {
                         </div>
                       </div>
 
-                      <div className="flex gap-1.5 sm:gap-2">
-                        <button
-                          onClick={() => handleChangeStatus(vehicle)}
-                          className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all hover:shadow-sm"
-                          style={{ backgroundColor: status.bg, color: status.text }}
-                          title="Changer le statut"
-                        >
-                          <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleViewDetails(vehicle)}
-                          className="flex-1 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold transition-all hover:shadow-sm flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
-                          style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
-                        >
-                          <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                          <span className="hidden xs:inline">Détails</span>
-                        </button>
-                        <button
-                          onClick={() => handleEdit(vehicle)}
-                          className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all hover:shadow-sm"
-                          style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}
-                          title="Modifier"
-                        >
-                          <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(vehicle)}
-                          className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all hover:shadow-sm bg-red-50 text-red-600 hover:bg-red-100"
-                          title="Supprimer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => handleViewDetails(vehicle)}
+                        className="w-full py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold transition-all hover:shadow-sm flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
+                        style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                      >
+                        <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <span>Voir détails</span>
+                      </button>
                     </div>
                   </div>
                 );
@@ -553,21 +568,33 @@ export default function VehiclesPage() {
                             <span className="text-[10px] text-gray-500">{formatMileage(vehicle.current_mileage)}</span>
                           </div>
                         </div>
-                        <div className="flex flex-col gap-1">
-                          <button
-                            onClick={() => handleViewDetails(vehicle)}
-                            className="p-1.5 rounded-lg"
-                            style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                        <div className="flex-shrink-0">
+                          <DropdownMenu
+                            isOpen={openMenuId === vehicle.id}
+                            onToggle={() => setOpenMenuId(openMenuId === vehicle.id ? null : vehicle.id)}
+                            button={
+                              <button
+                                className="p-1.5 rounded-lg hover:bg-gray-100 transition-all"
+                              >
+                                <MoreVertical className="w-5 h-5 text-gray-400" />
+                              </button>
+                            }
+                            width={176}
                           >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleEdit(vehicle)}
-                            className="p-1.5 rounded-lg"
-                            style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
+                            <button onClick={() => handleViewDetails(vehicle)} className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 text-gray-700">
+                              <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} /> Détails
+                            </button>
+                            <button onClick={() => handleEdit(vehicle)} className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 text-gray-700">
+                              <Edit className="w-4 h-4" style={{ color: '#B87333' }} /> Modifier
+                            </button>
+                            <button onClick={() => handleChangeStatus(vehicle)} className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 text-gray-700">
+                              <RotateCw className="w-4 h-4" style={{ color: '#6A8A82' }} /> Changer statut
+                            </button>
+                            <div className="border-t border-gray-100 my-1" />
+                            <button onClick={() => handleDelete(vehicle)} className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-red-50 text-red-600">
+                              <Trash2 className="w-4 h-4" /> Supprimer
+                            </button>
+                          </DropdownMenu>
                         </div>
                       </div>
                     </div>
@@ -578,16 +605,16 @@ export default function VehiclesPage() {
               {/* Desktop Table View */}
               <div className="hidden md:block data-table-container">
                 <div className="overflow-x-auto">
-                  <table className="data-table">
+                  <table className="data-table" style={{ tableLayout: 'fixed', width: '100%' }}>
                     <thead>
                       <tr>
-                        <th>Véhicule</th>
-                        <th>Immatriculation</th>
-                        <th>Statut</th>
-                        <th className="hidden lg:table-cell">Kilométrage</th>
-                        <th className="hidden lg:table-cell">Carburant</th>
-                        <th className="hidden xl:table-cell">Année</th>
-                        <th className="text-right">Actions</th>
+                        <th style={{ width: '25%' }}>Véhicule</th>
+                        <th style={{ width: '18%' }}>Immatriculation</th>
+                        <th style={{ width: '15%' }}>Statut</th>
+                        <th className="hidden lg:table-cell" style={{ width: '15%' }}>Kilométrage</th>
+                        <th className="hidden lg:table-cell" style={{ width: '12%' }}>Carburant</th>
+                        <th className="hidden xl:table-cell" style={{ width: '10%' }}>Année</th>
+                        <th className="text-center !px-2" style={{ width: '64px' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -595,7 +622,7 @@ export default function VehiclesPage() {
                         const status = STATUS_COLORS[vehicle.status] || STATUS_COLORS.available;
                         return (
                           <tr key={vehicle.id}>
-                            <td>
+                            <td className="overflow-hidden">
                               <div className="flex items-center gap-3">
                                 <div
                                   className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -605,12 +632,12 @@ export default function VehiclesPage() {
                                 </div>
                                 <div className="min-w-0">
                                   <p className="font-semibold text-sm truncate" style={{ color: '#1f2937' }}>{vehicle.brand} {vehicle.model}</p>
-                                  <p className="text-xs text-gray-500">{vehicle.color}</p>
+                                  <p className="text-xs text-gray-500 truncate">{vehicle.color}</p>
                                 </div>
                               </div>
                             </td>
-                            <td>
-                              <span className="font-mono font-semibold text-sm" style={{ color: '#1f2937' }}>
+                            <td className="overflow-hidden">
+                              <span className="font-mono font-semibold text-sm truncate block" style={{ color: '#1f2937' }}>
                                 {vehicle.license_plate}
                               </span>
                             </td>
@@ -641,39 +668,33 @@ export default function VehiclesPage() {
                                 {vehicle.year}
                               </span>
                             </td>
-                            <td>
-                              <div className="flex items-center justify-end gap-1.5">
-                                <button
-                                  onClick={() => handleChangeStatus(vehicle)}
-                                  className="p-1.5 lg:p-2 rounded-lg transition-all hover:shadow-sm"
-                                  style={{ backgroundColor: status.bg, color: status.text }}
-                                  title="Changer le statut"
+                            <td className="!px-2 text-center">
+                              <div className="flex items-center justify-center">
+                                <DropdownMenu
+                                  isOpen={openMenuId === vehicle.id}
+                                  onToggle={() => setOpenMenuId(openMenuId === vehicle.id ? null : vehicle.id)}
+                                  button={
+                                    <button
+                                      className="p-2 rounded-lg transition-all hover:bg-gray-100"
+                                    >
+                                      <MoreVertical className="w-5 h-5 text-gray-500" />
+                                    </button>
+                                  }
                                 >
-                                  <RotateCw className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleViewDetails(vehicle)}
-                                  className="p-1.5 lg:p-2 rounded-lg transition-all hover:shadow-sm"
-                                  style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
-                                  title="Voir détails"
-                                >
-                                  <Eye className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleEdit(vehicle)}
-                                  className="p-1.5 lg:p-2 rounded-lg transition-all hover:shadow-sm"
-                                  style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}
-                                  title="Modifier"
-                                >
-                                  <Edit className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(vehicle)}
-                                  className="p-1.5 lg:p-2 rounded-lg transition-all hover:shadow-sm bg-red-50 text-red-600 hover:bg-red-100"
-                                  title="Supprimer"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
+                                  <button onClick={() => handleViewDetails(vehicle)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 text-gray-700 font-medium">
+                                    <Eye className="w-4 h-4" style={{ color: '#6A8A82' }} /> Voir détails
+                                  </button>
+                                  <button onClick={() => handleEdit(vehicle)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 text-gray-700 font-medium">
+                                    <Edit className="w-4 h-4" style={{ color: '#B87333' }} /> Modifier
+                                  </button>
+                                  <button onClick={() => handleChangeStatus(vehicle)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 text-gray-700 font-medium">
+                                    <RotateCw className="w-4 h-4" style={{ color: '#6A8A82' }} /> Changer statut
+                                  </button>
+                                  <div className="border-t border-gray-100 my-1" />
+                                  <button onClick={() => handleDelete(vehicle)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-red-50 text-red-600 font-medium">
+                                    <Trash2 className="w-4 h-4" /> Supprimer
+                                  </button>
+                                </DropdownMenu>
                               </div>
                             </td>
                           </tr>

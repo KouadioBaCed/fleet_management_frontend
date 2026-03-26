@@ -3,7 +3,7 @@ import {
   X,
   Fuel,
   Car,
-  DollarSign,
+  Coins,
   MapPin,
   Gauge,
   Droplets,
@@ -362,7 +362,7 @@ export default function EditFuelModal({ isOpen, onClose, onSubmit, record }: Edi
               {/* Unit Price */}
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  <DollarSign className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
+                  <Coins className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
                   Prix unitaire ({currencySymbol}/L) *
                 </label>
                 <div className="relative">

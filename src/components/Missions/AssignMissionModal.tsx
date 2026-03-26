@@ -164,26 +164,39 @@ export default function AssignMissionModal({
   };
 
   // Filtered lists
-  const filteredMissions = pendingMissions.filter(
-    (m) =>
-      m.title.toLowerCase().includes(missionSearch.toLowerCase()) ||
-      m.mission_code.toLowerCase().includes(missionSearch.toLowerCase()) ||
-      m.origin_address?.toLowerCase().includes(missionSearch.toLowerCase()) ||
-      m.destination_address?.toLowerCase().includes(missionSearch.toLowerCase())
-  );
+  const searchLower = (val?: string | null) => (val || '').toLowerCase();
 
-  const filteredDrivers = availableDrivers.filter(
-    (d) =>
-      d.full_name?.toLowerCase().includes(driverSearch.toLowerCase()) ||
-      d.employee_id?.toLowerCase().includes(driverSearch.toLowerCase())
-  );
+  const filteredMissions = pendingMissions.filter((m) => {
+    const q = missionSearch.toLowerCase();
+    if (!q) return true;
+    return (
+      searchLower(m.title).includes(q) ||
+      searchLower(m.mission_code).includes(q) ||
+      searchLower(m.origin_address).includes(q) ||
+      searchLower(m.destination_address).includes(q)
+    );
+  });
 
-  const filteredVehicles = availableVehicles.filter(
-    (v) =>
-      v.license_plate?.toLowerCase().includes(vehicleSearch.toLowerCase()) ||
-      v.brand?.toLowerCase().includes(vehicleSearch.toLowerCase()) ||
-      v.model?.toLowerCase().includes(vehicleSearch.toLowerCase())
-  );
+  const filteredDrivers = availableDrivers.filter((d) => {
+    const q = driverSearch.toLowerCase();
+    if (!q) return true;
+    return (
+      searchLower(d.full_name).includes(q) ||
+      searchLower(d.employee_id).includes(q) ||
+      searchLower(d.user?.first_name).includes(q) ||
+      searchLower(d.user?.last_name).includes(q)
+    );
+  });
+
+  const filteredVehicles = availableVehicles.filter((v) => {
+    const q = vehicleSearch.toLowerCase();
+    if (!q) return true;
+    return (
+      searchLower(v.license_plate).includes(q) ||
+      searchLower(v.brand).includes(q) ||
+      searchLower(v.model).includes(q)
+    );
+  });
 
   if (!isOpen) return null;
 
@@ -390,7 +403,8 @@ export default function AssignMissionModal({
                     ) : (
                       filteredDrivers.map((driver) => {
                         const isSelected = selectedDriver?.id === driver.id;
-                        const initials = driver.full_name?.split(' ').map((n) => n[0]).join('') || '?';
+                        const driverName = driver.full_name || `${driver.user?.first_name || ''} ${driver.user?.last_name || ''}`.trim() || 'Inconnu';
+                        const initials = driverName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || '?';
 
                         return (
                           <button
@@ -409,7 +423,7 @@ export default function AssignMissionModal({
                               {(driver.photo || driver.user?.profile_picture) ? (
                                 <img
                                   src={driver.photo || driver.user?.profile_picture}
-                                  alt={driver.full_name}
+                                  alt={driverName}
                                   className="w-12 h-12 rounded-full object-cover"
                                 />
                               ) : (
@@ -422,7 +436,7 @@ export default function AssignMissionModal({
                               )}
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
-                                  <h4 className="font-semibold text-gray-900">{driver.full_name}</h4>
+                                  <h4 className="font-semibold text-gray-900">{driverName}</h4>
                                   <span className="font-mono text-sm text-gray-500">
                                     {driver.employee_id}
                                   </span>
@@ -603,12 +617,15 @@ export default function AssignMissionModal({
                       <User className="w-5 h-5" style={{ color: '#6A8A82' }} />
                       <span className="font-semibold text-gray-700">Conducteur</span>
                     </div>
-                    {selectedDriver && (
+                    {selectedDriver && (() => {
+                      const name = selectedDriver.full_name || `${selectedDriver.user?.first_name || ''} ${selectedDriver.user?.last_name || ''}`.trim() || 'Inconnu';
+                      const ini = name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
+                      return (
                       <div className="flex items-center gap-4">
                         {(selectedDriver.photo || selectedDriver.user?.profile_picture) ? (
                           <img
                             src={selectedDriver.photo || selectedDriver.user?.profile_picture}
-                            alt={selectedDriver.full_name}
+                            alt={name}
                             className="w-12 h-12 rounded-full object-cover"
                           />
                         ) : (
@@ -616,11 +633,11 @@ export default function AssignMissionModal({
                             className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
                             style={{ backgroundColor: '#6A8A82' }}
                           >
-                            {selectedDriver.full_name?.split(' ').map((n) => n[0]).join('') || '?'}
+                            {ini}
                           </div>
                         )}
                         <div>
-                          <h4 className="font-semibold text-gray-900">{selectedDriver.full_name}</h4>
+                          <h4 className="font-semibold text-gray-900">{name}</h4>
                           <div className="flex items-center gap-3 text-sm text-gray-500">
                             <span className="font-mono">{selectedDriver.employee_id}</span>
                             <span className="flex items-center gap-1">
@@ -630,7 +647,8 @@ export default function AssignMissionModal({
                           </div>
                         </div>
                       </div>
-                    )}
+                      );
+                    })()}
                   </div>
 
                   {/* Vehicle Summary */}

@@ -17,6 +17,8 @@ import {
   Phone,
   AlertTriangle,
   Search,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 import { vehiclesApi } from '@/api/vehicles';
 import { driversApi } from '@/api/drivers';
@@ -49,10 +51,10 @@ interface FormErrors {
 }
 
 const STEPS = [
-  { id: 1, title: 'Informations', icon: FileText },
-  { id: 2, title: 'Itinéraire', icon: MapPin },
-  { id: 3, title: 'Planning', icon: Calendar },
-  { id: 4, title: 'Assignation', icon: User },
+  { id: 1, title: 'Assignation', icon: User },
+  { id: 2, title: 'Informations', icon: FileText },
+  { id: 3, title: 'Itinéraire', icon: MapPin },
+  { id: 4, title: 'Planning', icon: Calendar },
   { id: 5, title: 'Finalisation', icon: Check },
 ];
 
@@ -84,6 +86,12 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
   const originSearchTimeout = useRef<NodeJS.Timeout | null>(null);
   const destinationSearchTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  // Checkpoint autocomplete state
+  const [checkpointSuggestions, setCheckpointSuggestions] = useState<Record<number, AddressSuggestion[]>>({});
+  const [isSearchingCheckpoint, setIsSearchingCheckpoint] = useState<Record<number, boolean>>({});
+  const [showCheckpointSuggestions, setShowCheckpointSuggestions] = useState<Record<number, boolean>>({});
+  const checkpointSearchTimeouts = useRef<Record<number, NodeJS.Timeout>>({});
+
   const [formData, setFormData] = useState({
     mission_code: '',
     title: '',
@@ -97,6 +105,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
     destination_latitude: '',
     destination_longitude: '',
     estimated_distance: '',
+    checkpoints: [] as Array<{ address: string; latitude: string; longitude: string; notes: string }>,
 
     // Planning
     scheduled_start: '',
@@ -132,7 +141,8 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
         driversApi.getAvailable(),
       ]);
       setAvailableVehicles(vehicles);
-      setAvailableDrivers(drivers);
+      // Ne garder que les chauffeurs qui ont un véhicule assigné
+      setAvailableDrivers(drivers.filter(d => d.current_vehicle));
     } catch (error) {
       console.error('Error loading resources:', error);
     } finally {
@@ -155,6 +165,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
     const handleClickOutside = () => {
       setShowOriginSuggestions(false);
       setShowDestinationSuggestions(false);
+      setShowCheckpointSuggestions({});
     };
 
     document.addEventListener('click', handleClickOutside);
@@ -235,51 +246,39 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
 
   // Sélection d'une adresse d'origine
   const selectOriginAddress = (suggestion: AddressSuggestion) => {
-    setFormData(prev => ({
-      ...prev,
-      origin_address: suggestion.display_name,
-      origin_latitude: suggestion.lat,
-      origin_longitude: suggestion.lon,
-    }));
+    setFormData(prev => {
+      const updated = {
+        ...prev,
+        origin_address: suggestion.display_name,
+        origin_latitude: suggestion.lat,
+        origin_longitude: suggestion.lon,
+      };
+      setTimeout(() => recalculateDistance(updated), 0);
+      return updated;
+    });
     setShowOriginSuggestions(false);
     setOriginSuggestions([]);
-
-    // Calculer la distance si destination déjà renseignée
-    if (formData.destination_latitude && formData.destination_longitude) {
-      calculateDistance(
-        parseFloat(suggestion.lat),
-        parseFloat(suggestion.lon),
-        parseFloat(formData.destination_latitude),
-        parseFloat(formData.destination_longitude)
-      );
-    }
   };
 
   // Sélection d'une adresse de destination
   const selectDestinationAddress = (suggestion: AddressSuggestion) => {
-    setFormData(prev => ({
-      ...prev,
-      destination_address: suggestion.display_name,
-      destination_latitude: suggestion.lat,
-      destination_longitude: suggestion.lon,
-    }));
+    setFormData(prev => {
+      const updated = {
+        ...prev,
+        destination_address: suggestion.display_name,
+        destination_latitude: suggestion.lat,
+        destination_longitude: suggestion.lon,
+      };
+      setTimeout(() => recalculateDistance(updated), 0);
+      return updated;
+    });
     setShowDestinationSuggestions(false);
     setDestinationSuggestions([]);
-
-    // Calculer la distance si origine déjà renseignée
-    if (formData.origin_latitude && formData.origin_longitude) {
-      calculateDistance(
-        parseFloat(formData.origin_latitude),
-        parseFloat(formData.origin_longitude),
-        parseFloat(suggestion.lat),
-        parseFloat(suggestion.lon)
-      );
-    }
   };
 
-  // Calcul de la distance entre deux points (formule de Haversine)
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371; // Rayon de la Terre en km
+  // Calcul Haversine entre deux points
+  const haversine = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a =
@@ -287,11 +286,105 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
+    return R * c;
+  };
 
-    // Ajouter 20% pour tenir compte des routes (approximation)
-    const routeDistance = (distance * 1.2).toFixed(1);
+  // Recalcul distance multi-segments (origin -> checkpoints -> destination)
+  const recalculateDistance = (data: typeof formData) => {
+    const points: Array<{ lat: number; lng: number }> = [];
+
+    if (data.origin_latitude && data.origin_longitude) {
+      points.push({ lat: parseFloat(data.origin_latitude), lng: parseFloat(data.origin_longitude) });
+    }
+    for (const cp of data.checkpoints) {
+      if (cp.latitude && cp.longitude) {
+        points.push({ lat: parseFloat(cp.latitude), lng: parseFloat(cp.longitude) });
+      }
+    }
+    if (data.destination_latitude && data.destination_longitude) {
+      points.push({ lat: parseFloat(data.destination_latitude), lng: parseFloat(data.destination_longitude) });
+    }
+
+    if (points.length < 2) return;
+
+    let totalDistance = 0;
+    for (let i = 0; i < points.length - 1; i++) {
+      totalDistance += haversine(points[i].lat, points[i].lng, points[i + 1].lat, points[i + 1].lng);
+    }
+
+    const routeDistance = (totalDistance * 1.2).toFixed(1);
     setFormData(prev => ({ ...prev, estimated_distance: routeDistance }));
+  };
+
+  // Legacy wrapper pour origin/destination
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    recalculateDistance(formData);
+  };
+
+  // --- Checkpoint handlers ---
+  const addCheckpoint = () => {
+    setFormData(prev => ({
+      ...prev,
+      checkpoints: [...prev.checkpoints, { address: '', latitude: '', longitude: '', notes: '' }],
+    }));
+  };
+
+  const removeCheckpoint = (index: number) => {
+    setFormData(prev => {
+      const updated = { ...prev, checkpoints: prev.checkpoints.filter((_, i) => i !== index) };
+      setTimeout(() => recalculateDistance(updated), 0);
+      return updated;
+    });
+    // Cleanup suggestion state
+    setCheckpointSuggestions(prev => { const n = { ...prev }; delete n[index]; return n; });
+    setShowCheckpointSuggestions(prev => { const n = { ...prev }; delete n[index]; return n; });
+    setIsSearchingCheckpoint(prev => { const n = { ...prev }; delete n[index]; return n; });
+  };
+
+  const handleCheckpointSearch = (index: number, value: string) => {
+    setFormData(prev => {
+      const cps = [...prev.checkpoints];
+      cps[index] = { ...cps[index], address: value, latitude: '', longitude: '' };
+      return { ...prev, checkpoints: cps };
+    });
+
+    if (checkpointSearchTimeouts.current[index]) {
+      clearTimeout(checkpointSearchTimeouts.current[index]);
+    }
+
+    if (value.length < 3) {
+      setCheckpointSuggestions(prev => ({ ...prev, [index]: [] }));
+      setShowCheckpointSuggestions(prev => ({ ...prev, [index]: false }));
+      return;
+    }
+
+    setIsSearchingCheckpoint(prev => ({ ...prev, [index]: true }));
+    checkpointSearchTimeouts.current[index] = setTimeout(async () => {
+      const suggestions = await searchAddress(value);
+      setCheckpointSuggestions(prev => ({ ...prev, [index]: suggestions }));
+      setShowCheckpointSuggestions(prev => ({ ...prev, [index]: suggestions.length > 0 }));
+      setIsSearchingCheckpoint(prev => ({ ...prev, [index]: false }));
+    }, 500);
+  };
+
+  const selectCheckpointAddress = (index: number, suggestion: AddressSuggestion) => {
+    setFormData(prev => {
+      const cps = [...prev.checkpoints];
+      cps[index] = { ...cps[index], address: suggestion.display_name, latitude: suggestion.lat, longitude: suggestion.lon };
+      const updated = { ...prev, checkpoints: cps };
+      setTimeout(() => recalculateDistance(updated), 0);
+      return updated;
+    });
+    setShowCheckpointSuggestions(prev => ({ ...prev, [index]: false }));
+    setCheckpointSuggestions(prev => ({ ...prev, [index]: [] }));
+  };
+
+  const updateCheckpointNotes = (index: number, notes: string) => {
+    setFormData(prev => {
+      const cps = [...prev.checkpoints];
+      cps[index] = { ...cps[index], notes };
+      return { ...prev, checkpoints: cps };
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -323,6 +416,11 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
 
     switch (step) {
       case 1:
+        if (!formData.driver) newErrors.driver = 'Un chauffeur doit etre selectionne';
+        if (formData.driver && !formData.vehicle) newErrors.driver = 'Ce chauffeur n\'a pas de véhicule assigné';
+        break;
+
+      case 2:
         if (!formData.mission_code.trim()) newErrors.mission_code = 'Le code mission est requis';
         if (!formData.title.trim()) newErrors.title = 'Le titre est requis';
         if (formData.title.trim().length < 3) newErrors.title = 'Le titre doit contenir au moins 3 caractères';
@@ -330,7 +428,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
         if (formData.description.trim().length < 10) newErrors.description = 'La description doit contenir au moins 10 caractères';
         break;
 
-      case 2:
+      case 3:
         if (!formData.origin_address.trim()) {
           newErrors.origin_address = 'Recherchez et sélectionnez une adresse d\'origine';
         } else if (!formData.origin_latitude || !formData.origin_longitude) {
@@ -344,9 +442,16 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
         if (!formData.estimated_distance) {
           newErrors.estimated_distance = 'Sélectionnez les deux adresses pour calculer la distance';
         }
+        formData.checkpoints.forEach((cp, index) => {
+          if (!cp.address.trim()) {
+            newErrors[`checkpoint_${index}_address`] = 'Adresse requise';
+          } else if (!cp.latitude || !cp.longitude) {
+            newErrors[`checkpoint_${index}_address`] = 'Sélectionnez une adresse dans les suggestions';
+          }
+        });
         break;
 
-      case 3:
+      case 4:
         if (!formData.scheduled_start) newErrors.scheduled_start = 'La date de debut est requise';
         if (!formData.scheduled_end) newErrors.scheduled_end = 'La date de fin est requise';
         if (formData.scheduled_start && formData.scheduled_end) {
@@ -359,11 +464,6 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
             newErrors.scheduled_start = 'La date de debut ne peut pas etre dans le passe';
           }
         }
-        break;
-
-      case 4:
-        if (!formData.driver) newErrors.driver = 'Un chauffeur doit etre selectionne';
-        if (formData.driver && !formData.vehicle) newErrors.driver = 'Ce chauffeur n\'a pas de véhicule assigné';
         break;
 
       case 5:
@@ -405,6 +505,13 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
         estimated_distance: parseFloat(formData.estimated_distance),
         vehicle: parseInt(formData.vehicle),
         driver: parseInt(formData.driver),
+        checkpoints: formData.checkpoints.map((cp, index) => ({
+          order: index + 1,
+          address: cp.address,
+          latitude: parseFloat(cp.latitude),
+          longitude: parseFloat(cp.longitude),
+          notes: cp.notes,
+        })),
       };
       await onSubmit(submitData);
       handleClose();
@@ -429,6 +536,9 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
     setDestinationSuggestions([]);
     setShowOriginSuggestions(false);
     setShowDestinationSuggestions(false);
+    setCheckpointSuggestions({});
+    setShowCheckpointSuggestions({});
+    setIsSearchingCheckpoint({});
     setFormData({
       mission_code: '',
       title: '',
@@ -440,6 +550,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
       destination_latitude: '',
       destination_longitude: '',
       estimated_distance: '',
+      checkpoints: [],
       scheduled_start: '',
       scheduled_end: '',
       vehicle: '',
@@ -464,323 +575,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
 
   const renderStepContent = () => {
     switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-6 p-6">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                Informations generales
-              </h3>
-              <p className="text-gray-600">Titre et description de la mission</p>
-            </div>
-            <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Code Mission *
-                  </label>
-                  <input
-                    type="text"
-                    name="mission_code"
-                    value={formData.mission_code}
-                    onChange={handleInputChange}
-                    placeholder="MISS-2024-001"
-                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all font-mono text-gray-900 placeholder-gray-400 ${
-                      errors.mission_code ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
-                    }`}
-                    style={{ borderColor: errors.mission_code ? undefined : '#E8ECEC' }}
-                  />
-                  {renderError('mission_code')}
-                  <p className="text-xs text-gray-500 mt-1">Code généré automatiquement, modifiable si besoin</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Titre de la mission *
-                  </label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    placeholder="Livraison Centre Commercial"
-                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
-                      errors.title ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
-                    }`}
-                    style={{ borderColor: errors.title ? undefined : '#E8ECEC' }}
-                  />
-                  {renderError('title')}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Description *
-                  </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Décrivez la mission en détail : objectif, instructions particulières, marchandises..."
-                    rows={4}
-                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all resize-none text-gray-900 placeholder-gray-400 ${
-                      errors.description ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
-                    }`}
-                    style={{ borderColor: errors.description ? undefined : '#E8ECEC' }}
-                  />
-                  {renderError('description')}
-                  <p className="text-xs text-gray-500 mt-1">{formData.description.length}/500 caractères</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-6 p-6">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                Itinéraire
-              </h3>
-              <p className="text-gray-600">Recherchez les adresses et les coordonnées seront remplies automatiquement</p>
-            </div>
-
-            {/* Origine */}
-            <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: '#6A8A82' }}>
-                  <MapPin className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point de départ</h4>
-              </div>
-              <div className="space-y-4">
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    <Search className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
-                    Rechercher l'adresse d'origine *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.origin_address}
-                      onChange={(e) => handleOriginSearch(e.target.value)}
-                      onFocus={() => originSuggestions.length > 0 && setShowOriginSuggestions(true)}
-                      placeholder="Tapez une adresse (ex: Gombe, Kinshasa)"
-                      className={`w-full px-4 py-3 pr-10 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
-                        errors.origin_address ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
-                      }`}
-                      style={{ borderColor: errors.origin_address ? undefined : '#E8ECEC' }}
-                    />
-                    {isSearchingOrigin && (
-                      <Loader2 className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />
-                    )}
-                  </div>
-                  {/* Suggestions dropdown */}
-                  {showOriginSuggestions && originSuggestions.length > 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border-2 rounded-xl shadow-lg max-h-60 overflow-y-auto" style={{ borderColor: '#E8ECEC' }}>
-                      {originSuggestions.map((suggestion) => (
-                        <button
-                          key={suggestion.place_id}
-                          type="button"
-                          onClick={() => selectOriginAddress(suggestion)}
-                          className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-3 border-b last:border-b-0 transition-colors"
-                          style={{ borderColor: '#E8ECEC' }}
-                        >
-                          <MapPin className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#6A8A82' }} />
-                          <span className="text-sm text-gray-700 line-clamp-2">{suggestion.display_name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {renderError('origin_address')}
-                </div>
-
-                {/* Coordonnées (lecture seule, remplies automatiquement) */}
-                {formData.origin_latitude && formData.origin_longitude && (
-                  <div className="grid grid-cols-2 gap-4 p-3 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Latitude</p>
-                      <p className="font-mono text-sm font-semibold" style={{ color: '#6A8A82' }}>{formData.origin_latitude}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Longitude</p>
-                      <p className="font-mono text-sm font-semibold" style={{ color: '#6A8A82' }}>{formData.origin_longitude}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Ligne de connexion */}
-            <div className="flex items-center justify-center">
-              <div className="h-8 border-l-2 border-dashed" style={{ borderColor: '#6A8A82' }} />
-            </div>
-
-            {/* Destination */}
-            <div className="bg-gradient-to-br from-copper/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#F5E8DD' }}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: '#B87333' }}>
-                  <MapPin className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point d'arrivée</h4>
-              </div>
-              <div className="space-y-4">
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    <Search className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
-                    Rechercher l'adresse de destination *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.destination_address}
-                      onChange={(e) => handleDestinationSearch(e.target.value)}
-                      onFocus={() => destinationSuggestions.length > 0 && setShowDestinationSuggestions(true)}
-                      placeholder="Tapez une adresse (ex: Limete, Kinshasa)"
-                      className={`w-full px-4 py-3 pr-10 rounded-xl border-2 focus:ring-4 focus:ring-copper/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
-                        errors.destination_address ? 'border-red-300 focus:border-red-500' : 'focus:border-copper'
-                      }`}
-                      style={{ borderColor: errors.destination_address ? undefined : '#E8ECEC' }}
-                    />
-                    {isSearchingDestination && (
-                      <Loader2 className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />
-                    )}
-                  </div>
-                  {/* Suggestions dropdown */}
-                  {showDestinationSuggestions && destinationSuggestions.length > 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border-2 rounded-xl shadow-lg max-h-60 overflow-y-auto" style={{ borderColor: '#E8ECEC' }}>
-                      {destinationSuggestions.map((suggestion) => (
-                        <button
-                          key={suggestion.place_id}
-                          type="button"
-                          onClick={() => selectDestinationAddress(suggestion)}
-                          className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-3 border-b last:border-b-0 transition-colors"
-                          style={{ borderColor: '#E8ECEC' }}
-                        >
-                          <MapPin className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#B87333' }} />
-                          <span className="text-sm text-gray-700 line-clamp-2">{suggestion.display_name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {renderError('destination_address')}
-                </div>
-
-                {/* Coordonnées (lecture seule, remplies automatiquement) */}
-                {formData.destination_latitude && formData.destination_longitude && (
-                  <div className="grid grid-cols-2 gap-4 p-3 rounded-lg" style={{ backgroundColor: '#F5E8DD' }}>
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Latitude</p>
-                      <p className="font-mono text-sm font-semibold" style={{ color: '#B87333' }}>{formData.destination_latitude}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Longitude</p>
-                      <p className="font-mono text-sm font-semibold" style={{ color: '#B87333' }}>{formData.destination_longitude}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Distance estimée (calculée automatiquement) */}
-            {formData.estimated_distance && (
-              <div className="bg-gradient-to-r from-sage/10 to-copper/10 rounded-xl p-5 border-2" style={{ borderColor: '#E8EFED' }}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#E8EFED' }}>
-                      <Navigation className="w-5 h-5" style={{ color: '#6A8A82' }} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Distance estimée</p>
-                      <p className="text-2xl font-bold" style={{ color: '#191919' }}>{formData.estimated_distance} km</p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500 max-w-[150px] text-right">
-                    Calculée automatiquement (+ 20% pour les routes)
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6 p-6">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                Horaires prévus
-              </h3>
-              <p className="text-gray-600">Planifiez le debut et la fin de la mission</p>
-            </div>
-            <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    <Clock className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
-                    Début prévu *
-                  </label>
-                  <input
-                    type="datetime-local"
-                    name="scheduled_start"
-                    value={formData.scheduled_start}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
-                      errors.scheduled_start ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
-                    }`}
-                    style={{ borderColor: errors.scheduled_start ? undefined : '#E8ECEC' }}
-                  />
-                  {renderError('scheduled_start')}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    <Clock className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
-                    Fin prévue *
-                  </label>
-                  <input
-                    type="datetime-local"
-                    name="scheduled_end"
-                    value={formData.scheduled_end}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
-                      errors.scheduled_end ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
-                    }`}
-                    style={{ borderColor: errors.scheduled_end ? undefined : '#E8ECEC' }}
-                  />
-                  {renderError('scheduled_end')}
-                </div>
-
-                {formData.scheduled_start && formData.scheduled_end && (
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
-                    <p className="text-sm font-medium" style={{ color: '#6A8A82' }}>
-                      Duree estimee:{' '}
-                      <span className="font-bold">
-                        {(() => {
-                          const start = new Date(formData.scheduled_start);
-                          const end = new Date(formData.scheduled_end);
-                          const diff = end.getTime() - start.getTime();
-                          if (diff <= 0) return 'Invalide';
-                          const hours = Math.floor(diff / (1000 * 60 * 60));
-                          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                          return `${hours}h ${minutes}min`;
-                        })()}
-                      </span>
-                    </p>
-                  </div>
-                )}
-              </div>
-              <div className="mt-4 p-4 rounded-lg flex items-start space-x-3" style={{ backgroundColor: '#DBEAFE' }}>
-                <Calendar className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#1E40AF' }} />
-                <p className="text-sm" style={{ color: '#1E3A8A' }}>
-                  Les dates seront utilisées pour planifier la mission et vérifier la disponibilité des ressources.
-                </p>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 4: {
+      case 1: {
         const selectedDriver = availableDrivers.find(d => String(d.id) === formData.driver);
         return (
           <div className="space-y-6 p-6">
@@ -871,7 +666,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                             <p className="text-sm font-medium" style={{ color: '#B87333' }}>
                               {Number(driver.rating || 0).toFixed(1)} ★
                             </p>
-                            <p className="text-xs text-gray-500">{driver.total_trips || 0} trajets</p>
+                            <p className="text-xs text-gray-500">{driver.total_trips || 0} missions</p>
                           </div>
                           {formData.driver === String(driver.id) && (
                             <Check className="w-5 h-5" style={{ color: '#B87333' }} />
@@ -914,6 +709,439 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
           </div>
         );
       }
+
+      case 2:
+        return (
+          <div className="space-y-6 p-6">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
+                Informations generales
+              </h3>
+              <p className="text-gray-600">Titre et description de la mission</p>
+            </div>
+            <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    Code Mission *
+                  </label>
+                  <input
+                    type="text"
+                    name="mission_code"
+                    value={formData.mission_code}
+                    onChange={handleInputChange}
+                    placeholder="MISS-2024-001"
+                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all font-mono text-gray-900 placeholder-gray-400 ${
+                      errors.mission_code ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
+                    }`}
+                    style={{ borderColor: errors.mission_code ? undefined : '#E8ECEC' }}
+                  />
+                  {renderError('mission_code')}
+                  <p className="text-xs text-gray-500 mt-1">Code généré automatiquement, modifiable si besoin</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    Titre de la mission *
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    placeholder="Livraison Centre Commercial"
+                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
+                      errors.title ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
+                    }`}
+                    style={{ borderColor: errors.title ? undefined : '#E8ECEC' }}
+                  />
+                  {renderError('title')}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    Description *
+                  </label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Décrivez la mission en détail : objectif, instructions particulières, marchandises..."
+                    rows={4}
+                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all resize-none text-gray-900 placeholder-gray-400 ${
+                      errors.description ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
+                    }`}
+                    style={{ borderColor: errors.description ? undefined : '#E8ECEC' }}
+                  />
+                  {renderError('description')}
+                  <p className="text-xs text-gray-500 mt-1">{formData.description.length}/500 caractères</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6 p-6">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
+                Itinéraire
+              </h3>
+              <p className="text-gray-600">Recherchez les adresses et les coordonnées seront remplies automatiquement</p>
+            </div>
+
+            {/* Origine */}
+            <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: '#6A8A82' }}>
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point de départ</h4>
+              </div>
+              <div className="space-y-4">
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    <Search className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
+                    Rechercher l'adresse d'origine *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.origin_address}
+                      onChange={(e) => handleOriginSearch(e.target.value)}
+                      onFocus={() => originSuggestions.length > 0 && setShowOriginSuggestions(true)}
+                      placeholder="Tapez une adresse (ex: Gombe, Kinshasa)"
+                      className={`w-full px-4 py-3 pr-10 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
+                        errors.origin_address ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
+                      }`}
+                      style={{ borderColor: errors.origin_address ? undefined : '#E8ECEC' }}
+                    />
+                    {isSearchingOrigin && (
+                      <Loader2 className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />
+                    )}
+                  </div>
+                  {/* Suggestions dropdown */}
+                  {showOriginSuggestions && originSuggestions.length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border-2 rounded-xl shadow-lg max-h-60 overflow-y-auto" style={{ borderColor: '#E8ECEC' }}>
+                      {originSuggestions.map((suggestion) => (
+                        <button
+                          key={suggestion.place_id}
+                          type="button"
+                          onClick={() => selectOriginAddress(suggestion)}
+                          className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-3 border-b last:border-b-0 transition-colors"
+                          style={{ borderColor: '#E8ECEC' }}
+                        >
+                          <MapPin className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#6A8A82' }} />
+                          <span className="text-sm text-gray-700 line-clamp-2">{suggestion.display_name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {renderError('origin_address')}
+                </div>
+
+                {/* Coordonnées (lecture seule, remplies automatiquement) */}
+                {formData.origin_latitude && formData.origin_longitude && (
+                  <div className="grid grid-cols-2 gap-4 p-3 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 mb-1">Latitude</p>
+                      <p className="font-mono text-sm font-semibold" style={{ color: '#6A8A82' }}>{formData.origin_latitude}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 mb-1">Longitude</p>
+                      <p className="font-mono text-sm font-semibold" style={{ color: '#6A8A82' }}>{formData.origin_longitude}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Ligne de connexion */}
+            <div className="flex items-center justify-center">
+              <div className="h-8 border-l-2 border-dashed" style={{ borderColor: '#6A8A82' }} />
+            </div>
+
+            {/* Checkpoints intermédiaires */}
+            {formData.checkpoints.map((cp, index) => (
+              <div key={index}>
+                <div className="bg-gradient-to-br from-amber-50 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8DCCC' }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: '#D4956B' }}>
+                        <span className="text-white font-bold text-sm">{index + 1}</span>
+                      </div>
+                      <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point de livraison {index + 1}</h4>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeCheckpoint(index)}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-400" />
+                    </button>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="relative" onClick={(e) => e.stopPropagation()}>
+                      <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                        <Search className="w-4 h-4 inline mr-2" style={{ color: '#D4956B' }} />
+                        Rechercher l'adresse *
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={cp.address}
+                          onChange={(e) => handleCheckpointSearch(index, e.target.value)}
+                          onFocus={() => (checkpointSuggestions[index]?.length ?? 0) > 0 && setShowCheckpointSuggestions(prev => ({ ...prev, [index]: true }))}
+                          placeholder="Tapez une adresse"
+                          className={`w-full px-4 py-3 pr-10 rounded-xl border-2 focus:ring-4 focus:ring-amber-100 outline-none transition-all text-gray-900 placeholder-gray-400 ${
+                            errors[`checkpoint_${index}_address`] ? 'border-red-300 focus:border-red-500' : 'focus:border-amber-400'
+                          }`}
+                          style={{ borderColor: errors[`checkpoint_${index}_address`] ? undefined : '#E8ECEC' }}
+                        />
+                        {isSearchingCheckpoint[index] && (
+                          <Loader2 className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />
+                        )}
+                      </div>
+                      {showCheckpointSuggestions[index] && (checkpointSuggestions[index]?.length ?? 0) > 0 && (
+                        <div className="absolute z-50 w-full mt-1 bg-white border-2 rounded-xl shadow-lg max-h-60 overflow-y-auto" style={{ borderColor: '#E8ECEC' }}>
+                          {checkpointSuggestions[index].map((suggestion) => (
+                            <button
+                              key={suggestion.place_id}
+                              type="button"
+                              onClick={() => selectCheckpointAddress(index, suggestion)}
+                              className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-3 border-b last:border-b-0 transition-colors"
+                              style={{ borderColor: '#E8ECEC' }}
+                            >
+                              <MapPin className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#D4956B' }} />
+                              <span className="text-sm text-gray-700 line-clamp-2">{suggestion.display_name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      {errors[`checkpoint_${index}_address`] && (
+                        <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {errors[`checkpoint_${index}_address`]}
+                        </p>
+                      )}
+                    </div>
+
+                    {cp.latitude && cp.longitude && (
+                      <div className="grid grid-cols-2 gap-4 p-3 rounded-lg" style={{ backgroundColor: '#F5EDE3' }}>
+                        <div>
+                          <p className="text-xs font-medium text-gray-500 mb-1">Latitude</p>
+                          <p className="font-mono text-sm font-semibold" style={{ color: '#D4956B' }}>{cp.latitude}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-gray-500 mb-1">Longitude</p>
+                          <p className="font-mono text-sm font-semibold" style={{ color: '#D4956B' }}>{cp.longitude}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Notes (optionnel)</label>
+                      <input
+                        type="text"
+                        value={cp.notes}
+                        onChange={(e) => updateCheckpointNotes(index, e.target.value)}
+                        placeholder="Instructions pour ce point..."
+                        className="w-full px-3 py-2 rounded-lg border-2 text-sm focus:ring-2 focus:ring-amber-100 outline-none text-gray-900 placeholder-gray-400"
+                        style={{ borderColor: '#E8ECEC' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ligne de connexion après checkpoint */}
+                <div className="flex items-center justify-center">
+                  <div className="h-8 border-l-2 border-dashed" style={{ borderColor: '#D4956B' }} />
+                </div>
+              </div>
+            ))}
+
+            {/* Bouton ajouter un point de livraison */}
+            <div className="flex items-center justify-center">
+              <button
+                type="button"
+                onClick={addCheckpoint}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-dashed transition-all hover:shadow-md hover:border-solid text-sm font-semibold"
+                style={{ borderColor: '#D4956B', color: '#D4956B' }}
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter un point de livraison
+              </button>
+            </div>
+
+            {/* Ligne de connexion vers destination */}
+            <div className="flex items-center justify-center">
+              <div className="h-8 border-l-2 border-dashed" style={{ borderColor: '#B87333' }} />
+            </div>
+
+            {/* Destination */}
+            <div className="bg-gradient-to-br from-copper/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#F5E8DD' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: '#B87333' }}>
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Point d'arrivée</h4>
+              </div>
+              <div className="space-y-4">
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    <Search className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
+                    Rechercher l'adresse de destination *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.destination_address}
+                      onChange={(e) => handleDestinationSearch(e.target.value)}
+                      onFocus={() => destinationSuggestions.length > 0 && setShowDestinationSuggestions(true)}
+                      placeholder="Tapez une adresse (ex: Limete, Kinshasa)"
+                      className={`w-full px-4 py-3 pr-10 rounded-xl border-2 focus:ring-4 focus:ring-copper/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
+                        errors.destination_address ? 'border-red-300 focus:border-red-500' : 'focus:border-copper'
+                      }`}
+                      style={{ borderColor: errors.destination_address ? undefined : '#E8ECEC' }}
+                    />
+                    {isSearchingDestination && (
+                      <Loader2 className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />
+                    )}
+                  </div>
+                  {/* Suggestions dropdown */}
+                  {showDestinationSuggestions && destinationSuggestions.length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border-2 rounded-xl shadow-lg max-h-60 overflow-y-auto" style={{ borderColor: '#E8ECEC' }}>
+                      {destinationSuggestions.map((suggestion) => (
+                        <button
+                          key={suggestion.place_id}
+                          type="button"
+                          onClick={() => selectDestinationAddress(suggestion)}
+                          className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-start gap-3 border-b last:border-b-0 transition-colors"
+                          style={{ borderColor: '#E8ECEC' }}
+                        >
+                          <MapPin className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#B87333' }} />
+                          <span className="text-sm text-gray-700 line-clamp-2">{suggestion.display_name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {renderError('destination_address')}
+                </div>
+
+                {/* Coordonnées (lecture seule, remplies automatiquement) */}
+                {formData.destination_latitude && formData.destination_longitude && (
+                  <div className="grid grid-cols-2 gap-4 p-3 rounded-lg" style={{ backgroundColor: '#F5E8DD' }}>
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 mb-1">Latitude</p>
+                      <p className="font-mono text-sm font-semibold" style={{ color: '#B87333' }}>{formData.destination_latitude}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 mb-1">Longitude</p>
+                      <p className="font-mono text-sm font-semibold" style={{ color: '#B87333' }}>{formData.destination_longitude}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Distance estimée (calculée automatiquement) */}
+            {formData.estimated_distance && (
+              <div className="bg-gradient-to-r from-sage/10 to-copper/10 rounded-xl p-5 border-2" style={{ borderColor: '#E8EFED' }}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#E8EFED' }}>
+                      <Navigation className="w-5 h-5" style={{ color: '#6A8A82' }} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Distance estimée</p>
+                      <p className="text-2xl font-bold" style={{ color: '#191919' }}>{formData.estimated_distance} km</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 max-w-[150px] text-right">
+                    Calculée automatiquement (+ 20% pour les routes)
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6 p-6">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
+                Horaires prévus
+              </h3>
+              <p className="text-gray-600">Planifiez le debut et la fin de la mission</p>
+            </div>
+            <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    <Clock className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
+                    Début prévu *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="scheduled_start"
+                    value={formData.scheduled_start}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
+                      errors.scheduled_start ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
+                    }`}
+                    style={{ borderColor: errors.scheduled_start ? undefined : '#E8ECEC' }}
+                  />
+                  {renderError('scheduled_start')}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
+                    <Clock className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
+                    Fin prévue *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="scheduled_end"
+                    value={formData.scheduled_end}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
+                      errors.scheduled_end ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
+                    }`}
+                    style={{ borderColor: errors.scheduled_end ? undefined : '#E8ECEC' }}
+                  />
+                  {renderError('scheduled_end')}
+                </div>
+
+                {formData.scheduled_start && formData.scheduled_end && (
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
+                    <p className="text-sm font-medium" style={{ color: '#6A8A82' }}>
+                      Duree estimee:{' '}
+                      <span className="font-bold">
+                        {(() => {
+                          const start = new Date(formData.scheduled_start);
+                          const end = new Date(formData.scheduled_end);
+                          const diff = end.getTime() - start.getTime();
+                          if (diff <= 0) return 'Invalide';
+                          const hours = Math.floor(diff / (1000 * 60 * 60));
+                          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                          return `${hours}h ${minutes}min`;
+                        })()}
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="mt-4 p-4 rounded-lg flex items-start space-x-3" style={{ backgroundColor: '#DBEAFE' }}>
+                <Calendar className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#1E40AF' }} />
+                <p className="text-sm" style={{ color: '#1E3A8A' }}>
+                  Les dates seront utilisées pour planifier la mission et vérifier la disponibilité des ressources.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
 
       case 5:
         return (

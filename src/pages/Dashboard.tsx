@@ -7,6 +7,7 @@ import { dashboardApi, type DashboardStats } from '@/api/dashboard';
 import { useTranslation } from '@/i18n';
 import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import TopDriversCard from '@/components/dashboard/TopDriversCard';
+import DocumentAlertsCard from '@/components/dashboard/DocumentAlertsCard';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -216,6 +217,11 @@ export default function Dashboard() {
                 );
               })}
             </div>
+
+            {/* Document Alerts */}
+            <DocumentAlertsCard
+              onViewVehicle={(vehicleId) => navigate(`/vehicles`)}
+            />
 
             {/* Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">

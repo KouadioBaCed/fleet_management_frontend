@@ -3,7 +3,7 @@ import {
   Gauge,
   TrendingUp,
   TrendingDown,
-  DollarSign,
+  Coins,
   Car,
   Fuel,
   Award,
@@ -124,7 +124,7 @@ export default function FuelAnalytics() {
         <div className="bg-white rounded-lg sm:rounded-xl border-2 p-3 sm:p-5" style={{ borderColor: '#B87333' }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-3 mb-2 sm:mb-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mb-1 sm:mb-0" style={{ backgroundColor: '#F5E8DD' }}>
-              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
+              <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
             </div>
             <span className="text-[10px] sm:text-sm font-medium text-gray-600">Coût/km</span>
           </div>

@@ -176,6 +176,7 @@ export default function NotificationCenter() {
     fetchUnreadCount,
     markAsRead,
     markAllAsRead,
+    markAllSeenAndKeep,
     deleteNotification,
   } = useNotificationStore();
 
@@ -265,7 +266,11 @@ export default function NotificationCenter() {
 
   const handleToggle = () => {
     if (!isOpen) {
-      fetchNotifications();
+      fetchNotifications().then(() => {
+        if (unreadCount > 0) {
+          markAllSeenAndKeep();
+        }
+      });
     }
     setIsOpen(!isOpen);
   };

@@ -4,7 +4,7 @@ import {
   Calendar,
   ChevronDown,
   Loader2,
-  DollarSign,
+  Coins,
   CheckCircle,
   XCircle,
   TrendingUp,
@@ -13,7 +13,8 @@ import {
   User,
   BarChart3,
   PieChart,
-  Clock
+  Clock,
+  RefreshCw
 } from 'lucide-react';
 import {
   incidentsApi,
@@ -55,6 +56,7 @@ export default function IncidentAnalytics() {
 
   const [data, setData] = useState<IncidentAnalyticsType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<IncidentAnalyticsPeriod>('month');
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
@@ -64,6 +66,7 @@ export default function IncidentAnalytics() {
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const response = await incidentsApi.getAnalytics({
         period: selectedPeriod !== 'custom' ? selectedPeriod : undefined,
@@ -71,8 +74,9 @@ export default function IncidentAnalytics() {
         end_date: selectedPeriod === 'custom' ? customEndDate : undefined,
       });
       setData(response);
-    } catch (error) {
-      console.error('Error fetching incident analytics:', error);
+    } catch (err: any) {
+      console.error('Error fetching incident analytics:', err);
+      setError(err?.response?.data?.detail || err?.message || 'Erreur lors du chargement des analyses');
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +111,15 @@ export default function IncidentAnalytics() {
       <div className="bg-white rounded-2xl border-2 p-12 text-center" style={{ borderColor: '#E8ECEC' }}>
         <AlertTriangle className="w-12 h-12 mx-auto mb-4" style={{ color: '#B87333' }} />
         <h3 className="text-xl font-bold text-gray-900">Erreur de chargement</h3>
-        <p className="text-gray-500 mt-2">Impossible de charger les analyses</p>
+        <p className="text-gray-500 mt-2">{error || 'Impossible de charger les analyses'}</p>
+        <button
+          onClick={fetchData}
+          className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold transition-all hover:-translate-y-0.5"
+          style={{ backgroundColor: '#6A8A82' }}
+        >
+          <RefreshCw className="w-4 h-4" />
+          Réessayer
+        </button>
       </div>
     );
   }
@@ -231,7 +243,7 @@ export default function IncidentAnalytics() {
         {/* Total Cost */}
         <div className="bg-white rounded-lg sm:rounded-xl border-2 p-3 sm:p-4" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center justify-between mb-1 sm:mb-2">
-            <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
+            <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
             <span className={`text-[10px] sm:text-xs font-medium flex items-center ${data.summary.cost_change <= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {data.summary.cost_change <= 0 ? <TrendingDown className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" /> : <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />}
               {Math.abs(data.summary.cost_change)}%
@@ -319,7 +331,7 @@ export default function IncidentAnalytics() {
       {data.costs_by_type.length > 0 && (
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-            <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
+            <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
             <h3 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Coûts par Type d'Incident</h3>
           </div>
 

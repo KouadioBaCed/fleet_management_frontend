@@ -31,7 +31,7 @@ import type { DistanceUnit, FuelUnit, Currency, Language, Theme, DateFormat } fr
 
 export default function SettingsPage() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState('units');
+  const [activeTab, setActiveTab] = useState('language');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -236,10 +236,7 @@ export default function SettingsPage() {
   };
 
   const tabs = [
-    { id: 'units', labelKey: 'settings.units', icon: Ruler },
     { id: 'language', labelKey: 'settings.language', icon: Globe },
-    { id: 'notifications', labelKey: 'settings.notifications', icon: Bell },
-    { id: 'appearance', labelKey: 'settings.appearance', icon: Palette },
     { id: 'security', labelKey: 'settings.security', icon: Shield },
   ];
 
@@ -318,7 +315,8 @@ export default function SettingsPage() {
             <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
 
               {/* Units Tab */}
-              {activeTab === 'units' && (
+              {/* Units tab removed - keeping reference for hidden units save */}
+              {false && (
                 <div className="space-y-4 sm:space-y-6">
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2" style={{ color: '#6A8A82' }}>
@@ -577,7 +575,7 @@ export default function SettingsPage() {
               )}
 
               {/* Notifications Tab */}
-              {activeTab === 'notifications' && (
+              {false && (
                 <div className="space-y-4 sm:space-y-6">
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2" style={{ color: '#6A8A82' }}>
@@ -716,7 +714,7 @@ export default function SettingsPage() {
               )}
 
               {/* Appearance Tab */}
-              {activeTab === 'appearance' && (
+              {false && (
                 <div className="space-y-4 sm:space-y-6">
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2" style={{ color: appearance.primary_color }}>
@@ -1001,47 +999,6 @@ export default function SettingsPage() {
                       </div>
                     </div>
 
-                    <div className="p-4 sm:p-6 border-2 border-gray-200 rounded-lg sm:rounded-xl opacity-75">
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
-                        <div className="flex items-start space-x-3 sm:space-x-4">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center bg-gray-200 flex-shrink-0">
-                            <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-base sm:text-lg text-gray-900">Authentification 2FA</h3>
-                            <p className="text-gray-600 text-xs sm:text-sm">Couche de sécurité supplémentaire</p>
-                            <span className="inline-block mt-1.5 sm:mt-2 px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold rounded-full bg-amber-100 text-amber-700">
-                              Bientôt disponible
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          disabled
-                          className="px-4 sm:px-6 py-2 sm:py-2.5 border-2 rounded-lg font-medium text-sm sm:text-base transition-all cursor-not-allowed opacity-50 self-start sm:flex-shrink-0"
-                          style={{ borderColor: '#6A8A82', color: '#6A8A82' }}
-                        >
-                          Activer
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="p-4 sm:p-6 bg-red-50 border-2 border-red-200 rounded-lg sm:rounded-xl">
-                      <div className="flex items-start space-x-3 sm:space-x-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center bg-red-200 flex-shrink-0">
-                          <Database className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-base sm:text-lg text-red-900">Zone de danger</h3>
-                          <p className="text-red-700 text-xs sm:text-sm mb-3 sm:mb-4">Actions irréversibles sur votre compte</p>
-                          <button
-                            onClick={() => setIsDeleteModalOpen(true)}
-                            className="px-4 sm:px-6 py-2 sm:py-2.5 bg-red-600 text-white rounded-lg font-medium text-sm sm:text-base hover:bg-red-700 transition-all"
-                          >
-                            Supprimer le compte
-                          </button>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               )}

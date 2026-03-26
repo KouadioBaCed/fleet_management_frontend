@@ -64,7 +64,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
       setLastRefresh(new Date());
     } catch (err: any) {
       console.error('Failed to fetch tracking data:', err);
-      setError(err.response?.data?.error || 'Erreur lors du chargement des donnees');
+      setError(err.response?.data?.error || 'Erreur lors du chargement des données');
     } finally {
       setIsLoading(false);
     }
@@ -149,7 +149,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
             </div>
             <div>
               <h2 className="text-xl font-bold" style={{ color: '#191919' }}>
-                Suivi en temps reel
+                Suivi en temps réel
               </h2>
               <p className="text-sm text-gray-500">
                 {trackingData?.mission.mission_code || mission?.mission_code}
@@ -182,7 +182,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
           {isLoading && !trackingData ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="w-10 h-10 animate-spin text-gray-400 mb-4" />
-              <p className="text-gray-500">Chargement des donnees...</p>
+              <p className="text-gray-500">Chargement des données...</p>
             </div>
           ) : error && !trackingData ? (
             <div className="bg-red-50 border-2 border-red-200 rounded-xl p-6 flex flex-col items-center">
@@ -212,7 +212,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                   <div className="flex-1">
                     <h3 className="font-bold" style={{ color: severityConfig.color }}>
                       {trackingData.delay_status.delay_type === 'start' && 'Retard au demarrage'}
-                      {trackingData.delay_status.delay_type === 'progress' && 'Mission en retard'}
+                      {trackingData.delay_status.delay_type === 'progress' && 'Mission accompli'}
                       {trackingData.delay_status.delay_type === 'arrival' && 'Retard a l\'arrivee'}
                     </h3>
                     <p className="text-sm" style={{ color: severityConfig.color }}>
@@ -285,7 +285,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                       </div>
                       {trackingData.schedule.actual_start && (
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Debut reel</span>
+                          <span className="text-sm text-gray-600">Début réel</span>
                           <span className="font-medium" style={{ color: '#6A8A82' }}>
                             {formatDateTime(trackingData.schedule.actual_start)}
                           </span>
@@ -386,7 +386,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                               <span className="text-xs text-gray-500">Statut</span>
                             </div>
                             <p className="font-bold text-lg" style={{ color: trackingData.current_position.is_moving ? '#6A8A82' : '#B87333' }}>
-                              {trackingData.current_position.is_moving ? 'En mouvement' : 'Arrete'}
+                              {trackingData.current_position.is_moving ? 'En cours' : 'À l\'arrêt'}
                             </p>
                           </div>
 

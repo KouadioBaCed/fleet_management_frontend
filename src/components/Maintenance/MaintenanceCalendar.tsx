@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Wrench, Car, Calendar, Clock, DollarSign, MapPin, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Wrench, Car, Calendar, Clock, Coins, MapPin, X } from 'lucide-react';
 import type { CalendarEvent } from '@/api/maintenance';
+import { useCurrency } from '@/store/settingsStore';
+import { getCurrencySymbol } from '@/api/settings';
 
 interface MaintenanceCalendarProps {
   events: CalendarEvent[];
@@ -16,6 +18,8 @@ const MONTHS = [
 ];
 
 export default function MaintenanceCalendar({ events, isLoading, onMonthChange, onEventClick }: MaintenanceCalendarProps) {
+  const currency = useCurrency();
+  const currencySymbol = getCurrencySymbol(currency);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
@@ -336,11 +340,11 @@ export default function MaintenanceCalendar({ events, isLoading, onMonthChange, 
                 </div>
 
                 <div className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 rounded-xl" style={{ backgroundColor: '#F8FAF9' }}>
-                  <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#B87333' }} />
+                  <Coins className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#B87333' }} />
                   <div className="min-w-0">
                     <p className="text-[10px] sm:text-xs text-gray-500">Coût estimé</p>
                     <p className="font-semibold text-sm sm:text-base" style={{ color: '#B87333' }}>
-                      {selectedEvent.total_cost.toFixed(2)} FCFA
+                      {selectedEvent.total_cost.toFixed(2)} {currencySymbol}
                     </p>
                   </div>
                 </div>

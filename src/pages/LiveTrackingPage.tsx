@@ -37,6 +37,7 @@ export default function LiveTrackingPage() {
   // WebSocket connection
   const { isConnected, lastMessage, sendMessage } = useWebSocket(WS_URL, {
     onMessage: (data) => {
+      setError(null);
       if (data.type === 'initial_data' || data.type === 'refresh_data') {
         setVehicles(data.vehicles || []);
         setLoading(false);
@@ -57,6 +58,9 @@ export default function LiveTrackingPage() {
       } else if (data.type === 'connection_established') {
         console.log('WebSocket connected:', data.message);
       }
+    },
+    onConnect: () => {
+      setError(null);
     },
     onError: () => {
       setError('Erreur de connexion WebSocket');
@@ -90,6 +94,7 @@ export default function LiveTrackingPage() {
         last_update: m.last_update,
         origin: m.origin,
         destination: m.destination,
+        checkpoints: m.checkpoints || [],
         scheduled_start: m.scheduled_start,
         scheduled_end: m.scheduled_end,
         actual_start: m.actual_start,
@@ -178,7 +183,7 @@ export default function LiveTrackingPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800">
-              Suivi GPS en temps reel
+              Suivi GPS en temps réel
             </h1>
             <p className="text-gray-500 mt-1 text-sm sm:text-base">Suivez vos véhicules en direct sur la carte</p>
           </div>
@@ -252,7 +257,7 @@ export default function LiveTrackingPage() {
                 <p className="stat-value" style={{ color: '#B87333' }}>
                   {vehicles.filter((v) => v.position?.is_moving).length}
                 </p>
-                <p className="stat-label">En mouvement</p>
+                <p className="stat-label">En cours</p>
               </div>
             </div>
           </div>
@@ -267,7 +272,7 @@ export default function LiveTrackingPage() {
                 <p className="stat-value text-gray-600">
                   {vehicles.filter((v) => v.position && !v.position.is_moving).length}
                 </p>
-                <p className="stat-label">A l'arret</p>
+                <p className="stat-label">À l'arrêt</p>
               </div>
             </div>
           </div>
@@ -282,7 +287,7 @@ export default function LiveTrackingPage() {
                 <p className="stat-value text-red-600">
                   {vehicles.filter((v) => v.delay_status.is_delayed).length}
                 </p>
-                <p className="stat-label">En retard</p>
+                <p className="stat-label">Arrivé</p>
               </div>
             </div>
           </div>
@@ -298,7 +303,7 @@ export default function LiveTrackingPage() {
                   <MapPin className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
                 </div>
                 <div>
-                  <span className="font-semibold text-sm sm:text-base text-gray-800">Carte en temps reel</span>
+                  <span className="font-semibold text-sm sm:text-base text-gray-800">Carte en temps réel</span>
                   <p className="text-[10px] sm:text-xs text-gray-400">Derniere MAJ: {formatLastUpdate(lastRefresh)}</p>
                 </div>
               </div>

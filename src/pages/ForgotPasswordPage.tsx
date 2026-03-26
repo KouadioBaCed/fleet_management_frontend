@@ -146,7 +146,7 @@ export default function ForgotPasswordPage() {
                     className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none transition-all text-sm text-gray-900"
                     onFocus={(e) => e.target.style.borderColor = '#6A8A82'}
                     onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
-                    placeholder="votre.email@exemple.com"
+                    placeholder="votre.email@rewisecar.com"
                     required
                     autoComplete="email"
                   />

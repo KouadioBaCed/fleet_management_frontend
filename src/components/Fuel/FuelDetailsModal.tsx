@@ -1,4 +1,4 @@
-import { X, Fuel, Car, DollarSign, MapPin, Gauge, Droplets, Calendar, CheckCircle, FileText } from 'lucide-react';
+import { X, Fuel, Car, Coins, MapPin, Gauge, Droplets, Calendar, CheckCircle, FileText } from 'lucide-react';
 import type { FuelRecord } from '@/api/fuel';
 import { useCurrency } from '@/store/settingsStore';
 import { getCurrencySymbol } from '@/api/settings';
@@ -94,7 +94,7 @@ export default function FuelDetailsModal({ isOpen, onClose, record }: FuelDetail
             {/* Unit Price */}
             <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl border-2" style={{ borderColor: '#E8ECEC' }}>
               <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: '#6A8A82' }} />
+                <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: '#6A8A82' }} />
                 <span className="text-[10px] sm:text-xs font-semibold text-gray-600">PRIX/L</span>
               </div>
               <p className="text-lg sm:text-2xl font-bold" style={{ color: '#6A8A82' }}>

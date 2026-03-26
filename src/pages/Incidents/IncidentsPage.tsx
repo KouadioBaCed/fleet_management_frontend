@@ -1,13 +1,12 @@
 import Layout from '@/components/Layout/Layout';
-import { AlertTriangle, Plus, Filter, MapPin, Clock, User, Camera, Car, MoreVertical, Search, LayoutGrid, List, CheckCircle, RefreshCw, Loader2, PieChart } from 'lucide-react';
+import { AlertTriangle, Filter, MapPin, Clock, User, Camera, Car, MoreVertical, Search, LayoutGrid, List, CheckCircle, Loader2, PieChart } from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import AddIncidentModal from '@/components/Incidents/AddIncidentModal';
 import IncidentDetailsModal from '@/components/Incidents/IncidentDetailsModal';
 import EditIncidentModal from '@/components/Incidents/EditIncidentModal';
 import DeleteIncidentModal from '@/components/Incidents/DeleteIncidentModal';
-import ResolveIncidentModal from '@/components/Incidents/ResolveIncidentModal';
 import IncidentAnalytics from '@/components/Incidents/IncidentAnalytics';
 import Pagination from '@/components/common/Pagination';
+import DropdownMenu from '@/components/common/DropdownMenu';
 import { incidentsApi, type Incident, type IncidentStats, type IncidentFilters } from '@/api/incidents';
 
 type ViewMode = 'grid' | 'list';
@@ -21,12 +20,10 @@ export default function IncidentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<IncidentFilters['incident_type']>('all');
   const [selectedSeverity, setSelectedSeverity] = useState<IncidentFilters['severity']>('all');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isTypeFilterOpen, setIsTypeFilterOpen] = useState(false);
@@ -108,16 +105,6 @@ export default function IncidentsPage() {
     return incidents.slice(startIndex, endIndex);
   }, [incidents, currentPage]);
 
-  const handleAddIncident = async (data: any) => {
-    try {
-      await incidentsApi.create(data);
-      setIsAddModalOpen(false);
-      fetchIncidents();
-    } catch (err) {
-      console.error('Error creating incident:', err);
-    }
-  };
-
   const handleViewDetails = async (incident: Incident) => {
     setOpenMenuId(null);
     try {
@@ -154,22 +141,6 @@ export default function IncidentsPage() {
     setOpenMenuId(null);
   };
 
-  const handleResolveClick = (incident: Incident) => {
-    setSelectedIncident(incident);
-    setIsResolveModalOpen(true);
-    setOpenMenuId(null);
-  };
-
-  const handleReopenClick = async (incident: Incident) => {
-    try {
-      await incidentsApi.reopen(incident.id);
-      fetchIncidents();
-      setOpenMenuId(null);
-    } catch (err) {
-      console.error('Error reopening incident:', err);
-    }
-  };
-
   const handleConfirmDelete = async () => {
     if (!selectedIncident) return;
     try {
@@ -194,18 +165,6 @@ export default function IncidentsPage() {
     }
   };
 
-  const handleResolveIncident = async (data: { resolution_notes: string; estimated_cost?: number }) => {
-    if (!selectedIncident) return;
-    try {
-      await incidentsApi.resolve(selectedIncident.id, data);
-      setIsResolveModalOpen(false);
-      setSelectedIncident(null);
-      fetchIncidents();
-    } catch (err) {
-      console.error('Error resolving incident:', err);
-    }
-  };
-
   // Get status for display
   const getIncidentStatus = (incident: Incident) => {
     return incident.is_resolved ? 'resolved' : 'unresolved';
@@ -227,13 +186,6 @@ export default function IncidentsPage() {
             </h1>
             <p className="text-gray-600 mt-1 text-sm sm:text-base">Gérez et suivez les incidents de votre flotte</p>
           </div>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center space-x-2 text-white transition-all duration-300 hover:-translate-y-0.5 w-full sm:w-auto justify-center btn-primary"
-          >
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>Déclarer un incident</span>
-          </button>
         </div>
 
         {/* Stats */}
@@ -558,59 +510,20 @@ export default function IncidentsPage() {
                         </div>
 
                         {/* Action Menu */}
-                        <div className="relative ml-2">
-                          <button
-                            onClick={() => setOpenMenuId(openMenuId === incident.id ? null : incident.id)}
-                            className="p-2 rounded-lg font-semibold transition-all hover:shadow-sm flex items-center justify-center"
-                            style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
-                          >
-                            <MoreVertical className="w-4 h-4" />
-                          </button>
-
-                          {openMenuId === incident.id && (
-                            <div className="absolute right-0 top-full mt-2 w-48 soft-dropdown z-10 overflow-hidden">
-                              <button
-                                onClick={() => handleViewDetails(incident)}
-                                className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-gray-50 transition-all"
-                                style={{ color: '#1f2937' }}
-                              >
-                                Détails
-                              </button>
-                              {!incident.is_resolved ? (
-                                <button
-                                  onClick={() => handleResolveClick(incident)}
-                                  className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-gray-50 transition-all flex items-center space-x-2"
-                                  style={{ color: '#6A8A82' }}
-                                >
-                                  <CheckCircle className="w-4 h-4" />
-                                  <span>Résoudre</span>
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => handleReopenClick(incident)}
-                                  className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-gray-50 transition-all flex items-center space-x-2"
-                                  style={{ color: '#B87333' }}
-                                >
-                                  <RefreshCw className="w-4 h-4" />
-                                  <span>Rouvrir</span>
-                                </button>
-                              )}
-                              <button
-                                onClick={() => handleEditIncident(incident)}
-                                className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-gray-50 transition-all"
-                                style={{ color: '#6A8A82' }}
-                              >
-                                Modifier
-                              </button>
-                              <button
-                                onClick={() => handleDeleteClick(incident)}
-                                className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-red-50 transition-all text-red-600"
-                              >
-                                Supprimer
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                        <DropdownMenu
+                          isOpen={openMenuId === incident.id}
+                          onToggle={() => setOpenMenuId(openMenuId === incident.id ? null : incident.id)}
+                          button={
+                            <button className="p-2 rounded-lg transition-all hover:bg-gray-100 ml-2" style={{ color: '#6A8A82' }}>
+                              <MoreVertical className="w-4 h-4" />
+                            </button>
+                          }
+                        >
+                          <button onClick={() => handleViewDetails(incident)} className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 text-gray-700">Détails</button>
+                          <button onClick={() => handleEditIncident(incident)} className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50" style={{ color: '#6A8A82' }}>Modifier</button>
+                          <div className="border-t border-gray-100 my-1" />
+                          <button onClick={() => handleDeleteClick(incident)} className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-red-50 text-red-600">Supprimer</button>
+                        </DropdownMenu>
                       </div>
 
                       {/* Badges */}
@@ -808,72 +721,20 @@ export default function IncidentsPage() {
 
                       {/* Action Button */}
                       <div className="flex justify-end">
-                        <div className="relative">
-                          <button
-                            onClick={() => setOpenMenuId(openMenuId === incident.id ? null : incident.id)}
-                            className="p-2 sm:p-2.5 rounded-lg font-semibold transition-all hover:shadow-sm flex-shrink-0 flex items-center justify-center"
-                            style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
-                            onMouseEnter={(e) => {
-                              if (openMenuId !== incident.id) {
-                                e.currentTarget.style.backgroundColor = '#6A8A82';
-                                e.currentTarget.style.color = '#ffffff';
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (openMenuId !== incident.id) {
-                                e.currentTarget.style.backgroundColor = '#E8EFED';
-                                e.currentTarget.style.color = '#6A8A82';
-                              }
-                            }}
-                          >
-                            <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
-                          </button>
-
-                          {/* Dropdown Menu */}
-                          {openMenuId === incident.id && (
-                            <div className="absolute right-0 bottom-full mb-2 w-48 soft-dropdown z-10 overflow-hidden">
-                              <button
-                                onClick={() => handleViewDetails(incident)}
-                                className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-gray-50 transition-all"
-                                style={{ color: '#1f2937' }}
-                              >
-                                Détails
-                              </button>
-                              {!incident.is_resolved ? (
-                                <button
-                                  onClick={() => handleResolveClick(incident)}
-                                  className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-gray-50 transition-all flex items-center space-x-2"
-                                  style={{ color: '#6A8A82' }}
-                                >
-                                  <CheckCircle className="w-4 h-4" />
-                                  <span>Résoudre</span>
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => handleReopenClick(incident)}
-                                  className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-gray-50 transition-all flex items-center space-x-2"
-                                  style={{ color: '#B87333' }}
-                                >
-                                  <RefreshCw className="w-4 h-4" />
-                                  <span>Rouvrir</span>
-                                </button>
-                              )}
-                              <button
-                                onClick={() => handleEditIncident(incident)}
-                                className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-gray-50 transition-all"
-                                style={{ color: '#6A8A82' }}
-                              >
-                                Modifier
-                              </button>
-                              <button
-                                onClick={() => handleDeleteClick(incident)}
-                                className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-red-50 transition-all text-red-600"
-                              >
-                                Supprimer
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                        <DropdownMenu
+                          isOpen={openMenuId === incident.id}
+                          onToggle={() => setOpenMenuId(openMenuId === incident.id ? null : incident.id)}
+                          button={
+                            <button className="p-2 sm:p-2.5 rounded-lg transition-all hover:bg-gray-100" style={{ color: '#6A8A82' }}>
+                              <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </button>
+                          }
+                        >
+                          <button onClick={() => handleViewDetails(incident)} className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 text-gray-700">Détails</button>
+                          <button onClick={() => handleEditIncident(incident)} className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50" style={{ color: '#6A8A82' }}>Modifier</button>
+                          <div className="border-t border-gray-100 my-1" />
+                          <button onClick={() => handleDeleteClick(incident)} className="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-red-50 text-red-600">Supprimer</button>
+                        </DropdownMenu>
                       </div>
                     </div>
                   </div>
@@ -895,13 +756,6 @@ export default function IncidentsPage() {
         )}
         </>
         )}
-
-        {/* Add Incident Modal */}
-        <AddIncidentModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onSubmit={handleAddIncident}
-        />
 
         {/* Incident Details Modal */}
         <IncidentDetailsModal
@@ -938,16 +792,6 @@ export default function IncidentsPage() {
           incident={selectedIncident}
         />
 
-        {/* Resolve Incident Modal */}
-        <ResolveIncidentModal
-          isOpen={isResolveModalOpen}
-          onClose={() => {
-            setIsResolveModalOpen(false);
-            setSelectedIncident(null);
-          }}
-          onConfirm={handleResolveIncident}
-          incident={selectedIncident}
-        />
       </div>
     </Layout>
   );

@@ -7,7 +7,6 @@ import {
   Coins,
   Fuel,
   Gauge,
-  Car,
   Calendar,
   ChevronDown,
   Loader2,
@@ -17,7 +16,8 @@ import {
   CheckCircle,
   PieChart,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Star
 } from 'lucide-react';
 import { analyticsApi, type FleetAnalytics, type AnalyticsPeriod, type VehicleConsumption } from '@/api/analytics';
 import { useCurrency } from '@/store/settingsStore';
@@ -39,24 +39,16 @@ const STATUS_CONFIG = {
   critical: { label: 'Critique', color: '#DC2626', bg: '#FEE2E2', icon: AlertTriangle },
 };
 
-const FUEL_TYPE_ICONS: Record<string, string> = {
-  gasoline: '⛽',
-  diesel: '🛢️',
-  electric: '⚡',
-  hybrid: '🔋',
-};
-
 export default function AnalyticsPage() {
   const currency = useCurrency();
   const currencySymbol = getCurrencySymbol(currency);
-
   const [data, setData] = useState<FleetAnalytics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState<AnalyticsPeriod>('month');
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
-  const [sortBy, setSortBy] = useState<'consumption' | 'cost' | 'efficiency'>('consumption');
+  const [trendView, setTrendView] = useState<'year' | 'month' | 'week'>('year');
 
   const periodRef = useRef<HTMLDivElement>(null);
 
@@ -92,16 +84,26 @@ export default function AnalyticsPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Sort vehicles
-  const sortedVehicles = data?.vehicle_consumption ? [...data.vehicle_consumption].sort((a, b) => {
-    if (sortBy === 'consumption') return (b.avg_consumption || 0) - (a.avg_consumption || 0);
-    if (sortBy === 'cost') return b.total_cost - a.total_cost;
-    return b.efficiency_ratio - a.efficiency_ratio;
-  }) : [];
+
+  // Filter trends based on trendView
+  const filteredTrends = (() => {
+    if (!data?.monthly_trends) return [];
+    const trends = data.monthly_trends;
+    if (trendView === 'year') return trends;
+    const now = new Date();
+    if (trendView === 'month') {
+      const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      return trends.filter(t => t.month === currentMonth);
+    }
+    // week: last 4 weeks = current month trends
+    const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
+    const weekMonth = `${fourWeeksAgo.getFullYear()}-${String(fourWeeksAgo.getMonth() + 1).padStart(2, '0')}`;
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    return trends.filter(t => t.month === currentMonth || t.month === weekMonth);
+  })();
 
   // Max values for charts
-  const maxTrendCost = Math.max(...(data?.monthly_trends?.map(t => t.total_cost) || [1]), 1);
-  const maxVehicleCost = Math.max(...(sortedVehicles.map(v => v.total_cost) || [1]), 1);
+  const maxTrendCost = Math.max(...(filteredTrends.map(t => t.total_cost) || [1]), 1);
 
   return (
     <Layout>
@@ -201,7 +203,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Main Stats Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4">
               {/* Total Cost */}
               <div className="stat-card">
                 <div className="stat-accent" style={{ backgroundColor: '#D97706' }} />
@@ -265,6 +267,23 @@ export default function AnalyticsPage() {
                 <p className="stat-label">Conso. Moyenne</p>
                 <p className="stat-value" style={{ color: '#7C3AED' }}>{data.summary.avg_consumption.value.toFixed(1)} <span className="text-xs sm:text-lg">L/100</span></p>
               </div>
+
+              {/* Incident Cost */}
+              <div className="stat-card">
+                <div className="stat-accent" style={{ backgroundColor: '#DC2626' }} />
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="stat-icon" style={{ backgroundColor: 'rgba(220,38,38,0.1)' }}>
+                    <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#DC2626' }} />
+                  </div>
+                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${data.summary.incident_cost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {data.summary.incident_cost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
+                    {Math.abs(data.summary.incident_cost.change).toFixed(1)}%
+                  </div>
+                </div>
+                <p className="stat-label">Autres coûts</p>
+                <p className="stat-value" style={{ color: '#DC2626' }}>{data.summary.incident_cost.value.toFixed(0)} {currencySymbol}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">{data.summary.incident_count} incident{data.summary.incident_count !== 1 ? 's' : ''} / {data.summary.incident_resolved} resolu{data.summary.incident_resolved !== 1 ? 's' : ''}</p>
+              </div>
             </div>
 
             {/* Cost Breakdown & Trends */}
@@ -307,6 +326,16 @@ export default function AnalyticsPage() {
                         strokeDasharray={`${data.cost_breakdown.by_category.maintenance.percentage * 2.51} 251`}
                         strokeDashoffset={`-${data.cost_breakdown.by_category.fuel.percentage * 2.51}`}
                       />
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        fill="none"
+                        stroke="#DC2626"
+                        strokeWidth="20"
+                        strokeDasharray={`${data.cost_breakdown.by_category.incidents.percentage * 2.51} 251`}
+                        strokeDashoffset={`-${(data.cost_breakdown.by_category.fuel.percentage + data.cost_breakdown.by_category.maintenance.percentage) * 2.51}`}
+                      />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
@@ -341,6 +370,16 @@ export default function AnalyticsPage() {
                       <p className="text-[10px] sm:text-xs text-gray-500">{data.cost_breakdown.by_category.maintenance.percentage.toFixed(1)}%</p>
                     </div>
                   </div>
+                  <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg sm:rounded-xl" style={{ backgroundColor: '#FEE2E2' }}>
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full" style={{ backgroundColor: '#DC2626' }} />
+                      <span className="font-medium text-xs sm:text-sm">Autres</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-xs sm:text-sm" style={{ color: '#DC2626' }}>{data.cost_breakdown.by_category.incidents.amount.toFixed(0)} {currencySymbol}</p>
+                      <p className="text-[10px] sm:text-xs text-gray-500">{data.cost_breakdown.by_category.incidents.percentage.toFixed(1)}%</p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Maintenance Detail */}
@@ -364,47 +403,88 @@ export default function AnalyticsPage() {
                     <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
                     <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Évolution des Coûts</h3>
                   </div>
-                  <div className="flex items-center space-x-3 sm:space-x-4 text-[10px] sm:text-xs">
-                    <div className="flex items-center space-x-1">
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded" style={{ backgroundColor: '#6A8A82' }} />
-                      <span className="text-gray-500">Carburant</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded" style={{ backgroundColor: '#B87333' }} />
-                      <span className="text-gray-500">Maintenance</span>
-                    </div>
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    {[
+                      { value: 'week' as const, label: 'Semaine' },
+                      { value: 'month' as const, label: 'Mois' },
+                      { value: 'year' as const, label: 'Année' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setTrendView(opt.value)}
+                        className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold transition-all ${
+                          trendView === opt.value ? 'shadow-sm' : 'hover:bg-gray-50'
+                        }`}
+                        style={{
+                          backgroundColor: trendView === opt.value ? '#6A8A82' : 'transparent',
+                          color: trendView === opt.value ? '#fff' : '#6B7280',
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                <div className="flex items-end space-x-1 sm:space-x-2 h-40 sm:h-56">
-                  {data.monthly_trends.map((trend, index) => {
-                    const fuelHeight = (trend.fuel_cost / maxTrendCost) * 100;
-                    const maintenanceHeight = (trend.maintenance_cost / maxTrendCost) * 100;
+                {/* Legend */}
+                <div className="flex items-center flex-wrap gap-3 sm:gap-4 text-[10px] sm:text-xs mb-3 sm:mb-4">
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded" style={{ backgroundColor: '#6A8A82' }} />
+                    <span className="text-gray-500">Carburant</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded" style={{ backgroundColor: '#B87333' }} />
+                    <span className="text-gray-500">Maintenance</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded" style={{ backgroundColor: '#DC2626' }} />
+                    <span className="text-gray-500">Autres</span>
+                  </div>
+                </div>
 
-                    return (
-                      <div key={index} className="flex-1 flex flex-col items-center">
-                        <div className="w-full flex flex-col items-center space-y-1" style={{ height: '120px' }}>
-                          <div className="flex-1 w-full flex items-end justify-center space-x-0.5 sm:space-x-1">
-                            <div
-                              className="w-2 sm:w-5 rounded-t-lg transition-all"
-                              style={{ height: `${Math.max(fuelHeight, 2)}%`, backgroundColor: '#6A8A82' }}
-                              title={`Carburant: ${trend.fuel_cost.toFixed(0)} ${currencySymbol}`}
-                            />
-                            <div
-                              className="w-2 sm:w-5 rounded-t-lg transition-all"
-                              style={{ height: `${Math.max(maintenanceHeight, 2)}%`, backgroundColor: '#B87333' }}
-                              title={`Maintenance: ${trend.maintenance_cost.toFixed(0)} ${currencySymbol}`}
-                            />
+                <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6">
+                  <div className="flex items-end gap-1 sm:gap-3 h-40 sm:h-56" style={{ minWidth: `${Math.max(filteredTrends.length * 70, 100)}px` }}>
+                    {filteredTrends.map((trend, index) => {
+                      const fuelHeight = (trend.fuel_cost / maxTrendCost) * 100;
+                      const maintenanceHeight = (trend.maintenance_cost / maxTrendCost) * 100;
+                      const incidentHeight = ((trend.incident_cost || 0) / maxTrendCost) * 100;
+
+                      return (
+                        <div key={index} className="flex-1 flex flex-col items-center" style={{ minWidth: '55px' }}>
+                          <div className="w-full flex flex-col items-center space-y-1" style={{ height: '120px' }}>
+                            <div className="flex-1 w-full flex items-end justify-center gap-0.5 sm:gap-1">
+                              <div
+                                className="w-2.5 sm:w-4 rounded-t-lg transition-all"
+                                style={{ height: `${Math.max(fuelHeight, 2)}%`, backgroundColor: '#6A8A82' }}
+                                title={`Carburant: ${trend.fuel_cost.toFixed(0)} ${currencySymbol}`}
+                              />
+                              <div
+                                className="w-2.5 sm:w-4 rounded-t-lg transition-all"
+                                style={{ height: `${Math.max(maintenanceHeight, 2)}%`, backgroundColor: '#B87333' }}
+                                title={`Maintenance: ${trend.maintenance_cost.toFixed(0)} ${currencySymbol}`}
+                              />
+                              <div
+                                className="w-2.5 sm:w-4 rounded-t-lg transition-all"
+                                style={{ height: `${Math.max(incidentHeight, 2)}%`, backgroundColor: '#DC2626' }}
+                                title={`Autres: ${(trend.incident_cost || 0).toFixed(0)} ${currencySymbol}`}
+                              />
+                            </div>
+                          </div>
+                          <div className="mt-1 sm:mt-2 text-center">
+                            <p className="text-[9px] sm:text-xs font-medium text-gray-500">{trend.label}</p>
+                            <p className="text-[9px] sm:text-xs font-semibold text-gray-800">{trend.total_cost.toFixed(0)}</p>
                           </div>
                         </div>
-                        <div className="mt-1 sm:mt-2 text-center">
-                          <p className="text-[9px] sm:text-xs font-medium text-gray-500">{trend.label.split(' ')[0].slice(0, 3)}</p>
-                          <p className="text-[9px] sm:text-xs font-semibold text-gray-800">{trend.total_cost.toFixed(0)}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
+
+                {filteredTrends.length === 0 && (
+                  <div className="text-center py-8 text-gray-400 text-sm">
+                    Aucune donnée pour cette période
+                  </div>
+                )}
               </div>
             </div>
 
@@ -486,230 +566,272 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            {/* Vehicle Consumption */}
+            {/* ===== ANALYSE DES CHAUFFEURS ===== */}
             <div className="data-table-container p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
-                <div className="flex items-center space-x-2">
-                  <Car className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-                  <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Consommation par Véhicule</h3>
-                </div>
-                <div className="flex items-center space-x-2 w-full sm:w-auto">
-                  <span className="text-xs sm:text-sm text-gray-500">Trier:</span>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="flex-1 sm:flex-none soft-input text-xs sm:text-sm font-medium text-gray-900"
-                  >
-                    <option value="consumption">Consommation</option>
-                    <option value="cost">Coût total</option>
-                    <option value="efficiency">Efficacité</option>
-                  </select>
-                </div>
+              <div className="flex items-center space-x-2 mb-4 sm:mb-6">
+                <Star className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
+                <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des Chauffeurs</h3>
               </div>
 
-              <div className="space-y-2 sm:space-y-3">
-                {sortedVehicles.length > 0 ? (
-                  sortedVehicles.map((vehicle, index) => {
-                    const statusConfig = STATUS_CONFIG[vehicle.status];
-                    const StatusIcon = statusConfig.icon;
-                    const costBarWidth = (vehicle.total_cost / maxVehicleCost) * 100;
+              {/* Driver Status Distribution */}
+              {data.driver_status_distribution && (
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                  {[
+                    { key: 'available', label: 'Disponible', color: '#059669', bg: '#D1FAE5' },
+                    { key: 'on_mission', label: 'En mission', color: '#B87333', bg: '#F5E8DD' },
+                    { key: 'on_break', label: 'En pause', color: '#D97706', bg: '#FEF3C7' },
+                    { key: 'off_duty', label: 'Hors service', color: '#DC2626', bg: '#FEE2E2' },
+                  ].map((s) => (
+                    <div key={s.key} className="text-center p-2 sm:p-3 rounded-xl" style={{ backgroundColor: s.bg }}>
+                      <p className="text-lg sm:text-2xl font-bold" style={{ color: s.color }}>
+                        {(data.driver_status_distribution as any)[s.key] || 0}
+                      </p>
+                      <p className="text-[9px] sm:text-xs font-medium" style={{ color: s.color }}>{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-                    return (
-                      <div
-                        key={vehicle.vehicle_id}
-                        className="data-card p-3 sm:p-4 transition-all"
-                      >
-                        {/* Mobile Layout */}
-                        <div className="sm:hidden">
-                          <div className="flex items-start gap-2 mb-2">
-                            <div
-                              className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
-                              style={{ backgroundColor: index < 3 ? '#B87333' : '#9CA3AF' }}
-                            >
-                              {index + 1}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="text-sm">{FUEL_TYPE_ICONS[vehicle.fuel_type] || '🚗'}</span>
-                                <span className="font-semibold text-xs text-gray-800">{vehicle.plate}</span>
-                                <div
-                                  className="px-1.5 py-0.5 rounded-full text-[9px] font-medium flex items-center space-x-0.5"
-                                  style={{ backgroundColor: statusConfig.bg, color: statusConfig.color }}
-                                >
-                                  <StatusIcon className="w-2.5 h-2.5" />
-                                  <span>{statusConfig.label}</span>
-                                </div>
+              {/* Driver Table */}
+              {data.driver_analytics && data.driver_analytics.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs sm:text-sm">
+                    <thead>
+                      <tr className="border-b-2" style={{ borderColor: '#E8ECEC' }}>
+                        <th className="text-left py-2 px-1 sm:px-2 font-semibold text-gray-600">Chauffeur</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600">Note</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600">Missions</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600 hidden sm:table-cell">Retards</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600">Incidents</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.driver_analytics.map((drv) => {
+                        const ratingColor = drv.rating >= 4 ? '#059669' : drv.rating >= 3 ? '#D97706' : '#DC2626';
+                        return (
+                          <tr key={drv.id} className="border-b" style={{ borderColor: '#F3F4F6' }}>
+                            <td className="py-2 px-1 sm:px-2">
+                              <p className="font-semibold text-gray-800 truncate max-w-[120px] sm:max-w-none">{drv.full_name}</p>
+                              <p className="text-[10px] text-gray-500">{drv.employee_id}</p>
+                            </td>
+                            <td className="text-center py-2 px-1">
+                              <div className="flex items-center justify-center gap-0.5">
+                                <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-400" />
+                                <span className="font-bold" style={{ color: ratingColor }}>{drv.rating.toFixed(1)}</span>
                               </div>
-                              <p className="text-[10px] text-gray-500 truncate">{vehicle.brand} {vehicle.model}</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-sm font-semibold text-gray-800">{vehicle.total_cost.toFixed(0)} {currencySymbol}</p>
-                            </div>
-                          </div>
+                            </td>
+                            <td className="text-center py-2 px-1">
+                              <span className="font-bold" style={{ color: '#6A8A82' }}>{drv.completed_missions}</span>
+                              <span className="text-gray-400">/{drv.total_missions}</span>
+                            </td>
+                            <td className="text-center py-2 px-1 hidden sm:table-cell">
+                              <span className={`font-bold ${drv.late_rate > 20 ? 'text-red-500' : drv.late_rate > 10 ? 'text-yellow-600' : 'text-green-600'}`}>
+                                {drv.late_count}
+                              </span>
+                              <span className="text-[10px] text-gray-400 ml-0.5">({drv.late_rate}%)</span>
+                            </td>
+                            <td className="text-center py-2 px-1">
+                              <span className={`font-bold ${drv.incident_count > 0 ? 'text-red-500' : 'text-green-600'}`}>
+                                {drv.incident_count}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-center py-6 text-gray-400 text-sm">Aucun chauffeur</p>
+              )}
+            </div>
 
-                          {/* Mobile Stats Grid */}
-                          <div className="grid grid-cols-4 gap-1.5 text-center">
-                            <div className="p-1.5 rounded-lg" style={{ backgroundColor: vehicle.avg_consumption > vehicle.expected_consumption ? '#FEE2E2' : '#D1FAE5' }}>
-                              <p className="text-[9px] text-gray-500">Conso.</p>
-                              <p className="font-bold text-[10px]" style={{ color: vehicle.avg_consumption > vehicle.expected_consumption ? '#DC2626' : '#059669' }}>
-                                {vehicle.avg_consumption.toFixed(1)}
-                              </p>
-                            </div>
-                            <div className="p-1.5 rounded-lg bg-gray-100">
-                              <p className="text-[9px] text-gray-500">Dist.</p>
-                              <p className="font-bold text-[10px] text-gray-700">{(vehicle.distance/1000).toFixed(0)}k</p>
-                            </div>
-                            <div className="p-1.5 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
-                              <p className="text-[9px] text-gray-500">Carb.</p>
-                              <p className="font-bold text-[10px]" style={{ color: '#6A8A82' }}>{vehicle.fuel_cost.toFixed(0)}</p>
-                            </div>
-                            <div className="p-1.5 rounded-lg" style={{ backgroundColor: '#F5E8DD' }}>
-                              <p className="text-[9px] text-gray-500">Maint.</p>
-                              <p className="font-bold text-[10px]" style={{ color: '#B87333' }}>{vehicle.maintenance_cost.toFixed(0)}</p>
-                            </div>
-                          </div>
+            {/* ===== ANALYSE DES VÉHICULES ===== */}
+            <div className="data-table-container p-4 sm:p-6">
+              <div className="flex items-center space-x-2 mb-4 sm:mb-6">
+                <Wrench className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
+                <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des Véhicules</h3>
+              </div>
 
-                          {/* Cost Bar */}
-                          <div className="h-1.5 rounded-full overflow-hidden mt-2" style={{ backgroundColor: '#E8ECEC' }}>
-                            <div
-                              className="h-full rounded-full transition-all"
-                              style={{
-                                width: `${costBarWidth}%`,
-                                background: `linear-gradient(to right, #6A8A82, #B87333)`
-                              }}
-                            />
-                          </div>
-                        </div>
+              {data.vehicle_analytics && data.vehicle_analytics.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs sm:text-sm">
+                    <thead>
+                      <tr className="border-b-2" style={{ borderColor: '#E8ECEC' }}>
+                        <th className="text-left py-2 px-1 sm:px-2 font-semibold text-gray-600">Véhicule</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600">km</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600 hidden sm:table-cell">Conso.</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600">Carburant</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600">Maint.</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600 hidden sm:table-cell">Pannes</th>
+                        <th className="text-center py-2 px-1 font-semibold text-gray-600">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.vehicle_analytics.map((veh) => (
+                        <tr key={veh.id} className="border-b" style={{ borderColor: '#F3F4F6' }}>
+                          <td className="py-2 px-1 sm:px-2">
+                            <p className="font-semibold text-gray-800">{veh.license_plate}</p>
+                            <p className="text-[10px] text-gray-500">{veh.brand} {veh.model}</p>
+                          </td>
+                          <td className="text-center py-2 px-1 font-medium text-gray-700">
+                            {(veh.current_mileage / 1000).toFixed(0)}k
+                          </td>
+                          <td className="text-center py-2 px-1 hidden sm:table-cell">
+                            <span className="font-medium" style={{ color: veh.avg_consumption > 12 ? '#DC2626' : '#059669' }}>
+                              {veh.avg_consumption.toFixed(1)}
+                            </span>
+                            <span className="text-[10px] text-gray-400 ml-0.5">L/100</span>
+                          </td>
+                          <td className="text-center py-2 px-1 font-medium" style={{ color: '#6A8A82' }}>
+                            {veh.fuel_cost.toFixed(0)} {currencySymbol}
+                          </td>
+                          <td className="text-center py-2 px-1">
+                            <span className="font-medium" style={{ color: '#B87333' }}>{veh.maintenance_cost.toFixed(0)}</span>
+                            <span className="text-[10px] text-gray-400 block">
+                              P:{veh.preventive_count} C:{veh.corrective_count}
+                            </span>
+                          </td>
+                          <td className="text-center py-2 px-1 hidden sm:table-cell">
+                            <span className={`font-bold ${veh.incident_count > 0 ? 'text-red-500' : 'text-green-600'}`}>
+                              {veh.incident_count}
+                            </span>
+                          </td>
+                          <td className="text-center py-2 px-1 font-bold text-gray-800">
+                            {veh.total_cost.toFixed(0)} {currencySymbol}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-center py-6 text-gray-400 text-sm">Aucun véhicule</p>
+              )}
+            </div>
 
-                        {/* Desktop Layout */}
-                        <div className="hidden sm:flex items-center gap-4">
-                          {/* Rank */}
-                          <div
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                            style={{ backgroundColor: index < 3 ? '#B87333' : '#9CA3AF' }}
-                          >
-                            {index + 1}
-                          </div>
+            {/* ===== ANALYSE DES INCIDENTS ===== */}
+            {data.incident_analytics && (
+              <div className="data-table-container p-4 sm:p-6">
+                <div className="flex items-center space-x-2 mb-4 sm:mb-6">
+                  <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#DC2626' }} />
+                  <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des Incidents</h3>
+                </div>
 
-                          {/* Vehicle Info */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <span className="text-lg">{FUEL_TYPE_ICONS[vehicle.fuel_type] || '🚗'}</span>
-                              <span className="font-semibold text-gray-800">{vehicle.plate}</span>
-                              <span className="text-sm text-gray-500">{vehicle.brand} {vehicle.model}</span>
-                              <div
-                                className="px-2 py-0.5 rounded-full text-xs font-medium flex items-center space-x-1"
-                                style={{ backgroundColor: statusConfig.bg, color: statusConfig.color }}
-                              >
-                                <StatusIcon className="w-3 h-3" />
-                                <span>{statusConfig.label}</span>
-                              </div>
-                            </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                  <div className="p-3 rounded-xl text-center" style={{ backgroundColor: '#FEE2E2' }}>
+                    <p className="text-xl sm:text-2xl font-bold text-red-600">{data.incident_analytics.total_count}</p>
+                    <p className="text-[10px] sm:text-xs text-red-500">Total incidents</p>
+                  </div>
+                  <div className="p-3 rounded-xl text-center" style={{ backgroundColor: '#D1FAE5' }}>
+                    <p className="text-xl sm:text-2xl font-bold text-green-600">{data.incident_analytics.resolved_count}</p>
+                    <p className="text-[10px] sm:text-xs text-green-600">Résolus</p>
+                  </div>
+                  <div className="p-3 rounded-xl text-center col-span-2 sm:col-span-1" style={{ backgroundColor: '#F5E8DD' }}>
+                    <p className="text-xl sm:text-2xl font-bold" style={{ color: '#B87333' }}>{data.incident_analytics.avg_cost.toFixed(0)} {currencySymbol}</p>
+                    <p className="text-[10px] sm:text-xs" style={{ color: '#B87333' }}>Coût moyen</p>
+                  </div>
+                </div>
 
-                            {/* Cost Bar */}
-                            <div className="h-2 rounded-full overflow-hidden mt-2" style={{ backgroundColor: '#E8ECEC' }}>
-                              <div
-                                className="h-full rounded-full transition-all"
-                                style={{
-                                  width: `${costBarWidth}%`,
-                                  background: `linear-gradient(to right, #6A8A82, #B87333)`
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          {/* Stats */}
-                          <div className="flex items-center gap-4 lg:gap-6 flex-shrink-0">
-                            <div className="text-center">
-                              <p className="text-xs text-gray-500">Conso.</p>
-                              <p className="font-bold text-sm" style={{ color: vehicle.avg_consumption > vehicle.expected_consumption ? '#DC2626' : '#059669' }}>
-                                {vehicle.avg_consumption.toFixed(1)} L/100
-                              </p>
-                            </div>
-                            <div className="text-center hidden lg:block">
-                              <p className="text-xs text-gray-500">Distance</p>
-                              <p className="font-bold text-sm text-gray-700">{vehicle.distance.toFixed(0)} km</p>
-                            </div>
-                            <div className="text-center">
-                              <p className="text-xs text-gray-500">Carburant</p>
-                              <p className="font-bold text-sm" style={{ color: '#6A8A82' }}>{vehicle.fuel_cost.toFixed(0)} {currencySymbol}</p>
-                            </div>
-                            <div className="text-center">
-                              <p className="text-xs text-gray-500">Maint.</p>
-                              <p className="font-bold text-sm" style={{ color: '#B87333' }}>{vehicle.maintenance_cost.toFixed(0)} {currencySymbol}</p>
-                            </div>
-                            <div className="text-center min-w-[70px]">
-                              <p className="text-xs text-gray-500">Total</p>
-                              <p className="text-lg font-semibold text-gray-800">{vehicle.total_cost.toFixed(0)} {currencySymbol}</p>
-                            </div>
-                          </div>
+                {/* Type breakdown */}
+                <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Par type</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                  {Object.entries(data.incident_analytics.by_type).map(([type, stats]) => {
+                    const typeLabels: Record<string, string> = {
+                      flat_tire: 'Pneu crevé', breakdown: 'Panne', accident: 'Accident',
+                      fuel_issue: 'Carburant', traffic_violation: 'Infraction', other: 'Autre',
+                    };
+                    return stats.count > 0 ? (
+                      <div key={type} className="p-2 sm:p-3 rounded-lg border" style={{ borderColor: '#E8ECEC' }}>
+                        <p className="font-semibold text-xs sm:text-sm text-gray-800">{typeLabels[type] || type}</p>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-sm sm:text-lg font-bold text-red-500">{stats.count}</span>
+                          <span className="text-[10px] sm:text-xs text-gray-500">{stats.avg_cost.toFixed(0)} {currencySymbol}/moy</span>
                         </div>
                       </div>
-                    );
-                  })
-                ) : (
-                  <div className="text-center py-8 sm:py-12 text-gray-500 text-sm">
-                    Aucune donnée de consommation disponible
-                  </div>
+                    ) : null;
+                  })}
+                </div>
+
+                {/* Locations */}
+                {data.incident_analytics.locations.length > 0 && (
+                  <>
+                    <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Localisations fréquentes</h4>
+                    <div className="space-y-1.5">
+                      {data.incident_analytics.locations.slice(0, 5).map((loc) => (
+                        <div key={loc.id} className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
+                          <MapPin className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
+                          <p className="text-xs text-gray-700 truncate flex-1">{loc.address || `${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}`}</p>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-medium flex-shrink-0">{loc.severity}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
-            </div>
+            )}
 
-            {/* Top Consumers & Most Costly */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              {/* Top Consumers */}
-              <div className="data-table-container p-4 sm:p-6">
-                <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-                  <Gauge className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#DC2626' }} />
-                  <h3 className="font-semibold text-sm sm:text-base text-gray-800">Plus Gros Consommateurs</h3>
-                </div>
-                <div className="space-y-2 sm:space-y-3">
-                  {data.top_consumers.map((vehicle, index) => (
-                    <div key={vehicle.vehicle_id} className="flex items-center justify-between p-2 sm:p-3 rounded-lg sm:rounded-xl bg-red-50">
-                      <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
-                        <span className="text-sm sm:text-lg">{FUEL_TYPE_ICONS[vehicle.fuel_type] || '🚗'}</span>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-xs sm:text-sm truncate">{vehicle.plate}</p>
-                          <p className="text-[10px] sm:text-xs text-gray-500 truncate">{vehicle.brand} {vehicle.model}</p>
+            {/* ===== ANALYSE FINANCIÈRE ===== */}
+            {data.financial && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                {/* Budget Summary */}
+                <div className="data-table-container p-4 sm:p-6">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
+                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Résumé Financier</h3>
+                  </div>
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Carburant', value: data.financial.budget_summary.fuel, color: '#6A8A82' },
+                      { label: 'Maintenance (pièces)', value: data.financial.budget_summary.maintenance_parts, color: '#B87333' },
+                      { label: 'Maintenance (main d\'oeuvre)', value: data.financial.budget_summary.maintenance_labor, color: '#D97706' },
+                      { label: 'Autres (incidents)', value: data.financial.budget_summary.incidents, color: '#DC2626' },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                          <span className="text-xs sm:text-sm text-gray-700">{item.label}</span>
                         </div>
+                        <span className="font-bold text-xs sm:text-sm" style={{ color: item.color }}>{item.value.toFixed(0)} {currencySymbol}</span>
                       </div>
-                      <div className="text-right flex-shrink-0 ml-2">
-                        <p className="font-semibold text-xs sm:text-base text-red-500">{vehicle.avg_consumption.toFixed(1)} L/100</p>
-                        <p className="text-[10px] sm:text-xs text-gray-500">{vehicle.total_quantity.toFixed(0)} L</p>
-                      </div>
+                    ))}
+                    <div className="border-t pt-2 mt-2 flex items-center justify-between" style={{ borderColor: '#E8ECEC' }}>
+                      <span className="font-bold text-sm text-gray-800">Total</span>
+                      <span className="font-bold text-base sm:text-lg text-gray-900">{data.financial.budget_summary.total.toFixed(0)} {currencySymbol}</span>
                     </div>
-                  ))}
+                  </div>
+                </div>
+
+                {/* Cost per Driver */}
+                <div className="data-table-container p-4 sm:p-6">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
+                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Coût par Chauffeur</h3>
+                  </div>
+                  {data.financial.cost_per_driver.length > 0 ? (
+                    <div className="space-y-2">
+                      {data.financial.cost_per_driver.map((drv, i) => {
+                        const maxCost = data.financial.cost_per_driver[0]?.total_cost || 1;
+                        const barWidth = (drv.total_cost / maxCost) * 100;
+                        return (
+                          <div key={drv.id}>
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">{drv.full_name}</span>
+                              <span className="text-xs sm:text-sm font-bold text-gray-800 ml-2 flex-shrink-0">{drv.total_cost.toFixed(0)} {currencySymbol}</span>
+                            </div>
+                            <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: '#E8ECEC' }}>
+                              <div className="h-full rounded-full" style={{ width: `${barWidth}%`, background: 'linear-gradient(to right, #6A8A82, #B87333)' }} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-center py-6 text-gray-400 text-sm">Aucune donnée</p>
+                  )}
                 </div>
               </div>
-
-              {/* Most Costly */}
-              <div className="data-table-container p-4 sm:p-6">
-                <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-                  <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
-                  <h3 className="font-semibold text-sm sm:text-base text-gray-800">Véhicules les Plus Coûteux</h3>
-                </div>
-                <div className="space-y-2 sm:space-y-3">
-                  {data.top_costly.map((vehicle, index) => (
-                    <div key={vehicle.vehicle_id} className="flex items-center justify-between p-2 sm:p-3 rounded-lg sm:rounded-xl" style={{ backgroundColor: '#F5E8DD' }}>
-                      <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
-                        <span className="text-sm sm:text-lg">{FUEL_TYPE_ICONS[vehicle.fuel_type] || '🚗'}</span>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-xs sm:text-sm truncate">{vehicle.plate}</p>
-                          <p className="text-[10px] sm:text-xs text-gray-500 truncate">{vehicle.brand} {vehicle.model}</p>
-                        </div>
-                      </div>
-                      <div className="text-right flex-shrink-0 ml-2">
-                        <p className="font-semibold text-xs sm:text-base" style={{ color: '#B87333' }}>{vehicle.total_cost.toFixed(0)} {currencySymbol}</p>
-                        <p className="text-[10px] sm:text-xs text-gray-500">
-                          <span className="hidden sm:inline">Carb: {vehicle.fuel_cost.toFixed(0)} | Maint: {vehicle.maintenance_cost.toFixed(0)}</span>
-                          <span className="sm:hidden">{vehicle.fuel_cost.toFixed(0)} + {vehicle.maintenance_cost.toFixed(0)}</span>
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            )}
           </>
         )}
       </div>

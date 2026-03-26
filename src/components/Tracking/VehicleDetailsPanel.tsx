@@ -145,7 +145,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                     color: isMoving ? '#6A8A82' : '#DC2626',
                   }}
                 >
-                  {isMoving ? 'En mouvement' : 'A l\'arret'}
+                  {isMoving ? 'En cours' : 'À l\'arrêt'}
                 </span>
                 <span
                   className="px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap"
@@ -362,7 +362,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                   <p className="font-semibold text-xs sm:text-sm" style={{ color: '#B87333' }}>{formatTime(vehicle.scheduled_end)}</p>
                 </div>
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-gray-100">
-                  <p className="text-[10px] sm:text-xs text-gray-500 mb-1">Depart reel</p>
+                  <p className="text-[10px] sm:text-xs text-gray-500 mb-1">Depart réel</p>
                   <p className="font-semibold text-xs sm:text-sm text-gray-700">{formatTime(vehicle.actual_start)}</p>
                 </div>
               </div>
@@ -372,7 +372,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                 <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
                   <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-red-700">Mission en retard</p>
+                    <p className="font-semibold text-red-700">Mission accompli</p>
                     <p className="text-sm text-red-600 mt-1">
                       Retard de {vehicle.delay_status.delay_minutes} minutes
                       {vehicle.delay_status.delay_type === 'arrival' && ' sur l\'heure d\'arrivée prévue'}

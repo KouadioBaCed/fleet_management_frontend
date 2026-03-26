@@ -1,5 +1,7 @@
-import { X, Wrench, Calendar, Car, DollarSign, Clock, MapPin, Gauge, FileText, CheckCircle } from 'lucide-react';
+import { X, Wrench, Calendar, Car, Coins, Clock, MapPin, Gauge, FileText, CheckCircle } from 'lucide-react';
 import type { Maintenance } from '@/api/maintenance';
+import { useCurrency } from '@/store/settingsStore';
+import { getCurrencySymbol } from '@/api/settings';
 
 interface MaintenanceDetailsModalProps {
   isOpen: boolean;
@@ -16,6 +18,9 @@ export default function MaintenanceDetailsModal({
   statusConfig,
   typeConfig
 }: MaintenanceDetailsModalProps) {
+  const currency = useCurrency();
+  const currencySymbol = getCurrencySymbol(currency);
+
   if (!isOpen || !maintenance) return null;
 
   const status = statusConfig[maintenance.status] || statusConfig.scheduled;
@@ -115,11 +120,11 @@ export default function MaintenanceDetailsModal({
             {/* Total Cost */}
             <div className="p-4 rounded-xl border-2" style={{ borderColor: '#E8ECEC' }}>
               <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-4 h-4" style={{ color: '#B87333' }} />
+                <Coins className="w-4 h-4" style={{ color: '#B87333' }} />
                 <span className="text-xs font-semibold text-gray-600">COÛT TOTAL</span>
               </div>
               <p className="text-lg font-bold" style={{ color: '#B87333' }}>
-                {Number(maintenance.total_cost).toFixed(2)} FCFA
+                {Number(maintenance.total_cost).toFixed(2)} {currencySymbol}
               </p>
             </div>
           </div>
@@ -132,13 +137,13 @@ export default function MaintenanceDetailsModal({
                 <div>
                   <p className="text-xs text-gray-500">Main d'œuvre</p>
                   <p className="text-base font-semibold" style={{ color: '#191919' }}>
-                    {Number(maintenance.labor_cost).toFixed(2)} FCFA
+                    {Number(maintenance.labor_cost).toFixed(2)} {currencySymbol}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Pièces détachées</p>
                   <p className="text-base font-semibold" style={{ color: '#191919' }}>
-                    {Number(maintenance.parts_cost).toFixed(2)} FCFA
+                    {Number(maintenance.parts_cost).toFixed(2)} {currencySymbol}
                   </p>
                 </div>
               </div>

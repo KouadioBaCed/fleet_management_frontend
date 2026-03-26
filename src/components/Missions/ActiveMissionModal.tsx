@@ -15,9 +15,10 @@ import {
   Car,
   FileText,
   CheckCircle,
+  StopCircle,
 } from 'lucide-react';
 import type { Mission } from '@/types';
-import { tripsApi, type Trip, type TripPause } from '@/api/trips';
+import { tripsApi, type Trip, type TripPause, type TripStop } from '@/api/trips';
 
 interface ActiveMissionModalProps {
   isOpen: boolean;
@@ -73,10 +74,14 @@ export default function ActiveMissionModal({
   // Pause History
   const [pauseHistory, setPauseHistory] = useState<TripPause[]>([]);
 
+  // Stop History
+  const [stopHistory, setStopHistory] = useState<TripStop[]>([]);
+
   useEffect(() => {
     if (isOpen && tripId) {
       loadTrip();
       loadPauseHistory();
+      loadStopHistory();
     }
   }, [isOpen, tripId]);
 
@@ -133,6 +138,16 @@ export default function ActiveMissionModal({
       setTotalPauseMinutes(data.total_pause_minutes);
     } catch (err) {
       console.error('Error loading pause history:', err);
+    }
+  };
+
+  const loadStopHistory = async () => {
+    if (!tripId) return;
+    try {
+      const data = await tripsApi.getStops(tripId);
+      setStopHistory(data.stops);
+    } catch (err) {
+      console.error('Error loading stop history:', err);
     }
   };
 
@@ -816,6 +831,53 @@ export default function ActiveMissionModal({
                           }`}
                         >
                           {pause.is_active ? 'En cours' : `${pause.duration_minutes} min`}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Stop History */}
+              {stopHistory.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <StopCircle className="w-4 h-4 text-red-500" />
+                    Justifications d'arrêts ({stopHistory.length})
+                  </h4>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {stopHistory.map((stop) => (
+                      <div
+                        key={stop.id}
+                        className="flex items-center justify-between p-3 rounded-lg bg-red-50/50 border border-red-100"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">
+                            {stop.reason === 'delivery' && '📦'}
+                            {stop.reason === 'client' && '👤'}
+                            {stop.reason === 'mechanical' && '⚠️'}
+                            {stop.reason === 'checkpoint' && '🛡️'}
+                            {stop.reason === 'other' && '📋'}
+                          </span>
+                          <div>
+                            <p className="text-sm font-medium" style={{ color: '#191919' }}>
+                              {stop.reason_display}
+                            </p>
+                            {stop.notes && (
+                              <p className="text-xs text-gray-500 italic">{stop.notes}</p>
+                            )}
+                            <p className="text-xs text-gray-400">
+                              {new Date(stop.stopped_at).toLocaleTimeString('fr-FR', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-sm font-semibold text-gray-600">
+                          {stop.duration_seconds >= 60
+                            ? `${Math.floor(stop.duration_seconds / 60)} min`
+                            : `${stop.duration_seconds} s`}
                         </span>
                       </div>
                     ))}

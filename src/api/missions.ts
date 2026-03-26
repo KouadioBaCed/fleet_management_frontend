@@ -4,6 +4,7 @@ import type { Mission } from '@/types';
 export interface MissionFilters {
   status?: 'pending' | 'assigned' | 'in_progress' | 'completed' | 'cancelled';
   priority?: 'low' | 'medium' | 'high' | 'urgent';
+  driver?: number;
   search?: string;
   ordering?: string;
 }
@@ -92,6 +93,15 @@ export interface MissionTrackingData {
   alerts_count: number;
 }
 
+export interface TrackingCheckpoint {
+  id: number;
+  order: number;
+  address: string;
+  latitude: number;
+  longitude: number;
+  notes: string;
+}
+
 export interface ActiveTrackingMission {
   id: number;
   mission_code: string;
@@ -110,6 +120,7 @@ export interface ActiveTrackingMission {
     latitude: number;
     longitude: number;
   };
+  checkpoints: TrackingCheckpoint[];
   current_position: GPSPosition | null;
   last_update: string | null;
   delay_status: DelayStatus;
@@ -130,6 +141,7 @@ export const missionsApi = {
 
     if (filters?.status) params.append('status', filters.status);
     if (filters?.priority) params.append('priority', filters.priority);
+    if (filters?.driver) params.append('driver', filters.driver.toString());
     if (filters?.search) params.append('search', filters.search);
     if (filters?.ordering) params.append('ordering', filters.ordering);
 

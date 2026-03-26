@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { X, AlertTriangle, MapPin, Clock, User, Car, FileText, Camera, Phone, Mail, ChevronLeft, ChevronRight, ExternalLink, Navigation, CheckCircle, DollarSign, Calendar } from 'lucide-react';
+import { X, AlertTriangle, MapPin, Clock, User, Car, FileText, Camera, Phone, Mail, ChevronLeft, ChevronRight, ExternalLink, Navigation, CheckCircle, Coins, Calendar, Download, File } from 'lucide-react';
 import type { Incident } from '@/api/incidents';
+import { useCurrency } from '@/store/settingsStore';
+import { getCurrencySymbol } from '@/api/settings';
 
 interface IncidentDetailsModalProps {
   isOpen: boolean;
@@ -19,6 +21,8 @@ export default function IncidentDetailsModal({
   typeConfig,
   statusConfig
 }: IncidentDetailsModalProps) {
+  const currency = useCurrency();
+  const currencySymbol = getCurrencySymbol(currency);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isPhotoFullscreen, setIsPhotoFullscreen] = useState(false);
 
@@ -451,19 +455,37 @@ export default function IncidentDetailsModal({
                         </div>
                       </div>
 
-                      {/* Cost */}
+                      {/* Repair Cost */}
+                      {incident.repair_cost && (
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className="w-10 h-10 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: 'white' }}
+                          >
+                            <Coins className="w-5 h-5" style={{ color: '#B87333' }} />
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gray-600">Coût de réparation</p>
+                            <p className="font-bold text-sm" style={{ color: '#B87333' }}>
+                              {parseFloat(incident.repair_cost).toLocaleString('fr-FR')} {currencySymbol}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Estimated Cost */}
                       {incident.estimated_cost && (
                         <div className="flex items-center space-x-3">
                           <div
                             className="w-10 h-10 rounded-lg flex items-center justify-center"
                             style={{ backgroundColor: 'white' }}
                           >
-                            <DollarSign className="w-5 h-5" style={{ color: '#B87333' }} />
+                            <Coins className="w-5 h-5" style={{ color: '#6B7280' }} />
                           </div>
                           <div>
-                            <p className="text-xs font-medium text-gray-600">Coût estimé</p>
-                            <p className="font-bold text-sm" style={{ color: '#B87333' }}>
-                              ${incident.estimated_cost}
+                            <p className="text-xs font-medium text-gray-600">Coût estimé (détail)</p>
+                            <p className="font-bold text-sm" style={{ color: '#6B7280' }}>
+                              {parseFloat(incident.estimated_cost).toLocaleString('fr-FR')} {currencySymbol}
                             </p>
                           </div>
                         </div>
@@ -480,6 +502,41 @@ export default function IncidentDetailsModal({
                           Notes de résolution
                         </p>
                         <p className="text-gray-700">{incident.resolution_notes}</p>
+                      </div>
+                    )}
+
+                    {/* Repair Invoice */}
+                    {incident.repair_invoice && (
+                      <div
+                        className="p-4 rounded-lg flex items-center justify-between"
+                        style={{ backgroundColor: 'white' }}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className="w-10 h-10 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: '#F5E8DD' }}
+                          >
+                            <File className="w-5 h-5" style={{ color: '#B87333' }} />
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                              Facture de réparation
+                            </p>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {incident.repair_invoice.split('/').pop()}
+                            </p>
+                          </div>
+                        </div>
+                        <a
+                          href={incident.repair_invoice}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:shadow-md"
+                          style={{ backgroundColor: '#B87333', color: 'white' }}
+                        >
+                          <Download className="w-4 h-4" />
+                          <span>Télécharger</span>
+                        </a>
                       </div>
                     )}
                   </div>

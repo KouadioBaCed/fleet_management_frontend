@@ -51,6 +51,11 @@ export interface Vehicle {
   notes?: string;
   last_maintenance_date?: string;
   next_maintenance_mileage?: number;
+  maintenance_frequency_km?: number;
+  maintenance_frequency_months?: number;
+  needs_maintenance?: boolean;
+  maintenance_overdue?: boolean;
+  next_maintenance_date?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -89,8 +94,29 @@ export interface Driver {
     brand: string;
     model: string;
   };
+  current_mission?: {
+    id: number;
+    mission_code: string;
+    title: string;
+    status: string;
+    priority: string;
+    origin_address: string;
+    destination_address: string;
+    scheduled_start: string;
+    scheduled_end: string | null;
+    actual_start: string | null;
+  };
   created_at?: string;
   updated_at?: string;
+}
+
+export interface MissionCheckpoint {
+  id?: number;
+  order: number;
+  address: string;
+  latitude: number;
+  longitude: number;
+  notes?: string;
 }
 
 export interface Mission {
@@ -115,9 +141,21 @@ export interface Mission {
   estimated_distance: number;
   responsible_person_name?: string;
   responsible_person_phone?: string;
+  actual_start?: string;
+  actual_end?: string;
+  checkpoints?: MissionCheckpoint[];
+  checkpoint_count?: number;
   notes?: string;
   created_at?: string;
   updated_at?: string;
+  active_trip?: {
+    id: number;
+    status: 'active' | 'paused';
+    start_time: string;
+    start_mileage: number;
+    start_fuel_level: number;
+    pause_duration_minutes: number;
+  };
 }
 
 export interface Trip {
@@ -180,6 +218,37 @@ export interface Incident {
   updated_at: string;
   vehicle_plate?: string;
   driver_name?: string;
+}
+
+export type VehicleDocumentType = 'carte_grise' | 'assurance' | 'visite_technique' | 'vignette';
+export type VehicleDocumentStatus = 'valid' | 'expiring_soon' | 'expired';
+
+export interface VehicleDocument {
+  id: number;
+  vehicle: number;
+  document_type: VehicleDocumentType;
+  document_number: string;
+  issue_date: string;
+  expiry_date: string;
+  file?: string;
+  file_name?: string;
+  status: VehicleDocumentStatus;
+  days_until_expiry?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface DocumentAlert {
+  id: number;
+  vehicle_id: number;
+  vehicle_plate: string;
+  vehicle_brand: string;
+  vehicle_model: string;
+  document_type: VehicleDocumentType;
+  document_number: string;
+  expiry_date: string;
+  days_until_expiry: number;
+  status: VehicleDocumentStatus;
 }
 
 export interface IncidentStats {

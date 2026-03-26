@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, CheckCircle, DollarSign, FileText, AlertTriangle, Loader2, Clock, Calendar, Wrench, Users, Package, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, CheckCircle, DollarSign, FileText, AlertTriangle, Loader2, Clock, Calendar, Wrench, Users, Package, Info, ChevronDown, ChevronUp, Upload, File, Trash2 } from 'lucide-react';
 import { useCurrency } from '@/store/settingsStore';
 import { getCurrencySymbol } from '@/api/settings';
 import type { Incident } from '@/api/incidents';
@@ -7,7 +7,7 @@ import type { Incident } from '@/api/incidents';
 interface ResolveIncidentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (data: { resolution_notes: string; estimated_cost?: number }) => Promise<void>;
+  onConfirm: (data: { resolution_notes: string; estimated_cost?: number; repair_cost?: number; repair_invoice?: File }) => Promise<void>;
   incident: Incident | null;
 }
 
@@ -31,10 +31,12 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
   const [resolutionNotes, setResolutionNotes] = useState('');
   const [showCostBreakdown, setShowCostBreakdown] = useState(false);
   const [costBreakdown, setCostBreakdown] = useState<CostBreakdown>({ parts: '', labor: '', other: '' });
+  const [repairCost, setRepairCost] = useState('');
+  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showTemplates, setShowTemplates] = useState(false);
-  const [errors, setErrors] = useState<{ notes?: string }>({});
+  const [errors, setErrors] = useState<{ notes?: string; repairCost?: string }>({});
 
   // Update current time every second
   useEffect(() => {
@@ -49,6 +51,8 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
       setResolutionNotes('');
       setCostBreakdown({ parts: '', labor: '', other: '' });
       setShowCostBreakdown(false);
+      setRepairCost('');
+      setInvoiceFile(null);
       setErrors({});
     }
   }, [isOpen]);
@@ -64,8 +68,15 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
 
   const handleSubmit = async () => {
     // Validation
+    const newErrors: { notes?: string; repairCost?: string } = {};
     if (!resolutionNotes.trim()) {
-      setErrors({ notes: 'Les notes de résolution sont requises' });
+      newErrors.notes = 'Les notes de résolution sont requises';
+    }
+    if (!repairCost.trim()) {
+      newErrors.repairCost = 'Le coût de réparation est requis';
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -75,9 +86,13 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
       await onConfirm({
         resolution_notes: resolutionNotes,
         estimated_cost: totalCost > 0 ? totalCost : undefined,
+        repair_cost: parseFloat(repairCost) || undefined,
+        repair_invoice: invoiceFile || undefined,
       });
       setResolutionNotes('');
       setCostBreakdown({ parts: '', labor: '', other: '' });
+      setRepairCost('');
+      setInvoiceFile(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -298,6 +313,93 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
             </p>
           </div>
 
+          {/* Repair Cost (required) */}
+          <div>
+            <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700 mb-2">
+              <DollarSign className="w-4 h-4" style={{ color: '#B87333' }} />
+              <span>Coût de réparation</span>
+              <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                value={repairCost}
+                onChange={(e) => {
+                  setRepairCost(e.target.value);
+                  if (errors.repairCost) setErrors((prev) => ({ ...prev, repairCost: undefined }));
+                }}
+                placeholder="Ex: 150000"
+                min="0"
+                step="0.01"
+                className={`w-full pl-12 pr-20 py-3 rounded-xl border-2 focus:ring-4 focus:ring-copper/10 outline-none transition-all text-sm text-gray-900 placeholder-gray-400 ${
+                  errors.repairCost ? 'border-red-400' : ''
+                }`}
+                style={{ borderColor: errors.repairCost ? '#f87171' : '#E8ECEC' }}
+                onFocus={(e) => { if (!errors.repairCost) e.target.style.borderColor = '#B87333'; }}
+                onBlur={(e) => { if (!errors.repairCost) e.target.style.borderColor = '#E8ECEC'; }}
+              />
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">{currencySymbol}</span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-medium">FCFA</span>
+            </div>
+            {errors.repairCost && (
+              <p className="text-red-500 text-xs mt-1 flex items-center space-x-1">
+                <AlertTriangle className="w-3 h-3" />
+                <span>{errors.repairCost}</span>
+              </p>
+            )}
+          </div>
+
+          {/* Invoice Upload */}
+          <div>
+            <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700 mb-2">
+              <Upload className="w-4 h-4" style={{ color: '#6A8A82' }} />
+              <span>Facture de réparation</span>
+              <span className="text-xs font-normal text-gray-400 ml-1">(PDF, image)</span>
+            </label>
+
+            {invoiceFile ? (
+              <div
+                className="flex items-center justify-between p-4 rounded-xl border-2"
+                style={{ borderColor: '#6A8A82', backgroundColor: '#F0F7F5' }}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'white' }}>
+                    <File className="w-5 h-5" style={{ color: '#6A8A82' }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 truncate max-w-[250px]">{invoiceFile.name}</p>
+                    <p className="text-xs text-gray-500">{(invoiceFile.size / 1024).toFixed(1)} Ko</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setInvoiceFile(null)}
+                  className="p-2 rounded-lg hover:bg-red-50 text-red-500 transition-colors"
+                  title="Supprimer"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <label
+                className="flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed cursor-pointer transition-all hover:border-sage hover:bg-gray-50"
+                style={{ borderColor: '#E8ECEC' }}
+              >
+                <Upload className="w-8 h-8 text-gray-300 mb-2" />
+                <p className="text-sm font-medium text-gray-600">Cliquez pour joindre la facture</p>
+                <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG — max 10 Mo</p>
+                <input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,.webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) setInvoiceFile(file);
+                  }}
+                />
+              </label>
+            )}
+          </div>
+
           {/* Cost Estimation */}
           <div>
             <button
@@ -475,7 +577,7 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
             </button>
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting || !resolutionNotes.trim()}
+              disabled={isSubmitting || !resolutionNotes.trim() || !repairCost.trim()}
               className="px-6 py-2.5 rounded-xl font-semibold text-white transition-all hover:shadow-lg flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: '#6A8A82' }}
             >

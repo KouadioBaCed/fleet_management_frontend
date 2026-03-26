@@ -173,7 +173,7 @@ export default function GoogleMapTracking({ vehicles }: GoogleMapTrackingProps) 
                     : { backgroundColor: '#fee2e2', color: '#dc2626' }
                   }
                 >
-                  {selectedVehicle.status === 'moving' ? 'En route' : 'Arrêté'}
+                  {selectedVehicle.status === 'moving' ? 'En cours' : 'À l\'arrêt'}
                 </div>
               </div>
 

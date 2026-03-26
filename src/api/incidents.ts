@@ -24,6 +24,8 @@ export interface Incident {
   resolved_by: number | null;
   resolved_by_name: string | null;
   estimated_cost: string | null;
+  repair_cost: string | null;
+  repair_invoice: string | null;
   reported_at: string;
   updated_at: string;
   vehicle_plate: string;
@@ -87,6 +89,8 @@ export interface CreateIncidentData {
 export interface ResolveIncidentData {
   resolution_notes?: string;
   estimated_cost?: number;
+  repair_cost?: number;
+  repair_invoice?: File;
 }
 
 export type IncidentAnalyticsPeriod = 'week' | 'month' | 'last_month' | '3_months' | '6_months' | 'year' | 'custom';
@@ -246,6 +250,15 @@ export const incidentsApi = {
   },
 
   resolve: async (id: number, data?: ResolveIncidentData): Promise<{ message: string; incident: Incident }> => {
+    if (data?.repair_invoice) {
+      const formData = new FormData();
+      if (data.resolution_notes) formData.append('resolution_notes', data.resolution_notes);
+      if (data.estimated_cost !== undefined) formData.append('estimated_cost', String(data.estimated_cost));
+      if (data.repair_cost !== undefined) formData.append('repair_cost', String(data.repair_cost));
+      formData.append('repair_invoice', data.repair_invoice);
+      const response = await apiClient.post(`/incidents/${id}/resolve/`, formData);
+      return response.data;
+    }
     const response = await apiClient.post(`/incidents/${id}/resolve/`, data || {});
     return response.data;
   },

@@ -425,7 +425,7 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
                       name="email"
                       value={formData.email}
                       onChange={handleEmailChange}
-                      placeholder="jean.dupont@example.com"
+                      placeholder="jean.dupont@rewisecar.com"
                       className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-sm sm:text-base text-gray-900 placeholder-gray-400 ${
                         errors.email ? 'border-red-500' : 'border-gray-200 focus:border-sage'
                       }`}

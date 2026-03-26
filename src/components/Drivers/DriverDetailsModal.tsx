@@ -24,8 +24,10 @@ import {
   HelpCircle,
   FileText,
 } from 'lucide-react';
-import type { Driver, Incident, IncidentStats } from '@/types';
+import type { Driver, Incident, IncidentStats, Mission } from '@/types';
 import { driversApi } from '@/api/drivers';
+import { missionsApi } from '@/api/missions';
+import { Navigation } from 'lucide-react';
 
 interface DriverDetailsModalProps {
   isOpen: boolean;
@@ -36,8 +38,8 @@ interface DriverDetailsModalProps {
 const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
   available: { label: 'Disponible', color: '#6A8A82', bgColor: '#E8EFED' },
   on_mission: { label: 'En mission', color: '#B87333', bgColor: '#F5E8DD' },
-  on_break: { label: 'En pause', color: '#6B7280', bgColor: '#F3F4F6' },
-  off_duty: { label: 'Hors service', color: '#DC2626', bgColor: '#FEE2E2' },
+  on_break: { label: 'Indisponible', color: '#DC2626', bgColor: '#FEE2E2' },
+  off_duty: { label: 'Indisponible', color: '#DC2626', bgColor: '#FEE2E2' },
 };
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
@@ -66,12 +68,15 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
   const [incidentFilter, setIncidentFilter] = useState<'all' | 'pending' | 'resolved'>('all');
   const [fullDriver, setFullDriver] = useState<Driver | null>(null);
   const [isLoadingDriver, setIsLoadingDriver] = useState(false);
+  const [driverMissions, setDriverMissions] = useState<Mission[]>([]);
+  const [isLoadingMissions, setIsLoadingMissions] = useState(false);
 
   useEffect(() => {
     if (isOpen && driver) {
       setActiveTab('general');
       loadFullDriver();
       loadIncidents();
+      loadDriverMissions();
     }
   }, [isOpen, driver]);
 
@@ -104,6 +109,21 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
       setIncidentStats(null);
     } finally {
       setIsLoadingIncidents(false);
+    }
+  };
+
+  const loadDriverMissions = async () => {
+    if (!driver) return;
+
+    setIsLoadingMissions(true);
+    try {
+      const response = await missionsApi.getAll({ driver: driver.id, ordering: '-scheduled_start' });
+      setDriverMissions(response.results);
+    } catch (error) {
+      console.error('Failed to load driver missions:', error);
+      setDriverMissions([]);
+    } finally {
+      setIsLoadingMissions(false);
     }
   };
 
@@ -365,6 +385,88 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                     </div>
                   )}
 
+                  {/* Current Mission */}
+                  {displayDriver.current_mission && (
+                    <div className="bg-gradient-to-r from-copper/10 to-sage/10 rounded-xl p-5 border-2" style={{ borderColor: '#F5E8DD' }}>
+                      <div className="flex items-center gap-2 mb-4">
+                        <Navigation className="w-5 h-5" style={{ color: '#B87333' }} />
+                        <h3 className="font-bold" style={{ color: '#191919' }}>Mission en cours</h3>
+                        <span
+                          className="ml-auto px-2.5 py-1 rounded-full text-xs font-semibold"
+                          style={{
+                            backgroundColor: displayDriver.current_mission.status === 'in_progress' ? '#F5E8DD' : '#E8ECEC',
+                            color: displayDriver.current_mission.status === 'in_progress' ? '#B87333' : '#6B7280',
+                          }}
+                        >
+                          {displayDriver.current_mission.status === 'in_progress' ? 'En cours' : 'En attente'}
+                        </span>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-bold text-lg" style={{ color: '#191919' }}>
+                              {displayDriver.current_mission.title}
+                            </p>
+                            <p className="text-sm text-gray-500 font-mono">{displayDriver.current_mission.mission_code}</p>
+                          </div>
+                        </div>
+
+                        {/* Route */}
+                        <div className="bg-white rounded-lg p-4 space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className="w-3 h-3 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: '#6A8A82' }} />
+                            <div>
+                              <p className="text-xs text-gray-500">Départ</p>
+                              <p className="text-sm font-semibold" style={{ color: '#191919' }}>
+                                {displayDriver.current_mission.origin_address}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="ml-1.5 border-l-2 border-dashed h-4" style={{ borderColor: '#E8ECEC' }} />
+                          <div className="flex items-start gap-3">
+                            <div className="w-3 h-3 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: '#B87333' }} />
+                            <div>
+                              <p className="text-xs text-gray-500">Destination</p>
+                              <p className="text-sm font-semibold" style={{ color: '#191919' }}>
+                                {displayDriver.current_mission.destination_address}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Schedule */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-white rounded-lg p-3">
+                            <p className="text-xs text-gray-500">Début prévu</p>
+                            <p className="text-sm font-semibold" style={{ color: '#191919' }}>
+                              {new Date(displayDriver.current_mission.scheduled_start).toLocaleString('fr-FR', {
+                                day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
+                              })}
+                            </p>
+                          </div>
+                          <div className="bg-white rounded-lg p-3">
+                            <p className="text-xs text-gray-500">
+                              {displayDriver.current_mission.actual_start ? 'Démarré à' : 'Fin prévue'}
+                            </p>
+                            <p className="text-sm font-semibold" style={{ color: '#191919' }}>
+                              {displayDriver.current_mission.actual_start
+                                ? new Date(displayDriver.current_mission.actual_start).toLocaleString('fr-FR', {
+                                    day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
+                                  })
+                                : displayDriver.current_mission.scheduled_end
+                                  ? new Date(displayDriver.current_mission.scheduled_end).toLocaleString('fr-FR', {
+                                      day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
+                                    })
+                                  : '-'
+                              }
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Notes */}
                   {displayDriver.notes && (
                     <div className="bg-gray-50 rounded-xl p-5 border-2" style={{ borderColor: '#E8ECEC' }}>
@@ -414,7 +516,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                       <p className="text-4xl font-bold" style={{ color: '#6A8A82' }}>
                         {displayDriver.total_trips}
                       </p>
-                      <p className="text-sm text-gray-500 mt-1">trajets effectués</p>
+                      <p className="text-sm text-gray-500 mt-1">missions effectuées</p>
                     </div>
                     <div className="w-16 h-16 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#E8EFED' }}>
                       <Route className="w-8 h-8" style={{ color: '#6A8A82' }} />
@@ -457,7 +559,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                       <p className="text-2xl font-bold text-green-600">
                         {incidentStats.resolved}
                       </p>
-                      <p className="text-xs text-gray-500">Resolus</p>
+                      <p className="text-xs text-gray-500">Résolus</p>
                     </div>
                     <div className="text-center p-3 bg-orange-50 rounded-lg">
                       <p className="text-2xl font-bold text-orange-600">
@@ -520,6 +622,101 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                   </div>
                 </div>
               </div>
+
+              {/* Missions Section */}
+              <div className="bg-gray-50 rounded-xl p-5 border-2" style={{ borderColor: '#E8ECEC' }}>
+                <div className="flex items-center gap-2 mb-4">
+                  <Navigation className="w-5 h-5" style={{ color: '#B87333' }} />
+                  <h3 className="font-bold" style={{ color: '#191919' }}>Missions</h3>
+                </div>
+
+                {isLoadingMissions && (
+                  <div className="flex items-center justify-center py-6">
+                    <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                  </div>
+                )}
+
+                {!isLoadingMissions && driverMissions.length === 0 && (
+                  <div className="text-center py-6">
+                    <Route className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                    <p className="text-sm text-gray-500">Aucune mission trouvée</p>
+                  </div>
+                )}
+
+                {!isLoadingMissions && driverMissions.length > 0 && (
+                  <div className="space-y-3">
+                    {/* Mission en cours */}
+                    {driverMissions.filter(m => m.status === 'in_progress').length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Mission en cours</p>
+                        {driverMissions.filter(m => m.status === 'in_progress').map(mission => (
+                          <div key={mission.id} className="bg-gradient-to-r from-copper/10 to-sage/10 rounded-lg p-4 border-2" style={{ borderColor: '#F5E8DD' }}>
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <p className="font-bold" style={{ color: '#191919' }}>{mission.title}</p>
+                                <p className="text-xs text-gray-500 font-mono">{mission.mission_code}</p>
+                              </div>
+                              <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}>
+                                En cours
+                              </span>
+                            </div>
+                            <div className="flex items-start gap-2 mt-3">
+                              <div className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: '#6A8A82' }} />
+                              <p className="text-xs text-gray-600">{mission.origin_address}</p>
+                            </div>
+                            <div className="ml-1 border-l-2 border-dashed h-3" style={{ borderColor: '#E8ECEC' }} />
+                            <div className="flex items-start gap-2">
+                              <div className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: '#B87333' }} />
+                              <p className="text-xs text-gray-600">{mission.destination_address}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Autres missions */}
+                    {driverMissions.filter(m => m.status !== 'in_progress').length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 mt-4">Autres missions</p>
+                        <div className="space-y-2 max-h-60 overflow-y-auto">
+                          {driverMissions.filter(m => m.status !== 'in_progress').map(mission => {
+                            const statusLabels: Record<string, { label: string; bg: string; color: string }> = {
+                              pending: { label: 'En attente', bg: '#FEF3C7', color: '#D97706' },
+                              assigned: { label: 'Assignée', bg: '#E8EFED', color: '#6A8A82' },
+                              completed: { label: 'Terminée', bg: '#D1FAE5', color: '#059669' },
+                              cancelled: { label: 'Annulée', bg: '#FEE2E2', color: '#DC2626' },
+                            };
+                            const missionStatus = statusLabels[mission.status] || statusLabels.pending;
+                            return (
+                              <div key={mission.id} className="bg-white rounded-lg p-3 border" style={{ borderColor: '#E8ECEC' }}>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold truncate" style={{ color: '#191919' }}>{mission.title}</p>
+                                    <p className="text-xs text-gray-500 font-mono">{mission.mission_code}</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                      <p className="text-xs text-gray-500">
+                                        {new Date(mission.scheduled_start).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                      </p>
+                                      <span className="text-xs text-gray-400">-</span>
+                                      <p className="text-xs text-gray-500 truncate">{mission.origin_address}</p>
+                                    </div>
+                                  </div>
+                                  <span
+                                    className="px-2 py-1 rounded-full text-[10px] font-semibold flex-shrink-0 ml-2"
+                                    style={{ backgroundColor: missionStatus.bg, color: missionStatus.color }}
+                                  >
+                                    {missionStatus.label}
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -532,7 +729,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                 {[
                   { id: 'all', label: 'Tous' },
                   { id: 'pending', label: 'En attente' },
-                  { id: 'resolved', label: 'Resolus' },
+                  { id: 'resolved', label: 'Résolus' },
                 ].map(filter => (
                   <button
                     key={filter.id}
@@ -569,7 +766,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                   <p className="text-gray-600 font-medium">Aucun incident</p>
                   <p className="text-sm text-gray-500 mt-1">
                     {incidentFilter === 'pending'
-                      ? 'Tous les incidents ont ete resolus'
+                      ? 'Tous les incidents ont ete résolus'
                       : incidentFilter === 'resolved'
                       ? 'Aucun incident resolu'
                       : 'Ce conducteur n\'a aucun incident enregistre'}
