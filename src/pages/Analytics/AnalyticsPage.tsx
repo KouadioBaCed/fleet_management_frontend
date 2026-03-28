@@ -103,6 +103,15 @@ export default function AnalyticsPage() {
   const totalQuantity = safeField(s?.total_quantity);
   const costPerKm = safeField(s?.cost_per_km);
 
+  // Safe accessors for cost breakdown
+  const defaultCategory = { amount: 0, percentage: 0, change: 0 };
+  const cb = data?.cost_breakdown;
+  const cbFuel = cb?.by_category?.fuel ?? defaultCategory;
+  const cbMaintenance = cb?.by_category?.maintenance ?? defaultCategory;
+  const cbIncidents = cb?.by_category?.incidents ?? defaultCategory;
+  const cbParts = cb?.maintenance_detail?.parts ?? 0;
+  const cbLabor = cb?.maintenance_detail?.labor ?? 0;
+
   // Filter trends based on trendView
   const filteredTrends = (() => {
     if (!data?.monthly_trends) return [];
@@ -346,7 +355,7 @@ export default function AnalyticsPage() {
                         fill="none"
                         stroke="#6A8A82"
                         strokeWidth="20"
-                        strokeDasharray={`${data.cost_breakdown.by_category.fuel.percentage * 2.51} 251`}
+                        strokeDasharray={`${cbFuel.percentage * 2.51} 251`}
                       />
                       <circle
                         cx="50"
@@ -355,8 +364,8 @@ export default function AnalyticsPage() {
                         fill="none"
                         stroke="#B87333"
                         strokeWidth="20"
-                        strokeDasharray={`${data.cost_breakdown.by_category.maintenance.percentage * 2.51} 251`}
-                        strokeDashoffset={`-${data.cost_breakdown.by_category.fuel.percentage * 2.51}`}
+                        strokeDasharray={`${cbMaintenance.percentage * 2.51} 251`}
+                        strokeDashoffset={`-${cbFuel.percentage * 2.51}`}
                       />
                       <circle
                         cx="50"
@@ -365,8 +374,8 @@ export default function AnalyticsPage() {
                         fill="none"
                         stroke="#DC2626"
                         strokeWidth="20"
-                        strokeDasharray={`${data.cost_breakdown.by_category.incidents.percentage * 2.51} 251`}
-                        strokeDashoffset={`-${(data.cost_breakdown.by_category.fuel.percentage + data.cost_breakdown.by_category.maintenance.percentage) * 2.51}`}
+                        strokeDasharray={`${cbIncidents.percentage * 2.51} 251`}
+                        strokeDashoffset={`-${(cbFuel.percentage + cbMaintenance.percentage) * 2.51}`}
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -388,8 +397,8 @@ export default function AnalyticsPage() {
                       <span className="font-medium text-xs sm:text-sm">Carburant</span>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-xs sm:text-sm" style={{ color: '#6A8A82' }}>{data.cost_breakdown.by_category.fuel.amount.toFixed(0)} {currencySymbol}</p>
-                      <p className="text-[10px] sm:text-xs text-gray-500">{data.cost_breakdown.by_category.fuel.percentage.toFixed(1)}%</p>
+                      <p className="font-bold text-xs sm:text-sm" style={{ color: '#6A8A82' }}>{cbFuel.amount.toFixed(0)} {currencySymbol}</p>
+                      <p className="text-[10px] sm:text-xs text-gray-500">{cbFuel.percentage.toFixed(1)}%</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg sm:rounded-xl" style={{ backgroundColor: '#F5E8DD' }}>
@@ -398,8 +407,8 @@ export default function AnalyticsPage() {
                       <span className="font-medium text-xs sm:text-sm">Maintenance</span>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-xs sm:text-sm" style={{ color: '#B87333' }}>{data.cost_breakdown.by_category.maintenance.amount.toFixed(0)} {currencySymbol}</p>
-                      <p className="text-[10px] sm:text-xs text-gray-500">{data.cost_breakdown.by_category.maintenance.percentage.toFixed(1)}%</p>
+                      <p className="font-bold text-xs sm:text-sm" style={{ color: '#B87333' }}>{cbMaintenance.amount.toFixed(0)} {currencySymbol}</p>
+                      <p className="text-[10px] sm:text-xs text-gray-500">{cbMaintenance.percentage.toFixed(1)}%</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg sm:rounded-xl" style={{ backgroundColor: '#FEE2E2' }}>
@@ -408,8 +417,8 @@ export default function AnalyticsPage() {
                       <span className="font-medium text-xs sm:text-sm">Autres</span>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-xs sm:text-sm" style={{ color: '#DC2626' }}>{data.cost_breakdown.by_category.incidents.amount.toFixed(0)} {currencySymbol}</p>
-                      <p className="text-[10px] sm:text-xs text-gray-500">{data.cost_breakdown.by_category.incidents.percentage.toFixed(1)}%</p>
+                      <p className="font-bold text-xs sm:text-sm" style={{ color: '#DC2626' }}>{cbIncidents.amount.toFixed(0)} {currencySymbol}</p>
+                      <p className="text-[10px] sm:text-xs text-gray-500">{cbIncidents.percentage.toFixed(1)}%</p>
                     </div>
                   </div>
                 </div>
@@ -419,11 +428,11 @@ export default function AnalyticsPage() {
                   <p className="text-[10px] sm:text-xs text-gray-500 font-medium mb-1.5 sm:mb-2">Détail Maintenance</p>
                   <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-600">Pièces</span>
-                    <span className="font-medium">{data.cost_breakdown.maintenance_detail.parts.toFixed(0)} {currencySymbol}</span>
+                    <span className="font-medium">{cbParts.toFixed(0)} {currencySymbol}</span>
                   </div>
                   <div className="flex justify-between text-xs sm:text-sm mt-1">
                     <span className="text-gray-600">Main d'œuvre</span>
-                    <span className="font-medium">{data.cost_breakdown.maintenance_detail.labor.toFixed(0)} {currencySymbol}</span>
+                    <span className="font-medium">{cbLabor.toFixed(0)} {currencySymbol}</span>
                   </div>
                 </div>
               </div>
