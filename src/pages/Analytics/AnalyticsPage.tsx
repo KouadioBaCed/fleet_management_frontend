@@ -44,6 +44,7 @@ export default function AnalyticsPage() {
   const currencySymbol = getCurrencySymbol(currency);
   const [data, setData] = useState<FleetAnalytics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<AnalyticsPeriod>('month');
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
@@ -54,6 +55,7 @@ export default function AnalyticsPage() {
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const response = await analyticsApi.getFleetAnalytics({
         period: selectedPeriod !== 'custom' ? selectedPeriod : undefined,
@@ -61,8 +63,9 @@ export default function AnalyticsPage() {
         end_date: selectedPeriod === 'custom' ? customEndDate : undefined,
       });
       setData(response);
-    } catch (error) {
-      console.error('Error fetching analytics:', error);
+    } catch (err) {
+      console.error('Error fetching analytics:', err);
+      setError('Impossible de charger les données analytiques. Veuillez réessayer.');
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +87,21 @@ export default function AnalyticsPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+
+  // Safe accessors for summary fields to prevent crashes on incomplete data
+  const s = data?.summary;
+  const safeField = (field: { value?: number; change?: number } | undefined) => ({
+    value: field?.value ?? 0,
+    change: field?.change ?? 0,
+  });
+  const totalCost = safeField(s?.total_cost);
+  const fuelCost = safeField(s?.fuel_cost);
+  const maintenanceCost = safeField(s?.maintenance_cost);
+  const avgConsumption = safeField(s?.avg_consumption);
+  const incidentCost = safeField(s?.incident_cost);
+  const totalDistance = safeField(s?.total_distance);
+  const totalQuantity = safeField(s?.total_quantity);
+  const costPerKm = safeField(s?.cost_per_km);
 
   // Filter trends based on trendView
   const filteredTrends = (() => {
@@ -194,8 +212,22 @@ export default function AnalyticsPage() {
           </div>
         )}
 
+        {/* Error */}
+        {!isLoading && error && (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <AlertTriangle className="w-12 h-12 text-red-400" />
+            <p className="text-gray-600 text-sm sm:text-base text-center">{error}</p>
+            <button
+              onClick={fetchData}
+              className="btn-primary px-4 py-2 text-sm font-medium"
+            >
+              Réessayer
+            </button>
+          </div>
+        )}
+
         {/* Content */}
-        {!isLoading && data && (
+        {!isLoading && data && !error && (
           <>
             {/* Period Info */}
             <div className="text-xs sm:text-sm text-gray-500">
@@ -211,13 +243,13 @@ export default function AnalyticsPage() {
                   <div className="stat-icon" style={{ backgroundColor: 'rgba(217,119,6,0.1)' }}>
                     <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#D97706' }} />
                   </div>
-                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${data.summary.total_cost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {data.summary.total_cost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
-                    {Math.abs(data.summary.total_cost.change).toFixed(1)}%
+                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${totalCost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {totalCost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
+                    {Math.abs(totalCost.change).toFixed(1)}%
                   </div>
                 </div>
                 <p className="stat-label">Coûts Totaux</p>
-                <p className="stat-value" style={{ color: '#D97706' }}>{data.summary.total_cost.value.toFixed(0)} {currencySymbol}</p>
+                <p className="stat-value" style={{ color: '#D97706' }}>{totalCost.value.toFixed(0)} {currencySymbol}</p>
               </div>
 
               {/* Fuel Cost */}
@@ -227,13 +259,13 @@ export default function AnalyticsPage() {
                   <div className="stat-icon" style={{ backgroundColor: 'rgba(5,150,105,0.1)' }}>
                     <Fuel className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#059669' }} />
                   </div>
-                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${data.summary.fuel_cost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {data.summary.fuel_cost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
-                    {Math.abs(data.summary.fuel_cost.change).toFixed(1)}%
+                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${fuelCost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {fuelCost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
+                    {Math.abs(fuelCost.change).toFixed(1)}%
                   </div>
                 </div>
                 <p className="stat-label">Carburant</p>
-                <p className="stat-value" style={{ color: '#059669' }}>{data.summary.fuel_cost.value.toFixed(0)} {currencySymbol}</p>
+                <p className="stat-value" style={{ color: '#059669' }}>{fuelCost.value.toFixed(0)} {currencySymbol}</p>
               </div>
 
               {/* Maintenance Cost */}
@@ -243,13 +275,13 @@ export default function AnalyticsPage() {
                   <div className="stat-icon" style={{ backgroundColor: 'rgba(37,99,235,0.1)' }}>
                     <Wrench className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#2563EB' }} />
                   </div>
-                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${data.summary.maintenance_cost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {data.summary.maintenance_cost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
-                    {Math.abs(data.summary.maintenance_cost.change).toFixed(1)}%
+                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${maintenanceCost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {maintenanceCost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
+                    {Math.abs(maintenanceCost.change).toFixed(1)}%
                   </div>
                 </div>
                 <p className="stat-label">Maintenance</p>
-                <p className="stat-value" style={{ color: '#2563EB' }}>{data.summary.maintenance_cost.value.toFixed(0)} {currencySymbol}</p>
+                <p className="stat-value" style={{ color: '#2563EB' }}>{maintenanceCost.value.toFixed(0)} {currencySymbol}</p>
               </div>
 
               {/* Avg Consumption */}
@@ -259,13 +291,13 @@ export default function AnalyticsPage() {
                   <div className="stat-icon" style={{ backgroundColor: 'rgba(124,58,237,0.1)' }}>
                     <Gauge className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#7C3AED' }} />
                   </div>
-                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${data.summary.avg_consumption.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {data.summary.avg_consumption.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
-                    {Math.abs(data.summary.avg_consumption.change).toFixed(1)}%
+                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${avgConsumption.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {avgConsumption.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
+                    {Math.abs(avgConsumption.change).toFixed(1)}%
                   </div>
                 </div>
                 <p className="stat-label">Conso. Moyenne</p>
-                <p className="stat-value" style={{ color: '#7C3AED' }}>{data.summary.avg_consumption.value.toFixed(1)} <span className="text-xs sm:text-lg">L/100</span></p>
+                <p className="stat-value" style={{ color: '#7C3AED' }}>{avgConsumption.value.toFixed(1)} <span className="text-xs sm:text-lg">L/100</span></p>
               </div>
 
               {/* Incident Cost */}
@@ -275,14 +307,14 @@ export default function AnalyticsPage() {
                   <div className="stat-icon" style={{ backgroundColor: 'rgba(220,38,38,0.1)' }}>
                     <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#DC2626' }} />
                   </div>
-                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${data.summary.incident_cost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {data.summary.incident_cost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
-                    {Math.abs(data.summary.incident_cost.change).toFixed(1)}%
+                  <div className={`flex items-center text-[10px] sm:text-sm font-medium ${incidentCost.change <= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {incidentCost.change <= 0 ? <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4" /> : <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />}
+                    {Math.abs(incidentCost.change).toFixed(1)}%
                   </div>
                 </div>
                 <p className="stat-label">Autres coûts</p>
-                <p className="stat-value" style={{ color: '#DC2626' }}>{data.summary.incident_cost.value.toFixed(0)} {currencySymbol}</p>
-                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">{data.summary.incident_count} incident{data.summary.incident_count !== 1 ? 's' : ''} / {data.summary.incident_resolved} resolu{data.summary.incident_resolved !== 1 ? 's' : ''}</p>
+                <p className="stat-value" style={{ color: '#DC2626' }}>{incidentCost.value.toFixed(0)} {currencySymbol}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">{s?.incident_count ?? 0} incident{(s?.incident_count ?? 0) !== 1 ? 's' : ''} / {s?.incident_resolved ?? 0} resolu{(s?.incident_resolved ?? 0) !== 1 ? 's' : ''}</p>
               </div>
             </div>
 
@@ -340,7 +372,7 @@ export default function AnalyticsPage() {
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
                         <p className="text-base sm:text-2xl font-semibold text-gray-800">
-                          {data.summary.total_cost.value.toFixed(0)}
+                          {totalCost.value.toFixed(0)}
                         </p>
                         <p className="text-[10px] sm:text-xs text-gray-500">{currencySymbol}</p>
                       </div>
@@ -496,7 +528,7 @@ export default function AnalyticsPage() {
                 <div className="space-y-2 sm:space-y-3">
                   {(['efficient', 'warning', 'critical'] as const).map((status) => {
                     const config = STATUS_CONFIG[status];
-                    const count = data.summary.efficiency_distribution[status];
+                    const count = s?.efficiency_distribution?.[status] ?? 0;
                     const Icon = config.icon;
                     return (
                       <div key={status} className="flex items-center justify-between">
@@ -521,13 +553,13 @@ export default function AnalyticsPage() {
                     <MapPin className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: '#6A8A82' }} />
                   </div>
                   <div>
-                    <p className="text-lg sm:text-2xl font-bold" style={{ color: '#6A8A82' }}>{data.summary.total_distance.value.toFixed(0)}</p>
+                    <p className="text-lg sm:text-2xl font-bold" style={{ color: '#6A8A82' }}>{totalDistance.value.toFixed(0)}</p>
                     <p className="text-[10px] sm:text-xs text-gray-500">km</p>
                   </div>
                 </div>
-                <div className={`mt-2 sm:mt-3 text-[10px] sm:text-sm font-medium flex items-center ${data.summary.total_distance.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {data.summary.total_distance.change >= 0 ? <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> : <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />}
-                  {data.summary.total_distance.change >= 0 ? '+' : ''}{data.summary.total_distance.change.toFixed(1)}%
+                <div className={`mt-2 sm:mt-3 text-[10px] sm:text-sm font-medium flex items-center ${totalDistance.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {totalDistance.change >= 0 ? <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> : <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />}
+                  {totalDistance.change >= 0 ? '+' : ''}{totalDistance.change.toFixed(1)}%
                 </div>
               </div>
 
@@ -538,13 +570,13 @@ export default function AnalyticsPage() {
                     <Fuel className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: '#B87333' }} />
                   </div>
                   <div>
-                    <p className="text-lg sm:text-2xl font-bold" style={{ color: '#B87333' }}>{data.summary.total_quantity.value.toFixed(0)}</p>
+                    <p className="text-lg sm:text-2xl font-bold" style={{ color: '#B87333' }}>{totalQuantity.value.toFixed(0)}</p>
                     <p className="text-[10px] sm:text-xs text-gray-500">litres</p>
                   </div>
                 </div>
-                <div className={`mt-2 sm:mt-3 text-[10px] sm:text-sm font-medium flex items-center ${data.summary.total_quantity.change <= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {data.summary.total_quantity.change <= 0 ? <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> : <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />}
-                  {data.summary.total_quantity.change >= 0 ? '+' : ''}{data.summary.total_quantity.change.toFixed(1)}%
+                <div className={`mt-2 sm:mt-3 text-[10px] sm:text-sm font-medium flex items-center ${totalQuantity.change <= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {totalQuantity.change <= 0 ? <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> : <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />}
+                  {totalQuantity.change >= 0 ? '+' : ''}{totalQuantity.change.toFixed(1)}%
                 </div>
               </div>
 
@@ -555,13 +587,13 @@ export default function AnalyticsPage() {
                     <Coins className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-lg sm:text-2xl font-bold text-blue-600">{data.summary.cost_per_km.value.toFixed(3)}</p>
+                    <p className="text-lg sm:text-2xl font-bold text-blue-600">{costPerKm.value.toFixed(3)}</p>
                     <p className="text-[10px] sm:text-xs text-gray-500">{currencySymbol}/km</p>
                   </div>
                 </div>
-                <div className={`mt-2 sm:mt-3 text-[10px] sm:text-sm font-medium flex items-center ${data.summary.cost_per_km.change <= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {data.summary.cost_per_km.change <= 0 ? <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> : <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />}
-                  {data.summary.cost_per_km.change >= 0 ? '+' : ''}{data.summary.cost_per_km.change.toFixed(1)}%
+                <div className={`mt-2 sm:mt-3 text-[10px] sm:text-sm font-medium flex items-center ${costPerKm.change <= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {costPerKm.change <= 0 ? <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> : <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />}
+                  {costPerKm.change >= 0 ? '+' : ''}{costPerKm.change.toFixed(1)}%
                 </div>
               </div>
             </div>

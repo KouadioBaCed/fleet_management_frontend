@@ -48,7 +48,7 @@ export default function EditDriverModal({ isOpen, onClose, onSubmit, driver }: E
     // License
     driver_license_number: '',
     driver_license_expiry: '',
-    driver_license_category: 'B',
+    driver_license_category: 'A',
 
     // Emergency contact
     emergency_contact_name: '',
@@ -92,7 +92,7 @@ export default function EditDriverModal({ isOpen, onClose, onSubmit, driver }: E
         status: fullDriver.status || 'available',
         driver_license_number: fullDriver.driver_license_number || '',
         driver_license_expiry: fullDriver.driver_license_expiry || '',
-        driver_license_category: fullDriver.driver_license_category || 'B',
+        driver_license_category: fullDriver.driver_license_category || 'A',
         emergency_contact_name: fullDriver.emergency_contact_name || '',
         emergency_contact_phone: fullDriver.emergency_contact_phone || '',
         hire_date: fullDriver.hire_date || '',
@@ -115,7 +115,7 @@ export default function EditDriverModal({ isOpen, onClose, onSubmit, driver }: E
         status: driver.status || 'available',
         driver_license_number: driver.driver_license_number || '',
         driver_license_expiry: driver.driver_license_expiry || '',
-        driver_license_category: driver.driver_license_category || 'B',
+        driver_license_category: driver.driver_license_category || 'A',
         emergency_contact_name: driver.emergency_contact_name || '',
         emergency_contact_phone: driver.emergency_contact_phone || '',
         hire_date: driver.hire_date || '',
@@ -549,11 +549,15 @@ export default function EditDriverModal({ isOpen, onClose, onSubmit, driver }: E
                       onChange={handleInputChange}
                       className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-copper focus:ring-4 focus:ring-copper/10 outline-none transition-all text-gray-900"
                     >
-                      <option value="A">A - Moto</option>
-                      <option value="B">B - Voiture</option>
-                      <option value="C">C - Poids lourd</option>
-                      <option value="D">D - Transport en commun</option>
-                      <option value="E">E - Remorque</option>
+                      <option value="A">A - Motos et tricycles (dès 16 ans)</option>
+                      <option value="B">B - Voitures et remorques ≤ 3 500 kg</option>
+                      <option value="C">C - Camions et tracteurs routiers</option>
+                      <option value="D">D - Autobus (transport de personnes)</option>
+                      <option value="E">E - Ensembles routiers (remorques &gt; 750 kg)</option>
+                      <option value="AB">AB - Motos + Voitures</option>
+                      <option value="BCDE">BCDE - Camionnettes, engins lourds (dès 21 ans)</option>
+                      <option value="ABCDE">ABCDE - Tous véhicules (dès 21 ans)</option>
+                      <option value="F">F - Véhicules adaptés (personnes handicapées)</option>
                     </select>
                   </div>
                 </div>

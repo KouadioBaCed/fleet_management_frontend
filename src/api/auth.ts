@@ -87,11 +87,7 @@ export const authApi = {
   },
 
   updateProfileWithPhoto: async (data: FormData) => {
-    const response = await apiClient.patch<User>('/auth/me/', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await apiClient.patch<User>('/auth/me/', data);
     return response.data;
   },
 

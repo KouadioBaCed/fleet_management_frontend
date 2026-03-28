@@ -144,10 +144,10 @@ export default function MissionsPage() {
   };
 
   const sortOptions = [
-    { value: '-scheduled_start', label: 'Date debut (recent)', icon: ArrowDown },
-    { value: 'scheduled_start', label: 'Date debut (ancien)', icon: ArrowUp },
-    { value: '-created_at', label: 'Date creation (recent)', icon: ArrowDown },
-    { value: 'created_at', label: 'Date creation (ancien)', icon: ArrowUp },
+    { value: '-scheduled_start', label: 'Date début (récent)', icon: ArrowDown },
+    { value: 'scheduled_start', label: 'Date début (ancien)', icon: ArrowUp },
+    { value: '-created_at', label: 'Date création (récent)', icon: ArrowDown },
+    { value: 'created_at', label: 'Date création (ancien)', icon: ArrowUp },
     { value: '-priority', label: 'Priorité (haute)', icon: ArrowDown },
     { value: 'priority', label: 'Priorité (basse)', icon: ArrowUp },
   ];

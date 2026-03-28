@@ -158,11 +158,7 @@ export const driversApi = {
   create: async (data: FormData | Partial<Driver>): Promise<Driver> => {
     if (data instanceof FormData) {
       // Send FormData directly - backend now accepts flat structure
-      const response = await apiClient.post<Driver>('/drivers/', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await apiClient.post<Driver>('/drivers/', data);
       return response.data;
     }
     const response = await apiClient.post<Driver>('/drivers/', data);
@@ -171,11 +167,7 @@ export const driversApi = {
 
   update: async (id: number, data: FormData | Partial<Driver>): Promise<Driver> => {
     if (data instanceof FormData) {
-      const response = await apiClient.put<Driver>(`/drivers/${id}/`, data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await apiClient.put<Driver>(`/drivers/${id}/`, data);
       return response.data;
     }
     const response = await apiClient.put<Driver>(`/drivers/${id}/`, data);

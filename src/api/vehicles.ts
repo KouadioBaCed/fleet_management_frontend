@@ -118,28 +118,17 @@ export const vehiclesApi = {
   },
 
   create: async (data: FormData | Partial<Vehicle>): Promise<Vehicle> => {
-    // Si c'est un FormData, on envoie avec multipart/form-data
     if (data instanceof FormData) {
-      const response = await apiClient.post<Vehicle>('/vehicles/', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await apiClient.post<Vehicle>('/vehicles/', data);
       return response.data;
     }
-    // Sinon, JSON classique
     const response = await apiClient.post<Vehicle>('/vehicles/', data);
     return response.data;
   },
 
   update: async (id: number, data: FormData | Partial<Vehicle>): Promise<Vehicle> => {
-    // Si c'est un FormData, on envoie avec multipart/form-data
     if (data instanceof FormData) {
-      const response = await apiClient.put<Vehicle>(`/vehicles/${id}/`, data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await apiClient.put<Vehicle>(`/vehicles/${id}/`, data);
       return response.data;
     }
     const response = await apiClient.put<Vehicle>(`/vehicles/${id}/`, data);
@@ -208,16 +197,12 @@ export const vehicleDocumentsApi = {
   },
 
   create: async (vehicleId: number, data: FormData): Promise<VehicleDocument> => {
-    const response = await apiClient.post<VehicleDocument>(`/vehicles/${vehicleId}/documents/`, data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const response = await apiClient.post<VehicleDocument>(`/vehicles/${vehicleId}/documents/`, data);
     return response.data;
   },
 
   update: async (vehicleId: number, documentId: number, data: FormData): Promise<VehicleDocument> => {
-    const response = await apiClient.put<VehicleDocument>(`/vehicles/${vehicleId}/documents/${documentId}/`, data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const response = await apiClient.put<VehicleDocument>(`/vehicles/${vehicleId}/documents/${documentId}/`, data);
     return response.data;
   },
 
