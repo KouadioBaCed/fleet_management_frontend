@@ -49,7 +49,7 @@ export default function AnalyticsPage() {
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
-  const [trendView, setTrendView] = useState<'year' | 'month' | 'week'>('year');
+  const [trendView, setTrendView] = useState<'12' | '6' | '3'>('12');
 
   const periodRef = useRef<HTMLDivElement>(null);
 
@@ -112,21 +112,12 @@ export default function AnalyticsPage() {
   const cbParts = cb?.maintenance_detail?.parts ?? 0;
   const cbLabor = cb?.maintenance_detail?.labor ?? 0;
 
-  // Filter trends based on trendView
+  // Filter trends based on trendView (last N months)
   const filteredTrends = (() => {
     if (!data?.monthly_trends) return [];
     const trends = data.monthly_trends;
-    if (trendView === 'year') return trends;
-    const now = new Date();
-    if (trendView === 'month') {
-      const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      return trends.filter(t => t.month === currentMonth);
-    }
-    // week: last 4 weeks = current month trends
-    const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
-    const weekMonth = `${fourWeeksAgo.getFullYear()}-${String(fourWeeksAgo.getMonth() + 1).padStart(2, '0')}`;
-    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    return trends.filter(t => t.month === currentMonth || t.month === weekMonth);
+    const count = parseInt(trendView);
+    return trends.slice(-count);
   })();
 
   // Max values for charts
@@ -446,9 +437,9 @@ export default function AnalyticsPage() {
                   </div>
                   <div className="flex items-center gap-1 sm:gap-2">
                     {[
-                      { value: 'week' as const, label: 'Semaine' },
-                      { value: 'month' as const, label: 'Mois' },
-                      { value: 'year' as const, label: 'Année' },
+                      { value: '3' as const, label: '3 mois' },
+                      { value: '6' as const, label: '6 mois' },
+                      { value: '12' as const, label: '12 mois' },
                     ].map((opt) => (
                       <button
                         key={opt.value}
