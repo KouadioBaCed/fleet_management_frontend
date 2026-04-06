@@ -142,7 +142,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
       ]);
       setAvailableVehicles(vehicles);
       // Ne garder que les chauffeurs qui ont un véhicule assigné
-      setAvailableDrivers(drivers.filter(d => d.current_vehicle));
+      setAvailableDrivers(drivers);
     } catch (error) {
       console.error('Error loading resources:', error);
     } finally {
