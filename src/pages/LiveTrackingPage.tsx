@@ -206,7 +206,7 @@ export default function LiveTrackingPage() {
               ) : (
                 <>
                   <WifiOff className="w-4 h-4" />
-                  <span className="hidden xs:inline">Mode periodique</span>
+                  <span className="hidden xs:inline">Mode périodique</span>
                 </>
               )}
             </div>

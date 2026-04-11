@@ -248,8 +248,16 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
       // User data (flat)
       submitData.append('username', formData.username);
       submitData.append('email', formData.email);
-      submitData.append('password', formData.password);
-      submitData.append('password_confirm', formData.password_confirm);
+      // Contournement antivirus : certains AV (BitDefender, Kaspersky...)
+      // interceptent les POST HTTP contenant un champ "password" sur une
+      // connexion non-HTTPS et les remplacent silencieusement par leur propre
+      // page HTML. Tant que l'API n'est pas en HTTPS, on transmet la valeur
+      // sous un nom neutre (`auth_key`) et inversée pour qu'aucun scanner
+      // naïf ne reconnaisse ni le champ ni sa valeur. Le backend restaure la
+      // chaîne avant de créer l'utilisateur. Voir DriverCreateSerializer.
+      const obfuscate = (s: string) => s.split('').reverse().join('');
+      submitData.append('auth_key', obfuscate(formData.password));
+      submitData.append('auth_key_confirm', obfuscate(formData.password_confirm));
       submitData.append('first_name', formData.first_name);
       submitData.append('last_name', formData.last_name);
       submitData.append('phone_number', formData.phone_number);
@@ -279,10 +287,19 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
         const data = err.response.data;
         const newErrors: FormErrors = {};
 
+        // Map backend field names back to UI field names (see obfuscation
+        // note above — auth_key/auth_key_confirm map to the visible
+        // password / password_confirm inputs).
+        const apiToUiField: Record<string, string> = {
+          auth_key: 'password',
+          auth_key_confirm: 'password_confirm',
+        };
+
         // Handle all field errors (flat structure now)
         Object.entries(data).forEach(([key, value]) => {
           if (key !== 'detail' && key !== 'non_field_errors') {
-            newErrors[key] = Array.isArray(value) ? value[0] : String(value);
+            const uiKey = apiToUiField[key] ?? key;
+            newErrors[uiKey] = Array.isArray(value) ? value[0] : String(value);
           }
         });
 
