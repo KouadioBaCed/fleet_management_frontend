@@ -213,7 +213,7 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between mb-1.5 ml-1">
                   <label className="block text-xs font-medium text-gray-500">Mot de passe</label>
                   <Link to="/forgot-password" className="text-[11px] font-medium transition-colors hover:underline" style={{ color: '#B87333' }}>
-                    Oublie ?
+                    Oublié ?
                   </Link>
                 </div>
                 <div
