@@ -292,7 +292,7 @@ export default function Sidebar({ isOpen, onClose, collapsed }: SidebarProps) {
                 <LogOut className="w-6 h-6 text-red-500" />
               </div>
               <h2 className="text-lg font-semibold text-gray-900">Deconnexion</h2>
-              <p className="text-sm text-gray-500 mt-1.5">Etes-vous sur de vouloir vous deconnecter ?</p>
+              <p className="text-sm text-gray-500 mt-1.5">Êtes-vous sur de vouloir vous déconnecter ?</p>
             </div>
             <div className="px-5 sm:px-6 py-4 flex flex-col-reverse sm:flex-row gap-2.5" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
               <button
