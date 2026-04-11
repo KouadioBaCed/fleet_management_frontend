@@ -34,8 +34,8 @@ export default function LiveTrackingPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
-  // WebSocket connection
-  const { isConnected, lastMessage, sendMessage } = useWebSocket(WS_URL, {
+  // WebSocket connection (real-time). Falls back to polling if it gives up.
+  const { isConnected, sendMessage } = useWebSocket(WS_URL, {
     onMessage: (data) => {
       setError(null);
       if (data.type === 'initial_data' || data.type === 'refresh_data') {
@@ -55,22 +55,17 @@ export default function LiveTrackingPage() {
               : v
           )
         );
-      } else if (data.type === 'connection_established') {
-        console.log('WebSocket connected:', data.message);
       }
     },
     onConnect: () => {
       setError(null);
     },
-    onError: () => {
-      setError('Erreur de connexion WebSocket');
-    },
   });
 
   // Fallback: Load data via API if WebSocket not connected
-  const loadDataFromApi = useCallback(async () => {
+  const loadDataFromApi = useCallback(async (showSpinner = true) => {
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
       const response = await missionsApi.getActiveTracking();
       const mappedVehicles: VehiclePosition[] = response.missions.map((m) => ({
         mission_id: m.id,
@@ -110,16 +105,21 @@ export default function LiveTrackingPage() {
     }
   }, []);
 
-  // Initial load if WebSocket takes too long
+  // Initial load via API immediately (don't wait for WebSocket).
+  // The WebSocket, when it works, will overwrite this with fresh data.
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (loading && vehicles.length === 0) {
-        loadDataFromApi();
-      }
-    }, 3000);
+    loadDataFromApi();
+  }, [loadDataFromApi]);
 
-    return () => clearTimeout(timeout);
-  }, [loading, vehicles.length, loadDataFromApi]);
+  // Polling fallback: when WebSocket isn't connected, refresh from API every 10s.
+  // Active both while WS is reconnecting and after it has given up.
+  useEffect(() => {
+    if (isConnected) return;
+    const interval = setInterval(() => {
+      loadDataFromApi(false);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isConnected, loadDataFromApi]);
 
   // Request refresh
   const handleRefresh = () => {
@@ -188,24 +188,25 @@ export default function LiveTrackingPage() {
             <p className="text-gray-500 mt-1 text-sm sm:text-base">Suivez vos véhicules en direct sur la carte</p>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            {/* Connection status */}
+            {/* Connection status: WS = temps reel, sinon polling API */}
             <div
               className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium ${
                 isConnected
                   ? 'bg-green-50 text-green-700 border border-green-200'
-                  : 'bg-red-50 text-red-600 border border-red-200'
+                  : 'bg-amber-50 text-amber-700 border border-amber-200'
               }`}
+              title={isConnected ? 'Mises a jour en temps reel' : 'Mises a jour toutes les 10s'}
             >
               {isConnected ? (
                 <>
                   <Wifi className="w-4 h-4" />
-                  <span className="hidden xs:inline">Connecte</span>
+                  <span className="hidden xs:inline">Temps reel</span>
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 </>
               ) : (
                 <>
                   <WifiOff className="w-4 h-4" />
-                  <span className="hidden xs:inline">Deconnecte</span>
+                  <span className="hidden xs:inline">Mode periodique</span>
                 </>
               )}
             </div>
@@ -319,7 +320,7 @@ export default function LiveTrackingPage() {
                 <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-4" />
                 <p className="text-red-600 font-medium mb-4 text-sm sm:text-base text-center">{error}</p>
                 <button
-                  onClick={loadDataFromApi}
+                  onClick={() => loadDataFromApi()}
                   className="btn-primary"
                 >
                   Reessayer
