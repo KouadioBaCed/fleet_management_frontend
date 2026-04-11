@@ -87,9 +87,30 @@ export default function VehiclesPage() {
       const response = await vehiclesApi.getAll(filters);
       setVehicles(response.results);
       setStats(response.stats);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch véhicles:', err);
-      setError('Impossible de charger les véhicules');
+      // Afficher le code HTTP et le detail backend si disponible, pour aider au diagnostic
+      const status = err?.response?.status;
+      const backendDetail = err?.response?.data?.detail || err?.response?.data?.error;
+      if (status === 500) {
+        setError(
+          backendDetail
+            ? `Erreur serveur (500) — ${backendDetail}`
+            : 'Erreur serveur (500). Verifiez les logs du backend ou contactez l\'administrateur.'
+        );
+      } else if (status === 401) {
+        setError('Session expiree. Reconnectez-vous.');
+      } else if (status === 403) {
+        setError('Acces refuse a cette ressource.');
+      } else if (err?.code === 'ERR_NETWORK') {
+        setError('Impossible de joindre le serveur. Verifiez votre connexion.');
+      } else {
+        setError(
+          status
+            ? `Impossible de charger les vehicules (HTTP ${status})`
+            : 'Impossible de charger les vehicules'
+        );
+      }
     } finally {
       setLoading(false);
     }
