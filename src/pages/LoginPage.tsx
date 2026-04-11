@@ -319,7 +319,7 @@ export default function LoginPage() {
                 className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:underline"
                 style={{ color: '#6A8A82' }}
               >
-                Creer un compte
+                Créer un compte
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
