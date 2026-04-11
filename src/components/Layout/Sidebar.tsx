@@ -291,7 +291,7 @@ export default function Sidebar({ isOpen, onClose, collapsed }: SidebarProps) {
               <div className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-red-50">
                 <LogOut className="w-6 h-6 text-red-500" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-900">Deconnexion</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Déconnexion</h2>
               <p className="text-sm text-gray-500 mt-1.5">Êtes-vous sur de vouloir vous déconnecter ?</p>
             </div>
             <div className="px-5 sm:px-6 py-4 flex flex-col-reverse sm:flex-row gap-2.5" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
@@ -310,12 +310,12 @@ export default function Sidebar({ isOpen, onClose, collapsed }: SidebarProps) {
                 {isLoggingOut ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Deconnexion...</span>
+                    <span>Déconnexion...</span>
                   </>
                 ) : (
                   <>
                     <LogOut className="w-4 h-4" />
-                    <span>Se deconnecter</span>
+                    <span>Se déconnecter</span>
                   </>
                 )}
               </button>
