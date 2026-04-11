@@ -1,8 +1,5 @@
 import { apiClient } from './client';
-import axios from 'axios';
 import type { User, Organization } from '@/types';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 interface LoginCredentials {
   username: string;
@@ -21,10 +18,7 @@ interface ProfileResponse {
 
 export const authApi = {
   login: async (credentials: LoginCredentials) => {
-    const response = await axios.post<LoginResponse>(
-      `${API_URL}/auth/login/`,
-      credentials
-    );
+    const response = await apiClient.post<LoginResponse>('/auth/login/', credentials);
     return response.data;
   },
 
@@ -45,25 +39,21 @@ export const authApi = {
     organization: Organization | null;
   }> => {
     // Step 1: Login to get tokens
-    const loginResponse = await axios.post<LoginResponse>(
-      `${API_URL}/auth/login/`,
-      credentials
-    );
+    const loginResponse = await apiClient.post<LoginResponse>('/auth/login/', credentials);
     const { access, refresh } = loginResponse.data;
 
     // Step 2: Fetch profile with the new token
-    const profileResponse = await axios.get<User>(
-      `${API_URL}/auth/me/`,
-      { headers: { Authorization: `Bearer ${access}` } }
-    );
+    const profileResponse = await apiClient.get<User>('/auth/me/', {
+      headers: { Authorization: `Bearer ${access}` },
+    });
     const user = profileResponse.data;
 
     // Step 3: Validate role (only admin and supervisor can access web)
     if (user.role === 'driver') {
       // Logout the token since driver can't access web
       try {
-        await axios.post(
-          `${API_URL}/auth/logout/`,
+        await apiClient.post(
+          '/auth/logout/',
           { refresh },
           { headers: { Authorization: `Bearer ${access}` } }
         );
@@ -112,13 +102,13 @@ export const authApi = {
     last_name: string;
     organization_name: string;
   }) => {
-    const response = await axios.post(`${API_URL}/auth/signup/initiate/`, data);
+    const response = await apiClient.post('/auth/signup/initiate/', data);
     return response.data;
   },
 
   // Signup - Verify token
   signupVerifyToken: async (token: string) => {
-    const response = await axios.post(`${API_URL}/auth/signup/verify-token/`, { token });
+    const response = await apiClient.post('/auth/signup/verify-token/', { token });
     return response.data;
   },
 
@@ -130,7 +120,7 @@ export const authApi = {
     password_confirm: string;
     phone_number?: string;
   }) => {
-    const response = await axios.post(`${API_URL}/auth/signup/complete/`, data);
+    const response = await apiClient.post('/auth/signup/complete/', data);
     return response.data;
   },
 };

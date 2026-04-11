@@ -141,7 +141,7 @@ export default function LoginPage() {
               }}
             >
               <h2 className="text-xl font-semibold text-gray-800">Connexion</h2>
-              <p className="text-[13px] text-gray-400 mt-1.5 font-light">Accedez a votre espace de gestion</p>
+              <p className="text-[13px] text-gray-400 mt-1.5 font-light">Accédez a votre espace de gestion</p>
             </div>
 
             {/* Inactivity message */}
@@ -150,7 +150,7 @@ export default function LoginPage() {
                 <Clock className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="text-xs font-medium text-blue-700">Session expiree</p>
-                  <p className="text-[11px] text-blue-500 mt-0.5">Deconnecte pour inactivite.</p>
+                  <p className="text-[11px] text-blue-500 mt-0.5">Déconnecte pour inactivite.</p>
                 </div>
                 <button type="button" onClick={() => setShowInactivityMessage(false)} className="text-blue-300 hover:text-blue-500 text-lg leading-none">&times;</button>
               </div>
