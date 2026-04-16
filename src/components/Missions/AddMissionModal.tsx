@@ -76,6 +76,11 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
   const [availableDrivers, setAvailableDrivers] = useState<Driver[]>([]);
   const [loadingResources, setLoadingResources] = useState(false);
 
+  // Inline vehicle-to-driver assignment
+  const [vehicleToAssign, setVehicleToAssign] = useState('');
+  const [assigningVehicle, setAssigningVehicle] = useState(false);
+  const [assignVehicleError, setAssignVehicleError] = useState<string | null>(null);
+
   // Address autocomplete state
   const [originSuggestions, setOriginSuggestions] = useState<AddressSuggestion[]>([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState<AddressSuggestion[]>([]);
@@ -172,18 +177,27 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  // Fonction de recherche d'adresse via OpenStreetMap Nominatim
+  // Fonction de recherche d'adresse via OpenStreetMap Nominatim — biaisée Côte d'Ivoire
+  // countrycodes=ci : filtre strictement les résultats au pays
+  // viewbox + bounded=1 : priorise la zone géographique ivoirienne pour plus de précision
   const searchAddress = async (query: string): Promise<AddressSuggestion[]> => {
     if (query.length < 3) return [];
 
     try {
+      // Bounding box Côte d'Ivoire : ~(-8.6, 10.7) Nord-Ouest → (-2.5, 4.3) Sud-Est
+      const params = new URLSearchParams({
+        format: 'json',
+        q: query,
+        limit: '8',
+        addressdetails: '1',
+        countrycodes: 'ci',
+        'accept-language': 'fr',
+        viewbox: '-8.6,10.7,-2.5,4.3',
+        bounded: '1',
+      });
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`,
-        {
-          headers: {
-            'Accept-Language': 'fr',
-          },
-        }
+        `https://nominatim.openstreetmap.org/search?${params.toString()}`,
+        { headers: { 'Accept-Language': 'fr' } }
       );
       const data = await response.json();
       return data.map((item: any) => ({
@@ -195,6 +209,93 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
     } catch (error) {
       console.error('Error searching address:', error);
       return [];
+    }
+  };
+
+  // Reverse geocoding : coordonnées → adresse lisible
+  const reverseGeocode = async (lat: number, lon: number): Promise<string> => {
+    try {
+      const params = new URLSearchParams({
+        format: 'json',
+        lat: String(lat),
+        lon: String(lon),
+        'accept-language': 'fr',
+        zoom: '18',
+        addressdetails: '1',
+      });
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?${params.toString()}`, {
+        headers: { 'Accept-Language': 'fr' },
+      });
+      const data = await res.json();
+      return data.display_name || `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+    } catch {
+      return `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+    }
+  };
+
+  // Géolocalisation du navigateur
+  const [isGeolocating, setIsGeolocating] = useState<'origin' | 'destination' | `cp_${number}` | null>(null);
+  const [geolocationError, setGeolocationError] = useState<string | null>(null);
+
+  const getCurrentPosition = (): Promise<GeolocationPosition> =>
+    new Promise((resolve, reject) => {
+      if (!('geolocation' in navigator)) {
+        reject(new Error("La géolocalisation n'est pas supportée par ce navigateur"));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      });
+    });
+
+  const useMyLocationFor = async (target: 'origin' | 'destination' | { checkpoint: number }) => {
+    const key = typeof target === 'string' ? target : (`cp_${target.checkpoint}` as const);
+    setIsGeolocating(key);
+    setGeolocationError(null);
+    try {
+      const pos = await getCurrentPosition();
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const address = await reverseGeocode(lat, lon);
+
+      if (target === 'origin') {
+        setFormData(prev => {
+          const updated = { ...prev, origin_address: address, origin_latitude: String(lat), origin_longitude: String(lon) };
+          setTimeout(() => recalculateDistance(updated), 0);
+          return updated;
+        });
+        setShowOriginSuggestions(false);
+      } else if (target === 'destination') {
+        setFormData(prev => {
+          const updated = { ...prev, destination_address: address, destination_latitude: String(lat), destination_longitude: String(lon) };
+          setTimeout(() => recalculateDistance(updated), 0);
+          return updated;
+        });
+        setShowDestinationSuggestions(false);
+      } else {
+        const idx = target.checkpoint;
+        setFormData(prev => {
+          const cps = [...prev.checkpoints];
+          cps[idx] = { ...cps[idx], address, latitude: String(lat), longitude: String(lon) };
+          const updated = { ...prev, checkpoints: cps };
+          setTimeout(() => recalculateDistance(updated), 0);
+          return updated;
+        });
+        setShowCheckpointSuggestions(prev => ({ ...prev, [idx]: false }));
+      }
+    } catch (err: any) {
+      const msg = err?.code === 1
+        ? "Permission de géolocalisation refusée. Autorisez l'accès dans votre navigateur."
+        : err?.code === 2
+        ? 'Position indisponible. Vérifiez votre connexion / GPS.'
+        : err?.code === 3
+        ? "Délai de géolocalisation dépassé."
+        : err?.message || 'Impossible de récupérer votre position.';
+      setGeolocationError(msg);
+    } finally {
+      setIsGeolocating(null);
     }
   };
 
@@ -387,6 +488,24 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
     });
   };
 
+  const handleAssignVehicleToDriver = async () => {
+    const driverId = parseInt(formData.driver);
+    const vehicleId = parseInt(vehicleToAssign);
+    if (!driverId || !vehicleId) return;
+    setAssigningVehicle(true);
+    setAssignVehicleError(null);
+    try {
+      await vehiclesApi.assignDriver(vehicleId, driverId);
+      await loadResources();
+      setFormData(prev => ({ ...prev, vehicle: String(vehicleId) }));
+      setVehicleToAssign('');
+    } catch (err: any) {
+      setAssignVehicleError(err.response?.data?.error || err.response?.data?.detail || "Erreur lors de l'assignation du véhicule");
+    } finally {
+      setAssigningVehicle(false);
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -560,6 +679,9 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
       responsible_person_phone: '',
       notes: '',
     });
+    setVehicleToAssign('');
+    setAssignVehicleError(null);
+    setAssigningVehicle(false);
     onClose();
   };
 
@@ -678,6 +800,69 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                   {renderError('driver')}
                 </div>
 
+                {/* Aucun véhicule — permettre assignation inline */}
+                {selectedDriver && !selectedDriver.current_vehicle && (
+                  <div className="bg-gradient-to-br from-red-50 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#FEE2E2' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: '#DC2626' }}>
+                        <AlertTriangle className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Aucun véhicule assigné</h4>
+                        <p className="text-xs text-gray-500">Attribuez un véhicule à ce chauffeur pour continuer</p>
+                      </div>
+                    </div>
+                    {availableVehicles.length === 0 ? (
+                      <div className="p-4 rounded-lg flex items-center gap-3" style={{ backgroundColor: '#FEF3C7' }}>
+                        <AlertTriangle className="w-5 h-5" style={{ color: '#D97706' }} />
+                        <p className="text-sm" style={{ color: '#92400E' }}>Aucun véhicule disponible pour le moment</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <select
+                          value={vehicleToAssign}
+                          onChange={(e) => setVehicleToAssign(e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl border-2 focus:outline-none bg-white"
+                          style={{ borderColor: '#E8ECEC' }}
+                          disabled={assigningVehicle}
+                        >
+                          <option value="">-- Sélectionner un véhicule --</option>
+                          {availableVehicles.map(v => (
+                            <option key={v.id} value={v.id}>
+                              {v.brand} {v.model} — {v.license_plate}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={handleAssignVehicleToDriver}
+                          disabled={!vehicleToAssign || assigningVehicle}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                          style={{ backgroundColor: '#6A8A82' }}
+                        >
+                          {assigningVehicle ? (
+                            <>
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                              <span>Assignation en cours...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-5 h-5" />
+                              <span>Assigner ce véhicule au chauffeur</span>
+                            </>
+                          )}
+                        </button>
+                        {assignVehicleError && (
+                          <div className="p-3 rounded-lg flex items-center gap-2" style={{ backgroundColor: '#FEE2E2' }}>
+                            <AlertCircle className="w-4 h-4" style={{ color: '#DC2626' }} />
+                            <p className="text-sm" style={{ color: '#991B1B' }}>{assignVehicleError}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Véhicule assigné automatiquement */}
                 {selectedDriver?.current_vehicle && (
                   <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
@@ -788,8 +973,21 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
                 Itinéraire
               </h3>
-              <p className="text-gray-600">Recherchez les adresses et les coordonnées seront remplies automatiquement</p>
+              <p className="text-gray-600">Recherchez les adresses (résultats en Côte d'Ivoire) ou utilisez votre position actuelle</p>
             </div>
+
+            {geolocationError && (
+              <div className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: '#FEE2E2' }}>
+                <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#DC2626' }} />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold" style={{ color: '#991B1B' }}>Géolocalisation impossible</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#991B1B' }}>{geolocationError}</p>
+                </div>
+                <button type="button" onClick={() => setGeolocationError(null)} className="flex-shrink-0">
+                  <X className="w-4 h-4" style={{ color: '#991B1B' }} />
+                </button>
+              </div>
+            )}
 
             {/* Origine */}
             <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
@@ -801,17 +999,34 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
               </div>
               <div className="space-y-4">
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    <Search className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
-                    Rechercher l'adresse d'origine *
-                  </label>
+                  <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+                    <label className="block text-sm font-semibold" style={{ color: '#191919' }}>
+                      <Search className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
+                      Rechercher l'adresse d'origine *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => useMyLocationFor('origin')}
+                      disabled={isGeolocating !== null}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:shadow-sm disabled:opacity-50"
+                      style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
+                      title="Utiliser ma position actuelle"
+                    >
+                      {isGeolocating === 'origin' ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Navigation className="w-3.5 h-3.5" />
+                      )}
+                      <span>Ma position</span>
+                    </button>
+                  </div>
                   <div className="relative">
                     <input
                       type="text"
                       value={formData.origin_address}
                       onChange={(e) => handleOriginSearch(e.target.value)}
                       onFocus={() => originSuggestions.length > 0 && setShowOriginSuggestions(true)}
-                      placeholder="Tapez une adresse (ex: Gombe, Kinshasa)"
+                      placeholder="Tapez une adresse (ex: Cocody, Abidjan)"
                       className={`w-full px-4 py-3 pr-10 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
                         errors.origin_address ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
                       }`}
@@ -883,17 +1098,34 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                   </div>
                   <div className="space-y-4">
                     <div className="relative" onClick={(e) => e.stopPropagation()}>
-                      <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                        <Search className="w-4 h-4 inline mr-2" style={{ color: '#D4956B' }} />
-                        Rechercher l'adresse *
-                      </label>
+                      <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+                        <label className="block text-sm font-semibold" style={{ color: '#191919' }}>
+                          <Search className="w-4 h-4 inline mr-2" style={{ color: '#D4956B' }} />
+                          Rechercher l'adresse *
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => useMyLocationFor({ checkpoint: index })}
+                          disabled={isGeolocating !== null}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:shadow-sm disabled:opacity-50"
+                          style={{ backgroundColor: '#FEF3C7', color: '#D4956B' }}
+                          title="Utiliser ma position actuelle"
+                        >
+                          {isGeolocating === `cp_${index}` ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Navigation className="w-3.5 h-3.5" />
+                          )}
+                          <span>Ma position</span>
+                        </button>
+                      </div>
                       <div className="relative">
                         <input
                           type="text"
                           value={cp.address}
                           onChange={(e) => handleCheckpointSearch(index, e.target.value)}
                           onFocus={() => (checkpointSuggestions[index]?.length ?? 0) > 0 && setShowCheckpointSuggestions(prev => ({ ...prev, [index]: true }))}
-                          placeholder="Tapez une adresse"
+                          placeholder="Tapez une adresse (ex: Yopougon, Abidjan)"
                           className={`w-full px-4 py-3 pr-10 rounded-xl border-2 focus:ring-4 focus:ring-amber-100 outline-none transition-all text-gray-900 placeholder-gray-400 ${
                             errors[`checkpoint_${index}_address`] ? 'border-red-300 focus:border-red-500' : 'focus:border-amber-400'
                           }`}
@@ -989,17 +1221,34 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
               </div>
               <div className="space-y-4">
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    <Search className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
-                    Rechercher l'adresse de destination *
-                  </label>
+                  <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+                    <label className="block text-sm font-semibold" style={{ color: '#191919' }}>
+                      <Search className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
+                      Rechercher l'adresse de destination *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => useMyLocationFor('destination')}
+                      disabled={isGeolocating !== null}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:shadow-sm disabled:opacity-50"
+                      style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}
+                      title="Utiliser ma position actuelle"
+                    >
+                      {isGeolocating === 'destination' ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Navigation className="w-3.5 h-3.5" />
+                      )}
+                      <span>Ma position</span>
+                    </button>
+                  </div>
                   <div className="relative">
                     <input
                       type="text"
                       value={formData.destination_address}
                       onChange={(e) => handleDestinationSearch(e.target.value)}
                       onFocus={() => destinationSuggestions.length > 0 && setShowDestinationSuggestions(true)}
-                      placeholder="Tapez une adresse (ex: Limete, Kinshasa)"
+                      placeholder="Tapez une adresse (ex: Plateau, Abidjan)"
                       className={`w-full px-4 py-3 pr-10 rounded-xl border-2 focus:ring-4 focus:ring-copper/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
                         errors.destination_address ? 'border-red-300 focus:border-red-500' : 'focus:border-copper'
                       }`}

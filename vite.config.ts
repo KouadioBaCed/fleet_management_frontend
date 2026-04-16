@@ -15,11 +15,11 @@ export default defineConfig({
     allowedHosts: ['random-examination-procedures-say.trycloudflare.com'],
     proxy: {
       '/api': {
-        target: 'http://192.168.67.140:8000',
+        target: 'http://192.168.69.211:8000',
         changeOrigin: true,
       },
       '/ws': {
-        target: 'ws://192.168.67.140:8000',
+        target: 'ws://192.168.69.211:8000',
         ws: true,
       },
     },
