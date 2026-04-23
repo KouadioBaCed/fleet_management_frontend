@@ -14,7 +14,7 @@ import { reportsApi, type ReportsSummary, type PeriodType, type ExportType } fro
 import { vehicleApi } from '@/api/vehicles';
 import { driversApi } from '@/api/drivers';
 import { useCurrency } from '@/store/settingsStore';
-import { getCurrencySymbol } from '@/api/settings';
+import { getCurrencySymbol, formatAmount } from '@/api/settings';
 import type { Vehicle, Driver } from '@/types';
 
 const PERIODS: { value: PeriodType; label: string }[] = [
@@ -225,7 +225,7 @@ export default function ReportsPage() {
     },
     {
       title: 'Coûts totaux',
-      value: `${data.stats.total_cost.value.toFixed(2)} ${currencySymbol}`,
+      value: `${formatAmount(data.stats.total_cost.value)} ${currencySymbol}`,
       change: data.stats.total_cost.change,
       emoji: '\uD83D\uDCB0',
       color: '#A86323'

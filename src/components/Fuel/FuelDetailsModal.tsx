@@ -1,7 +1,7 @@
 import { X, Fuel, Car, Coins, MapPin, Gauge, Droplets, Calendar, CheckCircle, FileText } from 'lucide-react';
 import type { FuelRecord } from '@/api/fuel';
 import { useCurrency } from '@/store/settingsStore';
-import { getCurrencySymbol } from '@/api/settings';
+import { getCurrencySymbol, formatAmount } from '@/api/settings';
 
 interface FuelDetailsModalProps {
   isOpen: boolean;
@@ -74,7 +74,7 @@ export default function FuelDetailsModal({ isOpen, onClose, record }: FuelDetail
           >
             <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Coût Total</p>
             <p className="text-2xl sm:text-4xl font-bold" style={{ color: '#B87333' }}>
-              {Number(record.total_cost).toFixed(2)} {currencySymbol}
+              {formatAmount(Number(record.total_cost))} {currencySymbol}
             </p>
           </div>
 

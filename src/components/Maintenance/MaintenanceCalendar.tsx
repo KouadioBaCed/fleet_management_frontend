@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Wrench, Car, Calendar, Clock, Coins, MapPin, X } from 'lucide-react';
 import type { CalendarEvent } from '@/api/maintenance';
 import { useCurrency } from '@/store/settingsStore';
-import { getCurrencySymbol } from '@/api/settings';
+import { getCurrencySymbol, formatAmount } from '@/api/settings';
 
 interface MaintenanceCalendarProps {
   events: CalendarEvent[];
@@ -344,7 +344,7 @@ export default function MaintenanceCalendar({ events, isLoading, onMonthChange, 
                   <div className="min-w-0">
                     <p className="text-[10px] sm:text-xs text-gray-500">Coût estimé</p>
                     <p className="font-semibold text-sm sm:text-base" style={{ color: '#B87333' }}>
-                      {selectedEvent.total_cost.toFixed(2)} {currencySymbol}
+                      {formatAmount(selectedEvent.total_cost)} {currencySymbol}
                     </p>
                   </div>
                 </div>

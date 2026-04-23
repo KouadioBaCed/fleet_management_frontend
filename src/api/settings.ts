@@ -111,8 +111,11 @@ export const getCurrencySymbol = (currency: Currency): string => {
   return symbols[currency] || currency;
 };
 
+export const formatAmount = (value: number): string => {
+  return Math.round(value).toLocaleString('fr-FR');
+};
+
 export const formatCurrency = (value: number, currency: Currency): string => {
   const symbol = getCurrencySymbol(currency);
-  const formatted = value.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  return `${formatted} ${symbol}`;
+  return `${formatAmount(value)} ${symbol}`;
 };

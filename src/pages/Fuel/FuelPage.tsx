@@ -32,7 +32,7 @@ import DropdownMenu from '@/components/common/DropdownMenu';
 import { fuelApi, type FuelRecord, type FuelStats, type CreateFuelData, type UpdateFuelData } from '@/api/fuel';
 import { vehiclesApi } from '@/api/vehicles';
 import { useCurrency } from '@/store/settingsStore';
-import { getCurrencySymbol } from '@/api/settings';
+import { getCurrencySymbol, formatAmount } from '@/api/settings';
 import { useTranslation } from '@/i18n';
 import type { Vehicle } from '@/types';
 
@@ -175,7 +175,7 @@ export default function FuelPage() {
     },
     {
       label: t('fuel.totalCost'),
-      value: `${(stats?.total_cost || 0).toFixed(2)} ${currencySymbol}`,
+      value: `${formatAmount(stats?.total_cost || 0)} ${currencySymbol}`,
       color: '#B87333',
       icon: Coins,
     },
@@ -701,7 +701,7 @@ export default function FuelPage() {
                         {/* Desktop: Cost */}
                         <div className="hidden sm:block text-right flex-shrink-0 min-w-[100px]">
                           <p className="text-2xl font-semibold" style={{ color: '#B87333' }}>
-                            {Number(record.total_cost).toFixed(2)} {currencySymbol}
+                            {formatAmount(Number(record.total_cost))} {currencySymbol}
                           </p>
                           {record.is_full_tank && (
                             <span className="text-xs text-green-600 font-medium">Plein complet</span>

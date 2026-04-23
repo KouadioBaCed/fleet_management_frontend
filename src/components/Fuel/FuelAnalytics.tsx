@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { fuelApi, type AnalyticsResponse, type VehicleAnalytics } from '@/api/fuel';
 import { useCurrency } from '@/store/settingsStore';
-import { getCurrencySymbol } from '@/api/settings';
+import { getCurrencySymbol, formatAmount } from '@/api/settings';
 
 const FUEL_TYPE_CONFIG: Record<string, { label: string; icon: string; color: string; bg: string }> = {
   gasoline: { label: 'Essence', icon: '⛽', color: '#6A8A82', bg: '#E8EFED' },
@@ -568,7 +568,7 @@ export default function FuelAnalytics() {
                         <div>
                           <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Coût total</p>
                           <p className="font-bold text-xs sm:text-base" style={{ color: '#B87333' }}>
-                            {vehicle.total_cost.toFixed(2)} {currencySymbol}
+                            {formatAmount(vehicle.total_cost)} {currencySymbol}
                           </p>
                         </div>
                         <div>

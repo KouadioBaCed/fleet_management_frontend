@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, CheckCircle, DollarSign, FileText, AlertTriangle, Loader2, Clock, Calendar, Wrench, Users, Package, Info, ChevronDown, ChevronUp, Upload, File, Trash2 } from 'lucide-react';
 import { useCurrency } from '@/store/settingsStore';
-import { getCurrencySymbol } from '@/api/settings';
+import { getCurrencySymbol, formatAmount } from '@/api/settings';
 import type { Incident } from '@/api/incidents';
 
 interface ResolveIncidentModalProps {
@@ -428,7 +428,7 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
                     className="px-3 py-1.5 rounded-full text-sm font-bold"
                     style={{ backgroundColor: '#F5E8DD', color: '#B87333' }}
                   >
-                    {totalCost.toFixed(2)} FCFA
+                    {formatAmount(totalCost)} FCFA
                   </span>
                 )}
                 {showCostBreakdown ? (
@@ -524,7 +524,7 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
                     className="text-2xl font-bold"
                     style={{ color: '#B87333' }}
                   >
-                    {totalCost.toFixed(2)} FCFA
+                    {formatAmount(totalCost)} FCFA
                   </span>
                 </div>
               </div>

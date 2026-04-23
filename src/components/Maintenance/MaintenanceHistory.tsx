@@ -21,7 +21,7 @@ import {
 import { maintenanceApi, type HistoryResponse, type HistoryIntervention, type TypeStats, type MonthlyCosts } from '@/api/maintenance';
 import { vehicleApi, type Vehicle } from '@/api/vehicles';
 import { useCurrency } from '@/store/settingsStore';
-import { getCurrencySymbol } from '@/api/settings';
+import { getCurrencySymbol, formatAmount } from '@/api/settings';
 
 interface MaintenanceHistoryProps {
   onInterventionClick?: (intervention: HistoryIntervention) => void;
@@ -210,7 +210,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
               <span className="text-[10px] sm:text-sm font-medium text-gray-600">Main d'oeuvre</span>
             </div>
             <p className="text-sm sm:text-2xl font-bold" style={{ color: '#6A8A82' }}>
-              {cumulative_costs.labor_cost.toFixed(2)} {currencySymbol}
+              {formatAmount(cumulative_costs.labor_cost)} {currencySymbol}
             </p>
           </div>
           <div className="p-2 sm:p-5 text-center border-r sm:border-r-0" style={{ borderColor: '#E8ECEC' }}>
@@ -221,7 +221,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
               <span className="text-[10px] sm:text-sm font-medium text-gray-600">Pièces</span>
             </div>
             <p className="text-sm sm:text-2xl font-bold" style={{ color: '#B87333' }}>
-              {cumulative_costs.parts_cost.toFixed(2)} {currencySymbol}
+              {formatAmount(cumulative_costs.parts_cost)} {currencySymbol}
             </p>
           </div>
           <div className="p-2 sm:p-5 text-center" style={{ backgroundColor: '#F8FAF9' }}>
@@ -232,7 +232,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
               <span className="text-[10px] sm:text-sm font-medium text-gray-600 whitespace-nowrap">Total Cumulé</span>
             </div>
             <p className="text-base sm:text-3xl font-bold" style={{ color: '#1E40AF' }}>
-              {cumulative_costs.total_cost.toFixed(2)} {currencySymbol}
+              {formatAmount(cumulative_costs.total_cost)} {currencySymbol}
             </p>
           </div>
         </div>
@@ -400,7 +400,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                           </span>
                         </div>
                         <p className="text-sm font-bold" style={{ color: '#1E40AF' }}>
-                          {intervention.total_cost.toFixed(2)} {currencySymbol}
+                          {formatAmount(intervention.total_cost)} {currencySymbol}
                         </p>
                       </div>
                     </div>
@@ -424,7 +424,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                       </div>
                       <div className="text-right min-w-[100px]">
                         <p className="text-lg font-bold" style={{ color: '#1E40AF' }}>
-                          {intervention.total_cost.toFixed(2)} {currencySymbol}
+                          {formatAmount(intervention.total_cost)} {currencySymbol}
                         </p>
                       </div>
                     </div>
@@ -505,19 +505,19 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                         <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl text-center" style={{ backgroundColor: '#E8EFED' }}>
                           <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Main d'oeuvre</p>
                           <p className="font-bold text-xs sm:text-base" style={{ color: '#6A8A82' }}>
-                            {intervention.labor_cost.toFixed(2)} {currencySymbol}
+                            {formatAmount(intervention.labor_cost)} {currencySymbol}
                           </p>
                         </div>
                         <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl text-center" style={{ backgroundColor: '#F5E8DD' }}>
                           <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Pièces</p>
                           <p className="font-bold text-xs sm:text-base" style={{ color: '#B87333' }}>
-                            {intervention.parts_cost.toFixed(2)} {currencySymbol}
+                            {formatAmount(intervention.parts_cost)} {currencySymbol}
                           </p>
                         </div>
                         <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl text-center" style={{ backgroundColor: '#DBEAFE' }}>
                           <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Total</p>
                           <p className="font-bold text-xs sm:text-base" style={{ color: '#1E40AF' }}>
-                            {intervention.total_cost.toFixed(2)} {currencySymbol}
+                            {formatAmount(intervention.total_cost)} {currencySymbol}
                           </p>
                         </div>
                       </div>

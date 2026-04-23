@@ -12,7 +12,7 @@ import MaintenanceHistory from '@/components/Maintenance/MaintenanceHistory';
 import { Wrench, Plus, Calendar, Clock, Car, Coins, CheckCircle, AlertCircle, Search, Filter, LayoutGrid, List, MoreVertical, Eye, Edit, Trash2, CalendarDays, Gauge, Play, X, Loader2, History } from 'lucide-react';
 import { maintenanceApi, type Maintenance, type MaintenanceStats, type CalendarEvent, type MileageAlert } from '@/api/maintenance';
 import { useCurrency } from '@/store/settingsStore';
-import { getCurrencySymbol } from '@/api/settings';
+import { getCurrencySymbol, formatAmount } from '@/api/settings';
 
 type ViewMode = 'list' | 'calendar' | 'history';
 type StatusFilter = 'all' | 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
@@ -585,7 +585,7 @@ export default function MaintenancePage() {
                             <div className="flex items-center gap-1.5">
                               <Coins className="w-4 h-4" style={{ color: '#6A8A82' }} />
                               <span className="font-medium" style={{ color: '#1f2937' }}>
-                                {Number(record.total_cost).toFixed(2)} {currencySymbol}
+                                {formatAmount(Number(record.total_cost))} {currencySymbol}
                               </span>
                             </div>
                             <div className="flex items-center gap-1.5">
