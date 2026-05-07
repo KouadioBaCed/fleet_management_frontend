@@ -94,7 +94,7 @@ export default function AssignMissionModal({
       setAvailableVehicles(vehicles);
     } catch (err) {
       console.error('Failed to load data:', err);
-      setError('Erreur lors du chargement des donnees');
+      setError('Erreur lors du chargement des données');
     } finally {
       setIsLoadingData(false);
     }

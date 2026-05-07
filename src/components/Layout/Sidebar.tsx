@@ -115,8 +115,8 @@ export default function Sidebar({ isOpen, onClose, collapsed }: SidebarProps) {
             </div>
             {/* Banner logo — visible when expanded */}
             <img
-              src="/logo_banner.png"
-              alt="YaswaCar"
+              src="/download.png"
+              alt="D-Fleet CI"
               className="h-10 w-auto object-contain transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
               style={{
                 mixBlendMode: 'multiply',

@@ -29,7 +29,7 @@ export default function Layout({ children }: LayoutProps) {
       '/settings': 'Parametres',
       '/profile': 'Profil',
     };
-    return titles[path] || 'YaswaCar';
+    return titles[path] || 'D-Fleet CI';
   };
 
   return (

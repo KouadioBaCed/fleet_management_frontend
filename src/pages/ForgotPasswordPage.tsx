@@ -114,7 +114,7 @@ export default function ForgotPasswordPage() {
               backgroundImage: 'linear-gradient(135deg, rgba(106, 138, 130, 0.9) 0%, rgba(184, 115, 51, 0.7) 100%)'
             }} />
             <div className="relative h-full flex flex-col items-center justify-center">
-              <img src="/logo_banner.png" alt="YaswaCar" className="h-16 w-auto object-contain" />
+              <img src="/download.png" alt="D-Fleet CI" className="h-16 w-auto object-contain" />
             </div>
           </div>
 
@@ -202,7 +202,7 @@ export default function ForgotPasswordPage() {
         {/* Version info */}
         <div className="text-center mt-6">
           <p className="text-xs text-gray-500">
-            YaswaCar Fleet Management v1.0
+            D-Fleet CI Fleet Management v1.0
           </p>
         </div>
       </div>

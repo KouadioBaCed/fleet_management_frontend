@@ -6,7 +6,7 @@ export default function GlobalLoader() {
       <div className="text-center">
         {/* Logo avec animation */}
         <div className="relative mb-8">
-          <img src="/logo_banner.png" alt="YaswaCar" className="h-16 w-auto object-contain mx-auto animate-pulse" />
+          <img src="/download.png" alt="D-Fleet CI" className="h-16 w-auto object-contain mx-auto animate-pulse" />
           {/* Cercles animés autour du logo */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-32 h-32 rounded-full border-4 border-transparent animate-spin" style={{

@@ -112,8 +112,8 @@ export default function LoginPage() {
             }}
           >
             <img
-              src="/logo_banner.png"
-              alt="YaswaCar"
+              src="/download.png"
+              alt="D-Fleet CI"
               className="h-14 sm:h-16 w-auto object-contain login-logo-float"
             />
           </div>
@@ -141,7 +141,7 @@ export default function LoginPage() {
               }}
             >
               <h2 className="text-xl font-semibold text-gray-800">Connexion</h2>
-              <p className="text-[13px] text-gray-400 mt-1.5 font-light">Accédez a votre espace de gestion</p>
+              <p className="text-[13px] text-gray-400 mt-1.5 font-light">Accédez à votre espace de gestion</p>
             </div>
 
             {/* Inactivity message */}

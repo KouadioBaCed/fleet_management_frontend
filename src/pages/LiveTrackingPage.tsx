@@ -99,7 +99,7 @@ export default function LiveTrackingPage() {
       setLastRefresh(new Date());
       setError(null);
     } catch (err) {
-      setError('Erreur lors du chargement des donnees');
+      setError('Erreur lors du chargement des données');
     } finally {
       setLoading(false);
     }
