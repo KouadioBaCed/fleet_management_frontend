@@ -60,6 +60,8 @@ interface LeafletTrackingMapProps {
   onVehicleSelect?: (vehicle: VehiclePosition) => void;
   center?: [number, number];
   zoom?: number;
+  // Trace GPS reelle du chauffeur selectionne (affichee en rouge)
+  driverPath?: [number, number][];
 }
 
 // Custom icon with driver name label
@@ -204,6 +206,7 @@ export default function LeafletTrackingMap({
   onVehicleSelect,
   center = [33.5731, -7.5898], // Casablanca default
   zoom = 12,
+  driverPath,
 }: LeafletTrackingMapProps) {
   const selectedVehicle = useMemo(
     () => vehicles.find((v) => v.mission_id === selectedVehicleId) || null,
@@ -425,13 +428,31 @@ export default function LeafletTrackingMap({
       <MapContainer
         center={center}
         zoom={zoom}
-        className="h-[300px] sm:h-[400px] lg:h-[500px] w-full"
+        className="h-[450px] sm:h-[550px] lg:h-[680px] w-full"
         scrollWheelZoom={true}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          subdomains="abcd"
+          maxZoom={20}
         />
+
+        {/* Parcours reel du chauffeur (rouge, style mobile) */}
+        {driverPath && driverPath.length > 1 && (
+          <>
+            {/* Halo rouge fonce pour le contraste */}
+            <Polyline
+              positions={driverPath}
+              pathOptions={{ color: '#B71C1C', weight: 9, opacity: 0.95, lineCap: 'round', lineJoin: 'round' }}
+            />
+            {/* Voie rouge vif au-dessus */}
+            <Polyline
+              positions={driverPath}
+              pathOptions={{ color: '#E53935', weight: 6, opacity: 1, lineCap: 'round', lineJoin: 'round' }}
+            />
+          </>
+        )}
 
         <FitBoundsToVehicles vehicles={vehicles} />
         <CenterOnVehicle vehicle={selectedVehicle} />
@@ -452,14 +473,14 @@ export default function LeafletTrackingMap({
 
           return (
             <div key={vehicle.mission_id}>
-              {/* Route line */}
+              {/* Itineraire prevu (en pointilles discrets pour laisser le parcours rouge ressortir) */}
               <Polyline
                 positions={routeLine}
                 pathOptions={{
-                  color: isDelayed ? '#DC2626' : '#6A8A82',
-                  weight: 4,
-                  opacity: 0.7,
-                  dashArray: hasPosition ? undefined : '10, 10',
+                  color: '#94A3B8',
+                  weight: 3,
+                  opacity: 0.6,
+                  dashArray: '8, 8',
                 }}
               />
 

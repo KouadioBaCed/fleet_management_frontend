@@ -65,6 +65,64 @@ const PRIORITY_OPTIONS = [
   { value: 'urgent', label: 'Urgente', color: '#DC2626', bgColor: '#FEE2E2', description: 'Traitement immédiat requis' },
 ];
 
+// Saisie date + heure 24h (date native + 2 selects HH/MM) — indépendante de la locale du navigateur
+interface DateTime24InputProps {
+  value: string;
+  onChange: (value: string) => void;
+  hasError?: boolean;
+  accentColor?: string;
+}
+function DateTime24Input({ value, onChange, hasError, accentColor = '#6A8A82' }: DateTime24InputProps) {
+  const [datePart, timePart] = (value || '').split('T');
+  const [hh = '', mm = ''] = (timePart || '').split(':');
+
+  const today = new Date().toISOString().split('T')[0];
+  const updateDate = (d: string) => onChange(d ? `${d}T${hh || '08'}:${mm || '00'}` : '');
+  const updateHour = (h: string) => onChange(`${datePart || today}T${h.padStart(2, '0')}:${mm || '00'}`);
+  const updateMinute = (m: string) => onChange(`${datePart || today}T${hh || '08'}:${m.padStart(2, '0')}`);
+
+  const borderClass = hasError ? 'border-red-300 focus-within:border-red-500' : 'focus-within:border-sage';
+  const borderStyle = { borderColor: hasError ? undefined : '#E8ECEC' };
+
+  return (
+    <div className={`flex items-center gap-2 w-full px-3 py-2 rounded-xl border-2 focus-within:ring-4 focus-within:ring-sage/10 transition-all bg-white ${borderClass}`} style={borderStyle}>
+      <input
+        type="date"
+        value={datePart || ''}
+        onChange={(e) => updateDate(e.target.value)}
+        className="flex-1 px-1 py-1 outline-none text-gray-900 bg-transparent"
+      />
+      <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ backgroundColor: '#F8FAFA' }}>
+        <select
+          value={hh}
+          onChange={(e) => updateHour(e.target.value)}
+          className="bg-transparent outline-none font-semibold text-gray-900 cursor-pointer"
+          style={{ color: accentColor }}
+          aria-label="Heures"
+        >
+          <option value="" disabled>HH</option>
+          {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((h) => (
+            <option key={h} value={h}>{h}</option>
+          ))}
+        </select>
+        <span className="font-bold text-gray-500">:</span>
+        <select
+          value={mm}
+          onChange={(e) => updateMinute(e.target.value)}
+          className="bg-transparent outline-none font-semibold text-gray-900 cursor-pointer"
+          style={{ color: accentColor }}
+          aria-label="Minutes"
+        >
+          <option value="" disabled>MM</option>
+          {Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')).map((m) => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
 export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissionModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1332,15 +1390,11 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                     <Clock className="w-4 h-4 inline mr-2" style={{ color: '#6A8A82' }} />
                     Début prévu *
                   </label>
-                  <input
-                    type="datetime-local"
-                    name="scheduled_start"
+                  <DateTime24Input
                     value={formData.scheduled_start}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
-                      errors.scheduled_start ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
-                    }`}
-                    style={{ borderColor: errors.scheduled_start ? undefined : '#E8ECEC' }}
+                    onChange={(v) => setFormData(prev => ({ ...prev, scheduled_start: v }))}
+                    hasError={!!errors.scheduled_start}
+                    accentColor="#6A8A82"
                   />
                   {renderError('scheduled_start')}
                 </div>
@@ -1350,15 +1404,11 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                     <Clock className="w-4 h-4 inline mr-2" style={{ color: '#B87333' }} />
                     Fin prévue *
                   </label>
-                  <input
-                    type="datetime-local"
-                    name="scheduled_end"
+                  <DateTime24Input
                     value={formData.scheduled_end}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-xl border-2 focus:ring-4 focus:ring-sage/10 outline-none transition-all text-gray-900 placeholder-gray-400 ${
-                      errors.scheduled_end ? 'border-red-300 focus:border-red-500' : 'focus:border-sage'
-                    }`}
-                    style={{ borderColor: errors.scheduled_end ? undefined : '#E8ECEC' }}
+                    onChange={(v) => setFormData(prev => ({ ...prev, scheduled_end: v }))}
+                    hasError={!!errors.scheduled_end}
+                    accentColor="#B87333"
                   />
                   {renderError('scheduled_end')}
                 </div>
@@ -1366,7 +1416,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                 {formData.scheduled_start && formData.scheduled_end && (
                   <div className="p-4 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
                     <p className="text-sm font-medium" style={{ color: '#6A8A82' }}>
-                      Duree estimee:{' '}
+                      Durée estimée:{' '}
                       <span className="font-bold">
                         {(() => {
                           const start = new Date(formData.scheduled_start);

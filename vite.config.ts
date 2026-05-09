@@ -10,16 +10,17 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    port: 5174,
     host: '0.0.0.0',
+    strictPort: true,
     allowedHosts: ['random-examination-procedures-say.trycloudflare.com'],
     proxy: {
       '/api': {
-        target: 'http://192.168.69.211:8000',
+        target: 'http://192.168.68.186:8000',
         changeOrigin: true,
       },
       '/ws': {
-        target: 'ws://192.168.69.211:8000',
+        target: 'ws://192.168.68.186:8000',
         ws: true,
       },
     },

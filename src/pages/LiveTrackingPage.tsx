@@ -30,6 +30,7 @@ export default function LiveTrackingPage() {
   const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState<number | null>(null);
   const [detailsVehicle, setDetailsVehicle] = useState<VehiclePosition | null>(null);
+  const [driverPath, setDriverPath] = useState<[number, number][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
@@ -149,6 +150,33 @@ export default function LiveTrackingPage() {
       }
     }
   }, [vehicles]);
+
+  // Recupere le parcours GPS reel du chauffeur selectionne et le rafraichit toutes les 15s
+  useEffect(() => {
+    if (!selectedVehicleId) {
+      setDriverPath([]);
+      return;
+    }
+    let cancelled = false;
+    const fetchPath = async () => {
+      try {
+        const history = await missionsApi.getTripHistory(selectedVehicleId);
+        if (cancelled) return;
+        const pts: [number, number][] = (history.route?.points || []).map(
+          (p) => [p.latitude, p.longitude] as [number, number]
+        );
+        setDriverPath(pts);
+      } catch {
+        if (!cancelled) setDriverPath([]);
+      }
+    };
+    fetchPath();
+    const interval = setInterval(fetchPath, 15000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [selectedVehicleId]);
 
   const formatTime = (dateStr: string | null | undefined) => {
     if (!dateStr) return '-';
@@ -311,12 +339,12 @@ export default function LiveTrackingPage() {
             </div>
 
             {loading && vehicles.length === 0 ? (
-              <div className="h-[300px] sm:h-[400px] lg:h-[500px] flex flex-col items-center justify-center">
+              <div className="h-[450px] sm:h-[550px] lg:h-[680px] flex flex-col items-center justify-center">
                 <Loader2 className="w-10 h-10 sm:w-12 sm:h-12 animate-spin mb-4" style={{ color: '#6A8A82' }} />
                 <p className="text-gray-500 text-sm sm:text-base">Chargement de la carte...</p>
               </div>
             ) : error ? (
-              <div className="h-[300px] sm:h-[400px] lg:h-[500px] flex flex-col items-center justify-center p-4 sm:p-6">
+              <div className="h-[450px] sm:h-[550px] lg:h-[680px] flex flex-col items-center justify-center p-4 sm:p-6">
                 <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-red-400 mb-4" />
                 <p className="text-red-600 font-medium mb-4 text-sm sm:text-base text-center">{error}</p>
                 <button
@@ -327,7 +355,7 @@ export default function LiveTrackingPage() {
                 </button>
               </div>
             ) : vehicles.length === 0 ? (
-              <div className="h-[300px] sm:h-[400px] lg:h-[500px] flex flex-col items-center justify-center p-4 sm:p-6">
+              <div className="h-[450px] sm:h-[550px] lg:h-[680px] flex flex-col items-center justify-center p-4 sm:p-6">
                 <div className="data-empty-icon mb-4">
                   <Car className="w-6 h-6" style={{ color: '#6A8A82' }} />
                 </div>
@@ -341,6 +369,7 @@ export default function LiveTrackingPage() {
                 vehicles={vehicles}
                 selectedVehicleId={selectedVehicleId}
                 onVehicleSelect={(v) => handleOpenDetails(v)}
+                driverPath={driverPath}
               />
             )}
           </div>
