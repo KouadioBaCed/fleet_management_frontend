@@ -12,7 +12,7 @@ import {
   Plus,
   Wrench,
   RefreshCw,  
-  Filter,
+  Filter, 
 } from 'lucide-react';
 import { dashboardApi, type Activity } from '@/api/dashboard';
 
