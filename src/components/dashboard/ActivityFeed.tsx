@@ -3,7 +3,7 @@ import {
   Activity as ActivityIcon,
   MapPin,
   AlertTriangle,
-  Car,
+  Car, 
   Users,
   Play,
   Pause,
