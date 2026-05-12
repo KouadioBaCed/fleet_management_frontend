@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 import type { User, Organization } from '@/types';
+import { resolveApiUrl } from '@/utils/urlUtils';
 
 interface AuthState {
   user: User | null;
@@ -16,7 +17,7 @@ interface AuthState {
   logoutSilent: () => void;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_URL = resolveApiUrl(import.meta.env.VITE_API_URL, 'http://localhost:8000/api');
 
 // Clés localStorage
 const STORAGE_KEYS = {

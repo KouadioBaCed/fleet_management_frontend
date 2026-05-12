@@ -4,6 +4,7 @@ import LeafletTrackingMap, { VehiclePosition } from '@/components/Tracking/Leafl
 import VehicleDetailsPanel from '@/components/Tracking/VehicleDetailsPanel';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { missionsApi } from '@/api/missions';
+import { resolveWsUrl } from '@/utils/urlUtils';
 import {
   MapPin,
   Navigation,
@@ -24,7 +25,7 @@ import {
   Eye,
 } from 'lucide-react';
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/live-map/';
+const WS_URL = resolveWsUrl(import.meta.env.VITE_WS_URL, 'ws://localhost:8000/ws/live-map/');
 
 export default function LiveTrackingPage() {
   const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);

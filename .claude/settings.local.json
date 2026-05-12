@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(npm run dev:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(del *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 50)",
+      "PowerShell(npx vite build --mode production 2>&1 | Select-Object -Last 30)"
     ],
     "deny": [],
     "ask": []

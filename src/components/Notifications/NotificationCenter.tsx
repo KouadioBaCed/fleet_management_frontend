@@ -4,6 +4,7 @@ import { Bell, Check, CheckCheck, Trash2, X, AlertTriangle, Wrench, Fuel, MapPin
 import { useNotificationStore } from '@/store/notificationStore';
 import { useTranslation } from '@/i18n';
 import type { Notification, NotificationType } from '@/api/notifications';
+import { resolveWsUrl } from '@/utils/urlUtils';
 
 const getNotificationIcon = (type: NotificationType) => {
   switch (type) {
@@ -194,7 +195,7 @@ export default function NotificationCenter() {
 
   // Connexion WebSocket pour les notifications temps reel
   useEffect(() => {
-    const wsUrl = (import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/live-map/')
+    const wsUrl = resolveWsUrl(import.meta.env.VITE_WS_URL, 'ws://localhost:8000/ws/live-map/')
       .replace('/ws/live-map/', '/ws/notifications/');
 
     let ws: WebSocket | null = null;

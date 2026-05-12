@@ -23,13 +23,13 @@ import {
 import { vehiclesApi } from '@/api/vehicles';
 import { driversApi } from '@/api/drivers';
 import type { Vehicle, Driver } from '@/types';
+import { getBackendBaseUrl } from '@/utils/urlUtils';
 
 // Helper pour construire les URLs des images
 const getMediaUrl = (path: string | null | undefined): string | null => {
   if (!path) return null;
   if (path.startsWith('http')) return path;
-  const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:8000';
-  return `${baseUrl}${path}`;
+  return `${getBackendBaseUrl()}${path}`;
 };
 
 // Interface pour les suggestions d'adresse
