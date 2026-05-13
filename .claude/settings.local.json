@@ -5,7 +5,10 @@
       "Bash(npm install:*)",
       "Bash(del *)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 50)",
-      "PowerShell(npx vite build --mode production 2>&1 | Select-Object -Last 30)"
+      "PowerShell(npx vite build --mode production 2>&1 | Select-Object -Last 30)",
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ],
     "deny": [],
     "ask": []
