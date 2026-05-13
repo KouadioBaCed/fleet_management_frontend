@@ -195,7 +195,10 @@ export default function NotificationCenter() {
 
   // Connexion WebSocket pour les notifications temps reel
   useEffect(() => {
-    const wsUrl = resolveWsUrl(import.meta.env.VITE_WS_URL, '/fleet-management/ws/live-map/')
+    const wsUrl = resolveWsUrl(
+      import.meta.env.PROD ? '/fleet-management/ws/live-map/' : import.meta.env.VITE_WS_URL,
+      '/fleet-management/ws/live-map/'
+    )
       .replace('/ws/live-map/', '/ws/notifications/');
 
     let ws: WebSocket | null = null;

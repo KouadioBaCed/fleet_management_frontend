@@ -25,7 +25,10 @@ import {
   Eye,
 } from 'lucide-react';
 
-const WS_URL = resolveWsUrl(import.meta.env.VITE_WS_URL, '/fleet-management/ws/live-map/');
+const WS_URL = resolveWsUrl(
+  import.meta.env.PROD ? '/fleet-management/ws/live-map/' : import.meta.env.VITE_WS_URL,
+  '/fleet-management/ws/live-map/'
+);
 
 export default function LiveTrackingPage() {
   const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);

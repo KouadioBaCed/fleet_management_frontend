@@ -17,7 +17,9 @@ interface AuthState {
   logoutSilent: () => void;
 }
 
-const API_URL = resolveApiUrl(import.meta.env.VITE_API_URL, '/fleet-management/api');
+const API_URL = import.meta.env.PROD
+  ? '/fleet-management/api'
+  : resolveApiUrl(import.meta.env.VITE_API_URL, '/fleet-management/api');
 
 // Clés localStorage
 const STORAGE_KEYS = {
