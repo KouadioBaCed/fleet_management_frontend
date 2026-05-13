@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { resolveApiUrl } from '@/utils/urlUtils';
 
-const API_URL = resolveApiUrl(import.meta.env.VITE_API_URL, '/api');
+const API_URL = resolveApiUrl(import.meta.env.VITE_API_URL, '/fleet-management/api');
 
 // Configuration de base d'axios
 export const apiClient = axios.create({

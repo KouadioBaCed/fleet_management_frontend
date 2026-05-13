@@ -21,7 +21,7 @@ export const resolveWsUrl = (envValue: string | undefined, fallback: string): st
  * Used to build absolute URLs for media files served by the backend.
  */
 export const getBackendBaseUrl = (): string => {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+  const apiUrl = import.meta.env.VITE_API_URL || '/fleet-management/api';
   const resolved = /^https?:\/\//i.test(apiUrl)
     ? apiUrl
     : `${window.location.origin}${apiUrl.startsWith('/') ? apiUrl : `/${apiUrl}`}`;

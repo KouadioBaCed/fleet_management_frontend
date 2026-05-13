@@ -8,7 +8,7 @@ import axios from 'axios';
 import { shouldRefreshToken, isTokenExpired } from '@/utils/tokenUtils';
 import { resolveApiUrl } from '@/utils/urlUtils';
 
-const API_URL = resolveApiUrl(import.meta.env.VITE_API_URL, 'http://localhost:8000/api');
+const API_URL = resolveApiUrl(import.meta.env.VITE_API_URL, '/fleet-management/api');
 
 // Configuration
 const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
