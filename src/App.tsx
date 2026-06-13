@@ -1,11 +1,20 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
+import type { JSX } from 'react';
 import { useAuthStore } from './store/authStore';
 import { authApi } from './api/auth';
 import { sessionManager } from './services/sessionManager';
 import GlobalLoader from './components/common/GlobalLoader';
 import InactivityWarningModal from './components/common/InactivityWarningModal';
 import { ThemeProvider } from './components/Theme';
+import { MODULES } from './config/modules';
+import type { ModuleCode } from './types';
+import {
+  ProtectedRoute,
+  PublicRoute,
+  ModuleProtectedRoute,
+  DefaultRedirect,
+} from './components/routing/guards';
 
 // Pages
 import LoginPage from './pages/LoginPage';
@@ -25,17 +34,21 @@ import AnalyticsPage from './pages/Analytics/AnalyticsPage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 
-// Composant pour proteger les routes
-function ProtectedRoute({ children }: { children: JSX.Element }) {
-  const { isAuthenticated } = useAuthStore();
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
-}
-
-// Composant pour rediriger les utilisateurs connectes
-function PublicRoute({ children }: { children: JSX.Element }) {
-  const { isAuthenticated } = useAuthStore();
-  return isAuthenticated ? <Navigate to="/" replace /> : children;
-}
+// Association code de module -> page rendue.
+// Les routes sont générées dynamiquement à partir du registre `MODULES`,
+// puis protégées individuellement par `ModuleProtectedRoute`.
+const MODULE_PAGES: Record<ModuleCode, JSX.Element> = {
+  dashboard: <Dashboard />,
+  vehicles: <VehiclesPage />,
+  drivers: <DriversPage />,
+  missions: <MissionsPage />,
+  tracking: <LiveTrackingPage />,
+  incidents: <IncidentsPage />,
+  maintenance: <MaintenancePage />,
+  fuel: <FuelPage />,
+  analytics: <AnalyticsPage />,
+  reports: <ReportsPage />,
+};
 
 // Composant principal avec gestion de session
 function AppContent() {
@@ -150,86 +163,22 @@ function AppContent() {
             <VerifyEmailPage />
           </PublicRoute>
         } />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/vehicles"
-          element={
-            <ProtectedRoute>
-              <VehiclesPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/drivers"
-          element={
-            <ProtectedRoute>
-              <DriversPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/missions"
-          element={
-            <ProtectedRoute>
-              <MissionsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/tracking"
-          element={
-            <ProtectedRoute>
-              <LiveTrackingPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/incidents"
-          element={
-            <ProtectedRoute>
-              <IncidentsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/maintenance"
-          element={
-            <ProtectedRoute>
-              <MaintenancePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/fuel"
-          element={
-            <ProtectedRoute>
-              <FuelPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute>
-              <ReportsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/analytics"
-          element={
-            <ProtectedRoute>
-              <AnalyticsPage />
-            </ProtectedRoute>
-          }
-        />
+
+        {/* Routes de modules — générées dynamiquement et protégées
+            individuellement selon les modules autorisés de l'organisation. */}
+        {MODULES.map((module) => (
+          <Route
+            key={module.code}
+            path={module.path}
+            element={
+              <ModuleProtectedRoute module={module.code}>
+                {MODULE_PAGES[module.code]}
+              </ModuleProtectedRoute>
+            }
+          />
+        ))}
+
+        {/* Routes toujours disponibles (authentification uniquement) */}
         <Route
           path="/settings"
           element={
@@ -246,6 +195,10 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
+        {/* Attrape-tout : renvoie vers la page d'atterrissage par défaut
+            (ex: /incidents pour une organisation "incidents uniquement"). */}
+        <Route path="*" element={<DefaultRedirect />} />
       </Routes>
 
       {/* Modal d'avertissement d'inactivite */}

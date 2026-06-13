@@ -1,19 +1,13 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslation } from '@/i18n';
 import { useColors } from '@/store/settingsStore';
+import { useModules } from '@/hooks/useModules';
+import { MODULES } from '@/config/modules';
 import {
-  LayoutDashboard,
-  Car,
   Users,
   MapPin,
-  Radio,
-  AlertTriangle,
-  Wrench,
-  Fuel,
-  BarChart3,
-  PieChart,
   Settings,
   LogOut,
   X,
@@ -33,6 +27,7 @@ export default function Sidebar({ isOpen, onClose, collapsed }: SidebarProps) {
   const { logout } = useAuthStore();
   const { t } = useTranslation();
   const { primary, secondary } = useColors();
+  const enabledModules = useModules();
   const [mounted, setMounted] = useState(false);
 
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -42,18 +37,17 @@ export default function Sidebar({ isOpen, onClose, collapsed }: SidebarProps) {
     requestAnimationFrame(() => setMounted(true));
   }, []);
 
-  const menuItems = [
-    { path: '/', icon: LayoutDashboard, labelKey: 'nav.dashboard' },
-    { path: '/vehicles', icon: Car, labelKey: 'nav.vehicles' },
-    { path: '/drivers', icon: Users, labelKey: 'nav.drivers' },
-    { path: '/missions', icon: MapPin, labelKey: 'nav.missions' },
-    { path: '/tracking', icon: Radio, labelKey: 'nav.tracking' },
-    { path: '/incidents', icon: AlertTriangle, labelKey: 'nav.incidents' },
-    { path: '/maintenance', icon: Wrench, labelKey: 'nav.maintenance' },
-    { path: '/fuel', icon: Fuel, labelKey: 'nav.fuel' },
-    { path: '/analytics', icon: PieChart, labelKey: 'nav.analytics' },
-    { path: '/reports', icon: BarChart3, labelKey: 'nav.reports' },
-  ];
+  // Menu construit dynamiquement à partir des modules autorisés de
+  // l'organisation. Une organisation "incidents uniquement" ne verra que
+  // l'entrée Incidents.
+  const menuItems = useMemo(
+    () =>
+      MODULES
+        .filter((m) => enabledModules.includes(m.code))
+        .sort((a, b) => a.order - b.order)
+        .map((m) => ({ path: m.path, icon: m.icon, labelKey: m.labelKey })),
+    [enabledModules]
+  );
 
   const handleLogoutClick = () => setIsLogoutModalOpen(true);
   const handleLogoutConfirm = async () => {

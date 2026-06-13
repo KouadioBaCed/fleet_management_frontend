@@ -1,14 +1,22 @@
 import { apiClient } from './client';
-import type { User, Organization } from '@/types';
+import type { User, Organization, ModuleCode } from '@/types';
 
 interface LoginCredentials {
   username: string;
   password: string;
 }
 
+/**
+ * Réponse de `/auth/login/`.
+ * Le backend renvoie déjà l'utilisateur, son organisation (avec ses modules)
+ * et la liste des modules à plat — inutile de rappeler `/auth/me/` ensuite.
+ */
 interface LoginResponse {
   access: string;
   refresh: string;
+  user: User;
+  organization: Organization | null;
+  modules: ModuleCode[];
 }
 
 interface ProfileResponse {
@@ -31,26 +39,20 @@ export const authApi = {
     };
   },
 
-  // Login with profile fetch - validates role
+  // Login + validation du rôle (un seul appel : /auth/login/ renvoie tout)
   loginWithProfile: async (credentials: LoginCredentials): Promise<{
     access: string;
     refresh: string;
     user: User;
     organization: Organization | null;
   }> => {
-    // Step 1: Login to get tokens
-    const loginResponse = await apiClient.post<LoginResponse>('/auth/login/', credentials);
-    const { access, refresh } = loginResponse.data;
+    // Étape 1 : login — renvoie tokens, utilisateur, organisation et modules
+    const { data } = await apiClient.post<LoginResponse>('/auth/login/', credentials);
+    const { access, refresh, user, organization, modules } = data;
 
-    // Step 2: Fetch profile with the new token
-    const profileResponse = await apiClient.get<User>('/auth/me/', {
-      headers: { Authorization: `Bearer ${access}` },
-    });
-    const user = profileResponse.data;
-
-    // Step 3: Validate role (only admin and supervisor can access web)
+    // Étape 2 : valider le rôle (seuls admin et superviseur accèdent au web)
     if (user.role === 'driver') {
-      // Logout the token since driver can't access web
+      // Le chauffeur n'a pas accès au web : on révoque immédiatement le token
       try {
         await apiClient.post(
           '/auth/logout/',
@@ -58,16 +60,22 @@ export const authApi = {
           { headers: { Authorization: `Bearer ${access}` } }
         );
       } catch {
-        // Ignore logout errors
+        // Ignorer les erreurs de logout
       }
       throw new Error('ROLE_NOT_ALLOWED');
     }
+
+    // L'organisation porte ses propres modules ; on retombe sur la liste à plat
+    // si jamais le backend ne les imbrique pas (source d'autorité = useModules).
+    const resolvedOrganization: Organization | null = organization
+      ? { ...organization, modules: organization.modules ?? modules }
+      : user.organization || null;
 
     return {
       access,
       refresh,
       user,
-      organization: user.organization || null,
+      organization: resolvedOrganization,
     };
   },
 

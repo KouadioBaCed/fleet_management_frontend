@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import NotificationCenter from '../Notifications/NotificationCenter';
 import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { useTranslation } from '@/i18n';
+import { getModuleByPath } from '@/config/modules';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,24 +14,16 @@ export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
+  // Titre dérivé du registre de modules (i18n) + pages toujours disponibles.
   const getPageTitle = () => {
     const path = location.pathname;
-    const titles: Record<string, string> = {
-      '/': 'Tableau de bord',
-      '/vehicles': 'Véhicules',
-      '/drivers': 'Conducteurs',
-      '/missions': 'Missions',
-      '/tracking': 'Suivi GPS',
-      '/incidents': 'Incidents',
-      '/maintenance': 'Maintenance',
-      '/fuel': 'Carburant',
-      '/analytics': 'Analyses',
-      '/reports': 'Rapports',
-      '/settings': 'Parametres',
-      '/profile': 'Profil',
-    };
-    return titles[path] || 'D-Fleet CI';
+    const module = getModuleByPath(path);
+    if (module) return t(module.labelKey);
+    if (path === '/settings') return t('nav.settings');
+    if (path === '/profile') return t('nav.profile');
+    return 'D-Fleet CI';
   };
 
   return (

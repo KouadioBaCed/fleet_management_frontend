@@ -1,5 +1,22 @@
 // Types pour l'application
 
+/**
+ * Codes canoniques des modules de la plateforme.
+ * DOIT rester synchronisé avec le registre backend (`apps/accounts/modules.py`)
+ * et le registre frontend (`src/config/modules.ts`).
+ */
+export type ModuleCode =
+  | 'dashboard'
+  | 'incidents'
+  | 'vehicles'
+  | 'drivers'
+  | 'missions'
+  | 'tracking'
+  | 'maintenance'
+  | 'fuel'
+  | 'analytics'
+  | 'reports';
+
 export interface Organization {
   id: string;
   name: string;
@@ -15,6 +32,12 @@ export interface Organization {
   subscription_type: 'trial' | 'basic' | 'professional' | 'enterprise';
   max_vehicles: number;
   max_drivers: number;
+  /**
+   * Codes des modules activés pour l'organisation (renvoyés par /auth/me/).
+   * `undefined` => données héritées d'avant la fonctionnalité modules
+   * (traité comme "tous les modules" pour rétro-compatibilité).
+   */
+  modules?: ModuleCode[];
 }
 
 export interface User {

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, AlertTriangle, FileText, MapPin, Camera, ChevronRight, ChevronLeft, Check, Search, Loader2, User, Car } from 'lucide-react';
 import { driversApi } from '@/api/drivers';
 import { vehiclesApi } from '@/api/vehicles';
+import { useHasModule } from '@/hooks/useModules';
 import type { Driver } from '@/types';
 
 interface AddIncidentModalProps {
@@ -51,6 +52,12 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
 
   const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([]);
 
+  // L'assignation chauffeur/véhicule n'est possible que si l'organisation
+  // possède les modules correspondants (une organisation "incidents uniquement"
+  // ne les charge pas — évite des appels API inutiles renvoyant 403).
+  const canAssignDrivers = useHasModule('drivers');
+  const canAssignVehicles = useHasModule('vehicles');
+
   // Drivers and vehicles state
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -64,13 +71,13 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Fetch drivers and vehicles when modal opens
+  // Fetch drivers and vehicles when modal opens (uniquement si modules actifs)
   useEffect(() => {
     if (isOpen) {
-      fetchDrivers();
-      fetchVehicles();
+      if (canAssignDrivers) fetchDrivers();
+      if (canAssignVehicles) fetchVehicles();
     }
-  }, [isOpen]);
+  }, [isOpen, canAssignDrivers, canAssignVehicles]);
 
   const fetchDrivers = async () => {
     setIsLoadingDrivers(true);
