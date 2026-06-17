@@ -167,7 +167,7 @@ export default function DriverAnalytics() {
         <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-4">
           <div className="flex items-center space-x-2">
             <Calendar className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-            <span className="font-semibold text-gray-700 text-sm sm:text-base">Période :</span>
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Période :</span>
           </div>
           <div className="flex flex-wrap gap-1.5 sm:gap-2 w-full sm:w-auto">
             {periodOptions.map((option) => (
@@ -221,7 +221,7 @@ export default function DriverAnalytics() {
               </span>
             </div>
           </div>
-          <p className="text-xs sm:text-sm font-medium text-gray-600">Total conducteurs</p>
+          <p className="text-xs sm:text-sm font-medium text-gray-600">Total chauffeurs</p>
           <p className="text-xl sm:text-3xl font-bold" style={{ color: '#6A8A82' }}>
             {analytics.summary.total_drivers}
           </p>
@@ -506,7 +506,7 @@ export default function DriverAnalytics() {
 
       {/* Driver Metrics Table */}
       <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-4 sm:p-6" style={{ borderColor: '#E8ECEC' }}>
-        <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6" style={{ color: '#191919' }}>Métriques par conducteur</h3>
+        <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6" style={{ color: '#191919' }}>Métriques par chauffeur</h3>
 
         {/* Mobile Card View */}
         <div className="md:hidden space-y-3">
@@ -578,7 +578,7 @@ export default function DriverAnalytics() {
             <thead>
               <tr className="border-b-2" style={{ borderColor: '#E8ECEC' }}>
                 <th className="text-left py-3 px-4 text-xs font-bold uppercase text-gray-500">Rang</th>
-                <th className="text-left py-3 px-4 text-xs font-bold uppercase text-gray-500">Conducteur</th>
+                <th className="text-left py-3 px-4 text-xs font-bold uppercase text-gray-500">Chauffeur</th>
                 <th className="text-center py-3 px-4 text-xs font-bold uppercase text-gray-500">Trajets</th>
                 <th className="text-center py-3 px-4 text-xs font-bold uppercase text-gray-500">Distance</th>
                 <th className="text-center py-3 px-4 text-xs font-bold uppercase text-gray-500">Incidents</th>
@@ -640,7 +640,7 @@ export default function DriverAnalytics() {
                       </span>
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <span className="font-medium">{driver.fuel_cost.toLocaleString('fr-FR')} €</span>
+                      <span className="font-medium">{driver.fuel_cost.toLocaleString('fr-FR')} FCFA</span>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span
@@ -677,7 +677,7 @@ export default function DriverAnalytics() {
         {analytics.driver_metrics.length > 10 && (
           <div className="mt-3 sm:mt-4 text-center">
             <button className="text-xs sm:text-sm font-medium flex items-center justify-center mx-auto" style={{ color: '#6A8A82' }}>
-              Voir tous les conducteurs ({analytics.driver_metrics.length})
+              Voir tous les chauffeurs ({analytics.driver_metrics.length})
               <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1" />
             </button>
           </div>
@@ -687,7 +687,7 @@ export default function DriverAnalytics() {
       {/* Incidents by Driver */}
       {analytics.incidents_by_driver.length > 0 && (
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-4 sm:p-6" style={{ borderColor: '#E8ECEC' }}>
-          <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6" style={{ color: '#191919' }}>Incidents par conducteur</h3>
+          <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6" style={{ color: '#191919' }}>Incidents par chauffeur</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             {analytics.incidents_by_driver.map((item) => (
@@ -710,16 +710,16 @@ export default function DriverAnalytics() {
                 </div>
                 <div className="flex space-x-0.5 sm:space-x-1">
                   {item.by_severity.minor > 0 && (
-                    <div className="flex-1 h-1.5 sm:h-2 rounded-full" style={{ backgroundColor: '#6A8A82' }} title={`Mineurs: ${item.by_severity.minor}`} />
+                    <div className="flex-1 h-1.5 sm:h-2 rounded-full" style={{ backgroundColor: '#6A8A82' }} title={`Mineurs : ${item.by_severity.minor}`} />
                   )}
                   {item.by_severity.moderate > 0 && (
-                    <div className="flex-1 h-1.5 sm:h-2 rounded-full" style={{ backgroundColor: '#6B7280' }} title={`Modérés: ${item.by_severity.moderate}`} />
+                    <div className="flex-1 h-1.5 sm:h-2 rounded-full" style={{ backgroundColor: '#6B7280' }} title={`Modérés : ${item.by_severity.moderate}`} />
                   )}
                   {item.by_severity.major > 0 && (
-                    <div className="flex-1 h-1.5 sm:h-2 rounded-full" style={{ backgroundColor: '#B87333' }} title={`Majeurs: ${item.by_severity.major}`} />
+                    <div className="flex-1 h-1.5 sm:h-2 rounded-full" style={{ backgroundColor: '#B87333' }} title={`Majeurs : ${item.by_severity.major}`} />
                   )}
                   {item.by_severity.critical > 0 && (
-                    <div className="flex-1 h-1.5 sm:h-2 rounded-full" style={{ backgroundColor: '#DC2626' }} title={`Critiques: ${item.by_severity.critical}`} />
+                    <div className="flex-1 h-1.5 sm:h-2 rounded-full" style={{ backgroundColor: '#DC2626' }} title={`Critiques : ${item.by_severity.critical}`} />
                   )}
                 </div>
               </div>

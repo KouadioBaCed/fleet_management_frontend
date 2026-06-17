@@ -209,7 +209,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
               <Bell className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#1E40AF' }} />
               <div>
                 <p className="text-sm" style={{ color: '#1E3A8A' }}>
-                  <strong>Information:</strong> Le conducteur {mission.driver_name} sera automatiquement notifié des modifications apportées à cette mission.
+                  <strong>Information :</strong> Le chauffeur {mission.driver_name} sera automatiquement notifié des modifications apportées à cette mission.
                 </p>
               </div>
             </div>
@@ -473,7 +473,7 @@ export default function EditMissionModal({ isOpen, onClose, onSubmit, mission }:
             <div className="space-y-5">
               <div className="bg-gray-50 rounded-xl p-5 border-2" style={{ borderColor: '#E8ECEC' }}>
                 <h4 className="text-sm font-bold mb-4" style={{ color: '#191919' }}>
-                  Contact du responsable (optionnel)
+                  Contact du responsable (facultatif)
                 </h4>
                 <div className="space-y-4">
                   <div>

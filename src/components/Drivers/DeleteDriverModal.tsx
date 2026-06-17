@@ -58,7 +58,7 @@ export default function DeleteDriverModal({ isOpen, onClose, onConfirm, driver }
               <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-bold text-red-900 mb-2">
-                  Attention : Cette action est irréversible
+                  Attention : Cette action est irréversible
                 </h3>
                 <p className="text-sm text-red-800">
                   Vous êtes sur le point de supprimer définitivement ce chauffeur et son compte utilisateur.
@@ -69,7 +69,7 @@ export default function DeleteDriverModal({ isOpen, onClose, onConfirm, driver }
           </div>
 
           <div className="bg-gray-50 rounded-xl p-5 border-2 mb-6" style={{ borderColor: '#E8ECEC' }}>
-            <p className="text-sm font-medium text-gray-600 mb-3">Chauffeur à supprimer :</p>
+            <p className="text-sm font-medium text-gray-600 mb-3">Chauffeur à supprimer :</p>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Nom</span>
@@ -81,7 +81,7 @@ export default function DeleteDriverModal({ isOpen, onClose, onConfirm, driver }
               </div>
               {driver.user?.email && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Email</span>
+                  <span className="text-sm text-gray-600">E-mail</span>
                   <span className="font-bold text-sm" style={{ color: '#191919' }}>{driver.user.email}</span>
                 </div>
               )}

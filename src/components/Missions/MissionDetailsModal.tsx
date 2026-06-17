@@ -178,7 +178,7 @@ export default function MissionDetailsModal({ isOpen, onClose, mission, statusCo
                   <p className="text-lg font-bold" style={{ color: '#191919' }}>{mission.origin_address}</p>
                   {mission.origin_latitude && mission.origin_longitude && (
                     <p className="text-xs text-gray-500 mt-1">
-                      GPS: {Number(mission.origin_latitude).toFixed(6)}, {Number(mission.origin_longitude).toFixed(6)}
+                      GPS : {Number(mission.origin_latitude).toFixed(6)}, {Number(mission.origin_longitude).toFixed(6)}
                     </p>
                   )}
                 </div>
@@ -213,14 +213,14 @@ export default function MissionDetailsModal({ isOpen, onClose, mission, statusCo
                   <p className="text-lg font-bold" style={{ color: '#191919' }}>{mission.destination_address}</p>
                   {mission.destination_latitude && mission.destination_longitude && (
                     <p className="text-xs text-gray-500 mt-1">
-                      GPS: {Number(mission.destination_latitude).toFixed(6)}, {Number(mission.destination_longitude).toFixed(6)}
+                      GPS : {Number(mission.destination_latitude).toFixed(6)}, {Number(mission.destination_longitude).toFixed(6)}
                     </p>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-2 p-3 rounded-lg mt-4" style={{ backgroundColor: '#F0F3F2' }}>
                 <Navigation className="w-5 h-5" style={{ color: '#B87333' }} />
-                <span className="text-sm font-medium text-gray-600">Distance estimée:</span>
+                <span className="text-sm font-medium text-gray-600">Distance estimée :</span>
                 <span className="text-sm font-bold" style={{ color: '#191919' }}>{mission.estimated_distance} km</span>
               </div>
             </div>
@@ -294,7 +294,7 @@ export default function MissionDetailsModal({ isOpen, onClose, mission, statusCo
             {mission.status === 'completed' && mission.actual_start && mission.actual_end && (
               <div className="mt-4 flex items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: '#D1FAE5' }}>
                 <Clock className="w-5 h-5" style={{ color: '#059669' }} />
-                <span className="text-sm font-medium" style={{ color: '#059669' }}>Durée totale :</span>
+                <span className="text-sm font-medium" style={{ color: '#059669' }}>Durée totale :</span>
                 <span className="text-sm font-bold" style={{ color: '#059669' }}>
                   {(() => {
                     const totalMin = Math.floor((new Date(mission.actual_end).getTime() - new Date(mission.actual_start).getTime()) / 60000);
@@ -538,7 +538,7 @@ export default function MissionDetailsModal({ isOpen, onClose, mission, statusCo
         {/* Footer */}
         <div className="p-6 border-t-2 bg-gray-50 flex justify-between items-center" style={{ borderColor: '#E8ECEC' }}>
           <div className="text-sm text-gray-500">
-            <p>Code: <span className="font-semibold">{mission.mission_code}</span></p>
+            <p>Code : <span className="font-semibold">{mission.mission_code}</span></p>
             {mission.created_at && (
               <p className="text-xs mt-1">
                 Créée le {new Date(mission.created_at).toLocaleString('fr-FR', {

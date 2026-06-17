@@ -123,7 +123,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-bold" style={{ color: '#191919' }}>
-                Historique des Interventions
+                Historique des interventions
               </h3>
               <p className="text-xs sm:text-sm text-gray-500">
                 {historyData.count} intervention{historyData.count > 1 ? 's' : ''} terminée{historyData.count > 1 ? 's' : ''}
@@ -207,7 +207,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mb-1 sm:mb-0" style={{ backgroundColor: '#E8EFED' }}>
                 <User className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: '#6A8A82' }} />
               </div>
-              <span className="text-[10px] sm:text-sm font-medium text-gray-600">Main d'oeuvre</span>
+              <span className="text-[10px] sm:text-sm font-medium text-gray-600">Main d'œuvre</span>
             </div>
             <p className="text-sm sm:text-2xl font-bold" style={{ color: '#6A8A82' }}>
               {formatAmount(cumulative_costs.labor_cost)} {currencySymbol}
@@ -229,7 +229,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
               <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mb-1 sm:mb-0" style={{ backgroundColor: '#DBEAFE' }}>
                 <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: '#1E40AF' }} />
               </div>
-              <span className="text-[10px] sm:text-sm font-medium text-gray-600 whitespace-nowrap">Total Cumulé</span>
+              <span className="text-[10px] sm:text-sm font-medium text-gray-600 whitespace-nowrap">Total cumulé</span>
             </div>
             <p className="text-base sm:text-3xl font-bold" style={{ color: '#1E40AF' }}>
               {formatAmount(cumulative_costs.total_cost)} {currencySymbol}
@@ -244,7 +244,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
             <PieChart className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Répartition par Type</h4>
+            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Répartition par type</h4>
           </div>
           <div className="space-y-2 sm:space-y-3">
             {by_type.map((type, index) => {
@@ -287,7 +287,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
             <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
-            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Coûts Mensuels</h4>
+            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Coûts mensuels</h4>
           </div>
           {monthly_costs.length > 0 ? (
             <div className="flex items-end space-x-1 sm:space-x-2 h-32 sm:h-40">
@@ -323,7 +323,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
             <div className="flex items-center justify-center space-x-3 sm:space-x-4 mt-3 sm:mt-4 pt-2 sm:pt-3 border-t" style={{ borderColor: '#E8ECEC' }}>
               <div className="flex items-center space-x-1 sm:space-x-1.5">
                 <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded" style={{ backgroundColor: '#6A8A82' }} />
-                <span className="text-[10px] sm:text-xs text-gray-600">Main d'oeuvre</span>
+                <span className="text-[10px] sm:text-xs text-gray-600">Main d'œuvre</span>
               </div>
               <div className="flex items-center space-x-1 sm:space-x-1.5">
                 <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded" style={{ backgroundColor: '#B87333' }} />
@@ -337,7 +337,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
       {/* Interventions List */}
       <div className="bg-white rounded-xl sm:rounded-2xl border-2 overflow-hidden" style={{ borderColor: '#E8ECEC' }}>
         <div className="px-3 sm:px-6 py-3 sm:py-4 border-b-2" style={{ borderColor: '#E8ECEC' }}>
-          <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Liste des Interventions</h4>
+          <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Liste des interventions</h4>
         </div>
 
         <div className="divide-y-2" style={{ borderColor: '#E8ECEC' }}>
@@ -503,7 +503,7 @@ export default function MaintenanceHistory({ onInterventionClick }: MaintenanceH
                       {/* Cost Breakdown */}
                       <div className="grid grid-cols-3 gap-2 sm:gap-3">
                         <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl text-center" style={{ backgroundColor: '#E8EFED' }}>
-                          <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Main d'oeuvre</p>
+                          <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Main d'œuvre</p>
                           <p className="font-bold text-xs sm:text-base" style={{ color: '#6A8A82' }}>
                             {formatAmount(intervention.labor_cost)} {currencySymbol}
                           </p>

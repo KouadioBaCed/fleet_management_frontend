@@ -268,7 +268,7 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
                 className="mb-3 p-3 rounded-xl border-2 space-y-2"
                 style={{ backgroundColor: '#F8FAF9', borderColor: '#E8ECEC' }}
               >
-                <p className="text-xs font-medium text-gray-500 mb-2">Cliquez pour appliquer un modèle :</p>
+                <p className="text-xs font-medium text-gray-500 mb-2">Cliquez pour appliquer un modèle :</p>
                 {NOTE_TEMPLATES.map((template, index) => (
                   <button
                     key={index}
@@ -419,7 +419,7 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
                 </div>
                 <div className="text-left">
                   <p className="font-semibold text-gray-900">Estimation des coûts</p>
-                  <p className="text-xs text-gray-500">Optionnel - Détaillez les frais associés</p>
+                  <p className="text-xs text-gray-500">Facultatif - Détaillez les frais associés</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
@@ -540,7 +540,7 @@ export default function ResolveIncidentModal({ isOpen, onClose, onConfirm, incid
               <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#6A8A82' }} />
               <div className="text-sm">
                 <p className="font-semibold" style={{ color: '#6A8A82' }}>
-                  En marquant cet incident comme résolu :
+                  En marquant cet incident comme résolu :
                 </p>
                 <ul className="mt-2 space-y-1 text-gray-600">
                   <li>• L'incident sera fermé avec l'horodatage actuel</li>

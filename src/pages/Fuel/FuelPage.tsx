@@ -237,7 +237,7 @@ export default function FuelPage() {
             <div className="data-table-container p-3 sm:p-5">
               <div className="flex items-center space-x-2 mb-3 sm:mb-4">
                 <Fuel className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-                <h4 className="font-semibold text-sm sm:text-base" style={{ color: '#1f2937' }}>Par Type de Carburant</h4>
+                <h4 className="font-semibold text-sm sm:text-base" style={{ color: '#1f2937' }}>Par type de carburant</h4>
               </div>
               <div className="space-y-2 sm:space-y-3">
                 {Object.entries(stats.by_fuel_type).map(([type, data]) => {
@@ -280,7 +280,7 @@ export default function FuelPage() {
             <div className="data-table-container p-3 sm:p-5">
               <div className="flex items-center space-x-2 mb-3 sm:mb-4">
                 <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
-                <h4 className="font-semibold text-sm sm:text-base" style={{ color: '#1f2937' }}>Coûts Mensuels</h4>
+                <h4 className="font-semibold text-sm sm:text-base" style={{ color: '#1f2937' }}>Coûts mensuels</h4>
               </div>
               {stats.monthly_data && stats.monthly_data.length > 0 ? (
                 <div className="flex items-end space-x-1 sm:space-x-2 h-32 sm:h-40">

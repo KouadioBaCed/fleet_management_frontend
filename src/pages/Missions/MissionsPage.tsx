@@ -153,9 +153,9 @@ export default function MissionsPage() {
   ];
 
   const statsDisplay = [
-    { label: 'Total Missions', value: stats.total, color: '#6A8A82' },
-    { label: 'En Attente', value: stats.by_status.pending + stats.by_status.assigned, color: '#6B7280' },
-    { label: 'En Cours', value: stats.by_status.in_progress, color: '#B87333' },
+    { label: 'Total missions', value: stats.total, color: '#6A8A82' },
+    { label: 'En attente', value: stats.by_status.pending + stats.by_status.assigned, color: '#6B7280' },
+    { label: 'En cours', value: stats.by_status.in_progress, color: '#B87333' },
     { label: 'Terminées', value: stats.by_status.completed, color: '#059669' },
   ];
 
@@ -322,7 +322,7 @@ export default function MissionsPage() {
       setSelectedMission(null);
       fetchMissions();
     } catch (err: any) {
-      throw new Error(err.response?.data?.error || 'Impossible de demarrer la mission');
+      throw new Error(err.response?.data?.error || 'Impossible de démarrer la mission');
     }
   };
 
@@ -407,7 +407,7 @@ export default function MissionsPage() {
               disabled={loading}
               className="p-2.5 sm:p-3 rounded-lg sm:rounded-xl border transition-all hover:shadow-sm disabled:opacity-50"
               style={{ borderColor: 'rgba(0,0,0,0.08)' }}
-              title="Rafraichir"
+              title="Rafraîchir"
             >
               <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-600 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -591,7 +591,7 @@ export default function MissionsPage() {
         {/* Active Filters Bar */}
         {hasActiveFilters && (
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-            <span className="text-xs sm:text-sm text-gray-500">Filtres:</span>
+            <span className="text-xs sm:text-sm text-gray-500">Filtres :</span>
             {statusFilter !== 'all' && (
               <span
                 className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium"
@@ -608,7 +608,7 @@ export default function MissionsPage() {
                 className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium"
                 style={{ backgroundColor: priorityConfig[priorityFilter].bg, color: priorityConfig[priorityFilter].text }}
               >
-                <span className="hidden xs:inline">Priorité:</span> {priorityConfig[priorityFilter].label}
+                <span className="hidden xs:inline">Priorité :</span> {priorityConfig[priorityFilter].label}
                 <button onClick={() => setPriorityFilter('all')} className="hover:opacity-70">
                   <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </button>
@@ -616,7 +616,7 @@ export default function MissionsPage() {
             )}
             {searchQuery && (
               <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-gray-100 text-gray-700">
-                <span className="hidden xs:inline">Recherche:</span> "{searchQuery}"
+                <span className="hidden xs:inline">Recherche :</span> "{searchQuery}"
                 <button onClick={() => setSearchQuery('')} className="hover:opacity-70">
                   <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </button>
@@ -636,7 +636,7 @@ export default function MissionsPage() {
         {currentSort && (
           <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-500">
             <ArrowUpDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span>Trié par: <span className="font-medium text-gray-700">{currentSort.label}</span></span>
+            <span>Trié par : <span className="font-medium text-gray-700">{currentSort.label}</span></span>
           </div>
         )}
 
@@ -791,7 +791,7 @@ export default function MissionsPage() {
                     <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                        <span className="text-gray-500">Début:</span>
+                        <span className="text-gray-500">Début :</span>
                         <span className="font-medium truncate" style={{ color: '#1f2937' }}>
                           {new Date(mission.scheduled_start).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
                           {' '}
@@ -800,7 +800,7 @@ export default function MissionsPage() {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                        <span className="text-gray-500">Fin:</span>
+                        <span className="text-gray-500">Fin :</span>
                         <span className="font-medium truncate" style={{ color: '#1f2937' }}>
                           {new Date(mission.scheduled_end).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
                           {' '}

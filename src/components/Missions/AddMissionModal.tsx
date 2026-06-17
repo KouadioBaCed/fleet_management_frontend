@@ -593,7 +593,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
 
     switch (step) {
       case 1:
-        if (!formData.driver) newErrors.driver = 'Un chauffeur doit etre selectionne';
+        if (!formData.driver) newErrors.driver = 'Un chauffeur doit être sélectionné';
         if (formData.driver && !formData.vehicle) newErrors.driver = 'Ce chauffeur n\'a pas de véhicule assigné';
         break;
 
@@ -629,16 +629,16 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
         break;
 
       case 4:
-        if (!formData.scheduled_start) newErrors.scheduled_start = 'La date de debut est requise';
+        if (!formData.scheduled_start) newErrors.scheduled_start = 'La date de début est requise';
         if (!formData.scheduled_end) newErrors.scheduled_end = 'La date de fin est requise';
         if (formData.scheduled_start && formData.scheduled_end) {
           const start = new Date(formData.scheduled_start);
           const end = new Date(formData.scheduled_end);
           if (end <= start) {
-            newErrors.scheduled_end = 'La date de fin doit etre posterieure a la date de debut';
+            newErrors.scheduled_end = 'La date de fin doit être postérieure à la date de début';
           }
           if (start < new Date()) {
-            newErrors.scheduled_start = 'La date de debut ne peut pas etre dans le passe';
+            newErrors.scheduled_start = 'La date de début ne peut pas être dans le passé';
           }
         }
         break;
@@ -697,7 +697,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
       const errorMessage = err.response?.data?.error ||
         err.response?.data?.detail ||
         Object.values(err.response?.data || {}).flat().join(', ') ||
-        'Erreur lors de la creation de la mission';
+        'Erreur lors de la création de la mission';
       setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -763,7 +763,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
                 Assignation
               </h3>
-              <p className="text-gray-600">Selectionnez un chauffeur, son véhicule sera assigné automatiquement</p>
+              <p className="text-gray-600">Sélectionnez un chauffeur, son véhicule sera assigné automatiquement</p>
             </div>
 
             {loadingResources ? (
@@ -958,7 +958,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
           <div className="space-y-6 p-6">
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                Informations generales
+                Informations générales
               </h3>
               <p className="text-gray-600">Titre et description de la mission</p>
             </div>
@@ -1231,7 +1231,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                     )}
 
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Notes (optionnel)</label>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Notes (facultatif)</label>
                       <input
                         type="text"
                         value={cp.notes}
@@ -1381,7 +1381,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
                 Horaires prévus
               </h3>
-              <p className="text-gray-600">Planifiez le debut et la fin de la mission</p>
+              <p className="text-gray-600">Planifiez le début et la fin de la mission</p>
             </div>
             <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
               <div className="space-y-5">
@@ -1416,7 +1416,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                 {formData.scheduled_start && formData.scheduled_end && (
                   <div className="p-4 rounded-lg" style={{ backgroundColor: '#E8EFED' }}>
                     <p className="text-sm font-medium" style={{ color: '#6A8A82' }}>
-                      Durée estimée:{' '}
+                      Durée estimée :{' '}
                       <span className="font-bold">
                         {(() => {
                           const start = new Date(formData.scheduled_start);
@@ -1503,7 +1503,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                 <div className="flex items-center gap-2 mb-4">
                   <Phone className="w-5 h-5" style={{ color: '#6A8A82' }} />
                   <h4 className="text-sm font-bold" style={{ color: '#191919' }}>
-                    Contact du responsable (optionnel)
+                    Contact du responsable (facultatif)
                   </h4>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1523,7 +1523,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                      Telephone
+                      Téléphone
                     </label>
                     <input
                       type="tel"
@@ -1542,13 +1542,13 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
               <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Notes additionnelles (optionnel)
+                    Notes additionnelles (facultatif)
                   </label>
                   <textarea
                     name="notes"
                     value={formData.notes}
                     onChange={handleInputChange}
-                    placeholder="Instructions speciales, remarques importantes..."
+                    placeholder="Instructions spéciales, remarques importantes..."
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl border-2 focus:border-sage focus:ring-4 focus:ring-sage/10 outline-none transition-all resize-none text-gray-900 placeholder-gray-400"
                     style={{ borderColor: '#E8ECEC' }}
@@ -1558,7 +1558,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
 
               {/* Resume */}
               <div className="bg-gray-50 rounded-xl p-5 border-2" style={{ borderColor: '#E8ECEC' }}>
-                <h4 className="font-bold mb-4" style={{ color: '#191919' }}>Resume de la mission</h4>
+                <h4 className="font-bold mb-4" style={{ color: '#191919' }}>Résumé de la mission</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-gray-500">Code</p>
@@ -1610,9 +1610,9 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
             </div>
             <div>
               <h2 className="text-2xl font-bold" style={{ color: '#191919' }}>
-                Nouvelle Mission
+                Nouvelle mission
               </h2>
-              <p className="text-sm text-gray-600">Etape {currentStep} sur {STEPS.length}</p>
+              <p className="text-sm text-gray-600">Étape {currentStep} sur {STEPS.length}</p>
             </div>
           </div>
           <button
@@ -1701,7 +1701,7 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                   style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
                 >
                   <ChevronLeft className="w-5 h-5" />
-                  <span>Precedent</span>
+                  <span>Précédent</span>
                 </button>
               )}
 
@@ -1725,12 +1725,12 @@ export default function AddMissionModal({ isOpen, onClose, onSubmit }: AddMissio
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Creation...</span>
+                      <span>Création...</span>
                     </>
                   ) : (
                     <>
                       <Check className="w-5 h-5" />
-                      <span>Creer la mission</span>
+                      <span>Créer la mission</span>
                     </>
                   )}
                 </button>

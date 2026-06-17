@@ -96,7 +96,7 @@ export default function ActivityFeed({ limit = 10, showFilters = false, onViewAl
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'A l\'instant';
+    if (diffMins < 1) return 'À l\'instant';
     if (diffMins < 60) return `Il y a ${diffMins} min`;
     if (diffHours < 24) return `Il y a ${diffHours}h`;
     return `Il y a ${diffDays}j`;

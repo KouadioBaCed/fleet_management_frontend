@@ -44,16 +44,16 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
   minor: { label: 'Mineur', color: '#6B7280', bgColor: '#F3F4F6' },
-  moderate: { label: 'Modere', color: '#D97706', bgColor: '#FEF3C7' },
+  moderate: { label: 'Modéré', color: '#D97706', bgColor: '#FEF3C7' },
   major: { label: 'Majeur', color: '#EA580C', bgColor: '#FFEDD5' },
   critical: { label: 'Critique', color: '#DC2626', bgColor: '#FEE2E2' },
 };
 
 const INCIDENT_TYPE_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  flat_tire: { label: 'Pneu creve', icon: XCircle, color: '#6B7280' },
+  flat_tire: { label: 'Pneu crevé', icon: XCircle, color: '#6B7280' },
   breakdown: { label: 'Panne', icon: Wrench, color: '#D97706' },
   accident: { label: 'Accident', icon: AlertTriangle, color: '#DC2626' },
-  fuel_issue: { label: 'Probleme carburant', icon: Fuel, color: '#EA580C' },
+  fuel_issue: { label: 'Problème carburant', icon: Fuel, color: '#EA580C' },
   traffic_violation: { label: 'Infraction', icon: FileWarning, color: '#7C3AED' },
   other: { label: 'Autre', icon: HelpCircle, color: '#6B7280' },
 };
@@ -299,7 +299,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                           <Mail className="w-5 h-5" style={{ color: '#B87333' }} />
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-gray-500">Email</p>
+                          <p className="text-xs font-medium text-gray-500">E-mail</p>
                           <p className="font-semibold truncate" style={{ color: '#191919' }}>
                             {displayDriver.user?.email || 'Non renseigné'}
                           </p>
@@ -546,7 +546,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                 <div className="bg-gray-50 rounded-xl p-5 border-2" style={{ borderColor: '#E8ECEC' }}>
                   <div className="flex items-center gap-2 mb-4">
                     <AlertTriangle className="w-5 h-5 text-gray-600" />
-                    <h3 className="font-bold" style={{ color: '#191919' }}>Resume des incidents</h3>
+                    <h3 className="font-bold" style={{ color: '#191919' }}>Résumé des incidents</h3>
                   </div>
                   <div className="grid grid-cols-4 gap-4">
                     <div className="text-center p-3 bg-white rounded-lg">
@@ -577,7 +577,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
 
                   {/* Severity Breakdown */}
                   <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-sm font-medium text-gray-600 mb-3">Par gravite</p>
+                    <p className="text-sm font-medium text-gray-600 mb-3">Par gravité</p>
                     <div className="flex gap-2">
                       {Object.entries(SEVERITY_CONFIG).map(([key, config]) => (
                         <div
@@ -725,7 +725,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
             <div className="space-y-4">
               {/* Filter */}
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">Filtrer:</span>
+                <span className="text-sm font-medium text-gray-600">Filtrer :</span>
                 {[
                   { id: 'all', label: 'Tous' },
                   { id: 'pending', label: 'En attente' },
@@ -766,10 +766,10 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                   <p className="text-gray-600 font-medium">Aucun incident</p>
                   <p className="text-sm text-gray-500 mt-1">
                     {incidentFilter === 'pending'
-                      ? 'Tous les incidents ont ete résolus'
+                      ? 'Tous les incidents ont été résolus'
                       : incidentFilter === 'resolved'
-                      ? 'Aucun incident resolu'
-                      : 'Ce conducteur n\'a aucun incident enregistre'}
+                      ? 'Aucun incident résolu'
+                      : 'Ce chauffeur n\'a aucun incident enregistré'}
                   </p>
                 </div>
               )}
@@ -813,7 +813,7 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                                 </span>
                                 {incident.is_resolved ? (
                                   <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                    Resolu
+                                    Résolu
                                   </span>
                                 ) : (
                                   <span className="px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
@@ -834,12 +834,12 @@ export default function DriverDetailsModal({ isOpen, onClose, driver }: DriverDe
                             {incident.vehicle_plate && (
                               <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                                 <Car className="w-3 h-3" />
-                                Vehicule: {incident.vehicle_plate}
+                                Véhicule : {incident.vehicle_plate}
                               </p>
                             )}
                             {incident.is_resolved && incident.resolved_at && (
                               <p className="text-xs text-green-600 mt-2">
-                                Resolu le {formatDateTime(incident.resolved_at)}
+                                Résolu le {formatDateTime(incident.resolved_at)}
                                 {incident.resolved_by_name && ` par ${incident.resolved_by_name}`}
                               </p>
                             )}

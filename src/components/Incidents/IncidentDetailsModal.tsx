@@ -361,7 +361,7 @@ export default function IncidentDetailsModal({
               <div className="mb-6">
                 <div className="flex items-center space-x-2 mb-3">
                   <User className="w-5 h-5" style={{ color: '#6A8A82' }} />
-                  <h3 className="text-lg font-bold" style={{ color: '#191919' }}>Conducteur concerné</h3>
+                  <h3 className="text-lg font-bold" style={{ color: '#191919' }}>Chauffeur concerné</h3>
                 </div>
 
                 <div

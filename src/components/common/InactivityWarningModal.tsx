@@ -60,7 +60,7 @@ export default function InactivityWarningModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">Session inactive</h2>
-              <p className="text-sm text-white/80">Etes-vous toujours la ?</p>
+              <p className="text-sm text-white/80">Êtes-vous toujours là ?</p>
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function InactivityWarningModal({
           </div>
 
           <p className="text-sm text-gray-500 text-center mb-6">
-            Pour des raisons de securite, vous serez deconnecte automatiquement apres une periode d'inactivite.
+            Pour des raisons de sécurité, vous serez déconnecté automatiquement après une période d'inactivité.
           </p>
 
           {/* Actions */}
@@ -89,14 +89,14 @@ export default function InactivityWarningModal({
               onClick={onLogout}
               className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
             >
-              Se deconnecter
+              Se déconnecter
             </button>
             <button
               onClick={onStayConnected}
               className="flex-1 px-4 py-3 rounded-xl text-white font-semibold transition-colors"
               style={{ backgroundColor: '#6A8A82' }}
             >
-              Rester connecte
+              Rester connecté
             </button>
           </div>
         </div>

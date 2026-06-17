@@ -113,7 +113,7 @@ export default function FuelAnalytics() {
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mb-1 sm:mb-0" style={{ backgroundColor: '#E8EFED' }}>
               <Gauge className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
             </div>
-            <span className="text-[10px] sm:text-sm font-medium text-gray-600">Conso. Moyenne</span>
+            <span className="text-[10px] sm:text-sm font-medium text-gray-600">Conso. moyenne</span>
           </div>
           <p className="text-xl sm:text-3xl font-bold" style={{ color: '#6A8A82' }}>
             {fleet_summary.avg_consumption.toFixed(1)}
@@ -167,7 +167,7 @@ export default function FuelAnalytics() {
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
             <PieChart className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Répartition Efficacité</h4>
+            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Répartition efficacité</h4>
           </div>
 
           <div className="space-y-2 sm:space-y-3">
@@ -206,7 +206,7 @@ export default function FuelAnalytics() {
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
             <Award className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Meilleurs Véhicules</h4>
+            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Meilleurs véhicules</h4>
           </div>
 
           <div className="space-y-2 sm:space-y-3">
@@ -246,7 +246,7 @@ export default function FuelAnalytics() {
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5 sm:col-span-2 lg:col-span-1" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
             <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
-            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>À Améliorer</h4>
+            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>À améliorer</h4>
           </div>
 
           <div className="space-y-2 sm:space-y-3">
@@ -289,7 +289,7 @@ export default function FuelAnalytics() {
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
             <Car className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Par Type de Véhicule</h4>
+            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Par type de véhicule</h4>
           </div>
 
           <div className="space-y-2 sm:space-y-3">
@@ -335,7 +335,7 @@ export default function FuelAnalytics() {
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
             <Fuel className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
-            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Par Carburant</h4>
+            <h4 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Par carburant</h4>
           </div>
 
           <div className="space-y-2 sm:space-y-3">
@@ -391,7 +391,7 @@ export default function FuelAnalytics() {
             </div>
             <div>
               <h3 className="text-sm sm:text-lg font-bold" style={{ color: '#191919' }}>
-                Consommation par Véhicule
+                Consommation par véhicule
               </h3>
               <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">
                 Détails et tendances de chaque véhicule

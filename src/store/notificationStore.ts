@@ -72,7 +72,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         unreadCount: Math.max(0, state.unreadCount - 1),
       }));
     } catch (err) {
-      const error = err instanceof Error ? err.message : 'Erreur lors de la mise a jour';
+      const error = err instanceof Error ? err.message : 'Erreur lors de la mise à jour';
       set({ error });
     }
   },
@@ -87,7 +87,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         highCount: 0,
       });
     } catch (err) {
-      const error = err instanceof Error ? err.message : 'Erreur lors de la mise a jour';
+      const error = err instanceof Error ? err.message : 'Erreur lors de la mise à jour';
       set({ error });
     }
   },
@@ -102,7 +102,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         highCount: 0,
       }));
     } catch (err) {
-      const error = err instanceof Error ? err.message : 'Erreur lors de la mise a jour';
+      const error = err instanceof Error ? err.message : 'Erreur lors de la mise à jour';
       set({ error });
     }
   },

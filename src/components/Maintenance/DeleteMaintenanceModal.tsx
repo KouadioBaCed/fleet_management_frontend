@@ -26,7 +26,7 @@ export default function DeleteMaintenanceModal({
                 <AlertTriangle className="w-6 h-6 text-red-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-red-600">Supprimer la Maintenance</h2>
+                <h2 className="text-xl font-bold text-red-600">Supprimer la maintenance</h2>
                 <p className="text-sm text-gray-600">Cette action est irréversible</p>
               </div>
             </div>

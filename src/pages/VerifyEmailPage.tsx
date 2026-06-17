@@ -37,7 +37,7 @@ export default function VerifyEmailPage() {
   // Verify token on mount
   useEffect(() => {
     if (!token) {
-      setTokenError('Token manquant. Veuillez utiliser le lien complet de votre email.');
+      setTokenError('Token manquant. Veuillez utiliser le lien complet de votre e-mail.');
       setLoading(false);
       return;
     }
@@ -260,8 +260,8 @@ export default function VerifyEmailPage() {
             {/* Info card */}
             <div className="bg-gray-50 rounded-xl p-4 mb-6">
               <div className="text-sm">
-                <p><strong>Organisation:</strong> {tokenData?.organization_name}</p>
-                <p><strong>Email:</strong> {tokenData?.email}</p>
+                <p><strong>Organisation :</strong> {tokenData?.organization_name}</p>
+                <p><strong>E-mail :</strong> {tokenData?.email}</p>
               </div>
             </div>
 
@@ -295,7 +295,7 @@ export default function VerifyEmailPage() {
               {/* Phone (optional) */}
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Téléphone <span className="text-gray-400 font-normal">(optionnel)</span>
+                  Téléphone <span className="text-gray-400 font-normal">(facultatif)</span>
                 </label>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -410,7 +410,7 @@ export default function VerifyEmailPage() {
         {/* Version info */}
         <div className="text-center mt-6">
           <p className="text-xs text-gray-500">
-            D-Fleet CI Fleet Management v1.0
+            D-Fleet CI — Gestion de flotte v1.0
           </p>
         </div>
       </div>

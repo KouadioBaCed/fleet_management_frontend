@@ -218,11 +218,11 @@ export default function ActiveMissionModal({
     switch (endStep) {
       case 'mileage':
         if (!endMileage || parseFloat(endMileage) < 0) {
-          setError('Veuillez entrer un kilometrage valide');
+          setError('Veuillez entrer un kilométrage valide');
           return;
         }
         if (parseFloat(endMileage) < startMileage) {
-          setError('Le kilometrage final doit etre superieur au kilometrage initial');
+          setError('Le kilométrage final doit être supérieur au kilométrage initial');
           return;
         }
         setEndStep('fuel');
@@ -360,7 +360,7 @@ export default function ActiveMissionModal({
                 <h3 className="text-xl font-bold mb-2" style={{ color: '#191919' }}>
                   Mettre en pause
                 </h3>
-                <p className="text-gray-600">Le tracking GPS sera arrete temporairement</p>
+                <p className="text-gray-600">Le tracking GPS sera arrêté temporairement</p>
               </div>
 
               {/* Reason Selection */}
@@ -397,12 +397,12 @@ export default function ActiveMissionModal({
               {/* Notes */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Notes (optionnel)
+                  Notes (facultatif)
                 </label>
                 <textarea
                   value={pauseNotes}
                   onChange={(e) => setPauseNotes(e.target.value)}
-                  placeholder="Ajouter des details..."
+                  placeholder="Ajouter des détails..."
                   rows={3}
                   className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all resize-none"
                 />
@@ -488,7 +488,7 @@ export default function ActiveMissionModal({
                       Kilométrage final
                     </h3>
                     <p className="text-gray-600">
-                      Notez le kilometrage actuel affiche sur le tableau de bord.
+                      Notez le kilométrage actuel affiché sur le tableau de bord.
                     </p>
                   </div>
 
@@ -535,7 +535,7 @@ export default function ActiveMissionModal({
                       Niveau de carburant
                     </h3>
                     <p className="text-gray-600">
-                      Indiquez le niveau de carburant actuel du vehicule.
+                      Indiquez le niveau de carburant actuel du véhicule.
                     </p>
                   </div>
 
@@ -590,7 +590,7 @@ export default function ActiveMissionModal({
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                      Notes (optionnel)
+                      Notes (facultatif)
                     </h3>
                     <p className="text-gray-600">
                       Ajoutez des observations ou commentaires sur le trajet.
@@ -600,7 +600,7 @@ export default function ActiveMissionModal({
                   <textarea
                     value={endNotes}
                     onChange={(e) => setEndNotes(e.target.value)}
-                    placeholder="Ex: RAS, livraison effectuee sans probleme..."
+                    placeholder="Ex : RAS, livraison effectuée sans problème..."
                     rows={4}
                     className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all resize-none text-left"
                   />
@@ -621,7 +621,7 @@ export default function ActiveMissionModal({
                       Confirmer la fin
                     </h3>
                     <p className="text-gray-600">
-                      Verifiez les informations avant de terminer.
+                      Vérifiez les informations avant de terminer.
                     </p>
                   </div>
 
@@ -684,7 +684,7 @@ export default function ActiveMissionModal({
                   <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 border border-amber-200">
                     <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-amber-800 text-left">
-                      Le tracking GPS sera arrete et la mission marquee comme terminee.
+                      Le tracking GPS sera arrêté et la mission marquée comme terminée.
                     </p>
                   </div>
                 </div>
@@ -753,7 +753,7 @@ export default function ActiveMissionModal({
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Vehicule</span>
+                  <span className="text-gray-600">Véhicule</span>
                   <span className="font-semibold" style={{ color: '#191919' }}>
                     {mission.vehicle_plate}
                   </span>
@@ -771,7 +771,7 @@ export default function ActiveMissionModal({
                 <div className="grid grid-cols-3 gap-4">
                   <div className="bg-gray-50 rounded-xl p-4 text-center">
                     <Gauge className="w-6 h-6 mx-auto mb-2" style={{ color: '#6A8A82' }} />
-                    <p className="text-xs text-gray-500 uppercase">Km depart</p>
+                    <p className="text-xs text-gray-500 uppercase">Km départ</p>
                     <p className="text-lg font-bold" style={{ color: '#191919' }}>
                       {trip.start_mileage}
                     </p>

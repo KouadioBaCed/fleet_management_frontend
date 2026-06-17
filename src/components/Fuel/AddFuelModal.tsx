@@ -231,7 +231,7 @@ export default function AddFuelModal({ isOpen, onClose, onSubmit, preselectedVeh
             </div>
             <div>
               <h2 className="text-xl font-bold" style={{ color: '#191919' }}>
-                Nouveau Ravitaillement
+                Nouveau ravitaillement
               </h2>
               <p className="text-sm text-gray-500">Enregistrer un plein de carburant</p>
             </div>
@@ -394,7 +394,7 @@ export default function AddFuelModal({ isOpen, onClose, onSubmit, preselectedVeh
                   type="text"
                   value={stationAddress}
                   onChange={(e) => setStationAddress(e.target.value)}
-                  placeholder="Adresse (optionnel)"
+                  placeholder="Adresse (facultatif)"
                   className="w-full px-4 py-2.5 rounded-xl border-2 text-sm focus:ring-2 focus:ring-sage/20 outline-none transition-all mt-2 text-gray-900 placeholder-gray-400"
                   style={{ borderColor: '#E8ECEC' }}
                 />
@@ -576,7 +576,7 @@ export default function AddFuelModal({ isOpen, onClose, onSubmit, preselectedVeh
               {/* Notes */}
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Notes (optionnel)
+                  Notes (facultatif)
                 </label>
                 <textarea
                   value={notes}

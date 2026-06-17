@@ -93,7 +93,7 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
       }
       // Validate file type
       if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-        setErrors(prev => ({ ...prev, photo: 'Format accepté: PNG, JPG ou JPEG' }));
+        setErrors(prev => ({ ...prev, photo: 'Format accepté : PNG, JPG ou JPEG' }));
         return;
       }
       setErrors(prev => {
@@ -158,9 +158,9 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
           newErrors.last_name = 'Le nom est requis';
         }
         if (!formData.email.trim()) {
-          newErrors.email = "L'email est requis";
+          newErrors.email = "L'adresse e-mail est requise";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-          newErrors.email = "Format d'email invalide";
+          newErrors.email = "Format d'adresse e-mail invalide";
         }
         if (!formData.phone_number.trim()) {
           newErrors.phone_number = 'Le téléphone est requis';
@@ -392,7 +392,7 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
                     Cliquez pour télécharger une photo
                   </p>
                   <p className="text-xs sm:text-sm text-gray-500">PNG, JPG ou JPEG jusqu'à 10MB</p>
-                  <p className="text-[10px] sm:text-xs text-gray-400 mt-1 sm:mt-2">(Optionnel - vous pouvez passer cette étape)</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400 mt-1 sm:mt-2">(Facultatif - vous pouvez passer cette étape)</p>
                 </div>
               )}
               <input
@@ -467,7 +467,7 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
                 </div>
                 <div>
                   <label className="block text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2" style={{ color: '#191919' }}>
-                    Email <span className="text-red-500">*</span>
+                    E-mail <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
@@ -690,7 +690,7 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
                 </div>
                 <div>
                   <label className="block text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2" style={{ color: '#191919' }}>
-                    Notes (optionnel)
+                    Notes (facultatif)
                   </label>
                   <textarea
                     name="notes"
@@ -863,7 +863,7 @@ export default function AddDriverModal({ isOpen, onClose, onSubmit }: AddDriverM
             </div>
             <div>
               <h2 className="text-lg sm:text-2xl font-bold" style={{ color: '#191919' }}>
-                Nouveau Chauffeur
+                Nouveau chauffeur
               </h2>
               <p className="text-xs sm:text-sm text-gray-600">Étape {currentStep} sur {STEPS.length}</p>
             </div>

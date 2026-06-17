@@ -50,16 +50,16 @@ export default function LoginPage() {
     } catch (err: any) {
       if (err.message === 'ROLE_NOT_ALLOWED') {
         setErrorType('role');
-        setError('Acces refuse. Cette interface est reservee aux administrateurs et superviseurs. Utilisez l\'application mobile pour les chauffeurs.');
+        setError('Accès refusé. Cette interface est réservée aux administrateurs et superviseurs. Utilisez l\'application mobile pour les chauffeurs.');
       } else if (err.response?.status === 401) {
         setErrorType('credentials');
-        setError('Identifiants incorrects. Verifiez votre nom d\'utilisateur et mot de passe.');
+        setError('Identifiants incorrects. Vérifiez votre nom d\'utilisateur et mot de passe.');
       } else if (err.code === 'ERR_NETWORK') {
         setErrorType('network');
-        setError('Erreur de connexion au serveur. Verifiez votre connexion internet.');
+        setError('Erreur de connexion au serveur. Vérifiez votre connexion internet.');
       } else {
         setErrorType('credentials');
-        setError('Une erreur est survenue. Veuillez reessayer.');
+        setError('Une erreur est survenue. Veuillez réessayer.');
       }
     } finally {
       setLoading(false);
@@ -149,8 +149,8 @@ export default function LoginPage() {
               <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-blue-50/80 border border-blue-100 mb-5 login-fade-in">
                 <Clock className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs font-medium text-blue-700">Session expiree</p>
-                  <p className="text-[11px] text-blue-500 mt-0.5">Déconnecte pour inactivite.</p>
+                  <p className="text-xs font-medium text-blue-700">Session expirée</p>
+                  <p className="text-[11px] text-blue-500 mt-0.5">Déconnecté pour inactivité.</p>
                 </div>
                 <button type="button" onClick={() => setShowInactivityMessage(false)} className="text-blue-300 hover:text-blue-500 text-lg leading-none">&times;</button>
               </div>
@@ -161,7 +161,7 @@ export default function LoginPage() {
               <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-green-50/80 border border-green-100 mb-5 login-fade-in">
                 <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-xs font-medium text-green-700">Compte supprime avec succes</p>
+                  <p className="text-xs font-medium text-green-700">Compte supprimé avec succès</p>
                 </div>
                 <button type="button" onClick={() => setShowAccountDeletedMessage(false)} className="text-green-300 hover:text-green-500 text-lg leading-none">&times;</button>
               </div>
@@ -213,7 +213,7 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between mb-1.5 ml-1">
                   <label className="block text-xs font-medium text-gray-500">Mot de passe</label>
                   <Link to="/forgot-password" className="text-[11px] font-medium transition-colors hover:underline" style={{ color: '#B87333' }}>
-                    Oublié ?
+                    Oublié ?
                   </Link>
                 </div>
                 <div

@@ -72,7 +72,7 @@ export default function FuelDetailsModal({ isOpen, onClose, record }: FuelDetail
             className="p-4 sm:p-5 rounded-lg sm:rounded-xl text-center"
             style={{ backgroundColor: '#FEF3C7', border: '2px solid #B87333' }}
           >
-            <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Coût Total</p>
+            <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Coût total</p>
             <p className="text-2xl sm:text-4xl font-bold" style={{ color: '#B87333' }}>
               {formatAmount(Number(record.total_cost))} {currencySymbol}
             </p>

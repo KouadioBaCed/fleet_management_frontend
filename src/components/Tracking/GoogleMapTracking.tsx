@@ -55,7 +55,7 @@ export default function GoogleMapTracking({ vehicles }: GoogleMapTrackingProps) 
           <h3 className="text-lg font-semibold mb-3" style={{ color: '#6A8A82' }}>Configuration Google Maps requise</h3>
           <div className="bg-white rounded-lg p-4 mb-4 text-left shadow-sm">
             <p className="text-sm text-gray-700 mb-3">
-              Pour afficher la carte en temps réel, vous devez configurer une clé API Google Maps :
+              Pour afficher la carte en temps réel, vous devez configurer une clé API Google Maps :
             </p>
             <ol className="text-xs text-gray-600 space-y-2 list-decimal list-inside">
               <li>Allez sur <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer" className="font-semibold" style={{ color: '#6A8A82' }}>Google Cloud Console</a></li>

@@ -13,7 +13,7 @@ const STATUS_OPTIONS = [
   {
     value: 'available',
     label: 'Disponible',
-    description: 'Le chauffeur est pret pour une mission',
+    description: 'Le chauffeur est prêt pour une mission',
     icon: CheckCircle,
     color: '#6A8A82',
     bgColor: '#E8EFED',
@@ -21,7 +21,7 @@ const STATUS_OPTIONS = [
   {
     value: 'on_mission',
     label: 'En mission',
-    description: 'Le chauffeur est actuellement en deplacement',
+    description: 'Le chauffeur est actuellement en déplacement',
     icon: Car,
     color: '#B87333',
     bgColor: '#F5E8DD',
@@ -159,7 +159,7 @@ export default function ChangeDriverStatusModal({ isOpen, onClose, onConfirm, dr
         {/* Status Options */}
         <div className="p-6 space-y-3">
           <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-            Selectionner le nouveau statut
+            Sélectionner le nouveau statut
           </p>
           {STATUS_OPTIONS.map((status) => {
             const Icon = status.icon;
@@ -238,7 +238,7 @@ export default function ChangeDriverStatusModal({ isOpen, onClose, onConfirm, dr
             {isSubmitting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Mise a jour...</span>
+                <span>Mise à jour...</span>
               </>
             ) : (
               <>

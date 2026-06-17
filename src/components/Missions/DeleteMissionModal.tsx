@@ -53,17 +53,17 @@ export default function DeleteMissionModal({ isOpen, onClose, onConfirm, mission
               Êtes-vous sûr de vouloir supprimer cette mission ? Cette action est irréversible.
             </p>
             <div className="bg-red-50 rounded-xl p-4 border-2 border-red-200">
-              <p className="text-sm font-semibold text-red-900 mb-2">Mission à supprimer:</p>
+              <p className="text-sm font-semibold text-red-900 mb-2">Mission à supprimer :</p>
               <p className="text-base font-bold text-red-800">{mission.code}</p>
               <p className="text-sm text-red-700 mt-1">{mission.title}</p>
               <div className="mt-3 pt-3 border-t border-red-200">
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-red-600">Chauffeur:</span>
+                    <span className="text-red-600">Chauffeur :</span>
                     <p className="font-semibold text-red-800">{mission.driver}</p>
                   </div>
                   <div>
-                    <span className="text-red-600">Véhicule:</span>
+                    <span className="text-red-600">Véhicule :</span>
                     <p className="font-semibold text-red-800">{mission.vehicle}</p>
                   </div>
                 </div>
@@ -75,7 +75,7 @@ export default function DeleteMissionModal({ isOpen, onClose, onConfirm, mission
             <div className="flex items-start space-x-3">
               <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-amber-800">
-                <strong>Attention:</strong> Si la mission est en cours ou assignée, le véhicule et le chauffeur seront automatiquement libérés.
+                <strong>Attention :</strong> Si la mission est en cours ou assignée, le véhicule et le chauffeur seront automatiquement libérés.
               </p>
             </div>
           </div>

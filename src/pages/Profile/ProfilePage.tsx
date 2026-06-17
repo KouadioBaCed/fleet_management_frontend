@@ -229,14 +229,14 @@ export default function ProfilePage() {
     // Validation du type de fichier
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      setError('Format d\'image non supporte. Utilisez JPEG, PNG ou WebP.');
+      setError('Format d\'image non pris en charge. Utilisez JPEG, PNG ou WebP.');
       return;
     }
 
     // Validation de la taille (max 5MB)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      setError('La taille de l\'image ne doit pas depasser 5MB.');
+      setError('La taille de l\'image ne doit pas dépasser 5 Mo.');
       return;
     }
 
@@ -284,7 +284,7 @@ export default function ProfilePage() {
         });
       }
 
-      setSuccess('Photo de profil mise a jour avec succes');
+      setSuccess('Photo de profil mise à jour avec succès');
       setImagePreview(null); // Effacer l'apercu car on utilise maintenant l'URL du serveur
 
       // Masquer le message de succes apres 3 secondes
@@ -374,7 +374,7 @@ export default function ProfilePage() {
                 {imagePreview ? (
                   <img
                     src={imagePreview}
-                    alt="Apercu de la photo"
+                    alt="Aperçu de la photo"
                     className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover shadow-lg"
                   />
                 ) : profile?.profile_picture ? (
@@ -554,7 +554,7 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2" style={{ color: '#6A8A82' }}>
                     <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2" />
-                    Email
+                    E-mail
                   </label>
                   <input
                     type="email"

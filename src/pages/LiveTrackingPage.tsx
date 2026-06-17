@@ -224,12 +224,12 @@ export default function LiveTrackingPage() {
                   ? 'bg-green-50 text-green-700 border border-green-200'
                   : 'bg-amber-50 text-amber-700 border border-amber-200'
               }`}
-              title={isConnected ? 'Mises a jour en temps reel' : 'Mises a jour toutes les 10s'}
+              title={isConnected ? 'Mises à jour en temps réel' : 'Mises à jour toutes les 10s'}
             >
               {isConnected ? (
                 <>
                   <Wifi className="w-4 h-4" />
-                  <span className="hidden xs:inline">Temps reel</span>
+                  <span className="hidden xs:inline">Temps réel</span>
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 </>
               ) : (
@@ -334,7 +334,7 @@ export default function LiveTrackingPage() {
                 </div>
                 <div>
                   <span className="font-semibold text-sm sm:text-base text-gray-800">Carte en temps réel</span>
-                  <p className="text-[10px] sm:text-xs text-gray-400">Derniere MAJ: {formatLastUpdate(lastRefresh)}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400">Dernière MAJ : {formatLastUpdate(lastRefresh)}</p>
                 </div>
               </div>
             </div>
@@ -352,7 +352,7 @@ export default function LiveTrackingPage() {
                   onClick={() => loadDataFromApi()}
                   className="btn-primary"
                 >
-                  Reessayer
+                  Réessayer
                 </button>
               </div>
             ) : vehicles.length === 0 ? (
@@ -362,7 +362,7 @@ export default function LiveTrackingPage() {
                 </div>
                 <p className="text-lg sm:text-xl font-semibold mb-2 text-center text-gray-800">Aucun véhicule actif</p>
                 <p className="text-gray-400 text-center text-sm sm:text-base">
-                  Les véhicules apparaitront ici lorsqu'ils auront des missions en cours.
+                  Les véhicules apparaîtront ici lorsqu'ils auront des missions en cours.
                 </p>
               </div>
             ) : (
@@ -446,7 +446,7 @@ export default function LiveTrackingPage() {
                               color: !hasPosition ? '#D97706' : isMoving ? '#6A8A82' : '#DC2626',
                             }}
                           >
-                            {!hasPosition ? 'En attente GPS' : isMoving ? 'En route' : 'Arrete'}
+                            {!hasPosition ? 'En attente GPS' : isMoving ? 'En route' : 'Arrêté'}
                           </span>
                           {isDelayed && (
                             <span className="status-badge" style={{ backgroundColor: 'rgba(220,38,38,0.08)', color: '#DC2626' }}>
@@ -479,14 +479,14 @@ export default function LiveTrackingPage() {
                               <div className="flex items-start gap-2">
                                 <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: '#6A8A82' }} />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-[10px] sm:text-xs text-gray-400">Depart</p>
+                                  <p className="text-[10px] sm:text-xs text-gray-400">Départ</p>
                                   <p className="text-[10px] sm:text-xs font-medium text-gray-600 line-clamp-2">{vehicle.origin.address}</p>
                                 </div>
                               </div>
                               <div className="flex items-start gap-2">
                                 <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: '#B87333' }} />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-[10px] sm:text-xs text-gray-400">Arrivee</p>
+                                  <p className="text-[10px] sm:text-xs text-gray-400">Arrivée</p>
                                   <p className="text-[10px] sm:text-xs font-medium text-gray-600 line-clamp-2">{vehicle.destination.address}</p>
                                 </div>
                               </div>
@@ -502,7 +502,7 @@ export default function LiveTrackingPage() {
                                 className="flex-1 btn-primary flex items-center justify-center gap-1.5 sm:gap-2"
                               >
                                 <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                <span>Voir details</span>
+                                <span>Voir détails</span>
                               </button>
                               {vehicle.driver_phone && (
                                 <a

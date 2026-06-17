@@ -34,7 +34,7 @@ export default function Dashboard() {
   useEffect(() => {
     fetchStats();
 
-    // Rafraichir toutes les 30 secondes
+    // Rafraîchir toutes les 30 secondes
     const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -87,7 +87,7 @@ export default function Dashboard() {
       {
         title: 'Missions',
         value: stats.missions.in_progress.toString(),
-        subtitle: `${stats.missions.completed} terminees`,
+        subtitle: `${stats.missions.completed} terminées`,
         icon: MapPin,
         bgColor: '#6A8A82',
         lightBg: '#E8EFED',
@@ -110,7 +110,7 @@ export default function Dashboard() {
         change: `${stats.alerts.major} majeures`,
         trend: stats.alerts.total_unresolved > 0 ? 'down' : 'neutral',
         details: [
-          { label: 'Moderees', value: stats.alerts.moderate },
+          { label: 'Modérées', value: stats.alerts.moderate },
           { label: 'Mineures', value: stats.alerts.minor },
         ],
       },
@@ -156,7 +156,7 @@ export default function Dashboard() {
               onClick={() => fetchStats()}
               disabled={loading}
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
-              title="Rafraichir"
+              title="Rafraîchir"
             >
               <RefreshCw className={`w-5 h-5 text-gray-500 ${loading ? 'animate-spin' : ''}`} />
             </button>

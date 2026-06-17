@@ -20,12 +20,12 @@ interface CancelMissionModalProps {
 }
 
 const CANCELLATION_REASONS = [
-  { value: 'client_request', label: 'Demande du client', description: 'Le client a demande l\'annulation' },
-  { value: 'driver_unavailable', label: 'Conducteur indisponible', description: 'Le conducteur ne peut pas effectuer la mission' },
-  { value: 'vehicle_issue', label: 'Probleme vehicule', description: 'Le vehicule est en panne ou indisponible' },
-  { value: 'schedule_conflict', label: 'Conflit de planning', description: 'Incompatibilite avec d\'autres missions' },
-  { value: 'weather', label: 'Conditions meteo', description: 'Conditions meteorologiques defavorables' },
-  { value: 'other', label: 'Autre motif', description: 'Specifiez le motif ci-dessous' },
+  { value: 'client_request', label: 'Demande du client', description: 'Le client a demandé l\'annulation' },
+  { value: 'driver_unavailable', label: 'Chauffeur indisponible', description: 'Le chauffeur ne peut pas effectuer la mission' },
+  { value: 'vehicle_issue', label: 'Problème véhicule', description: 'Le véhicule est en panne ou indisponible' },
+  { value: 'schedule_conflict', label: 'Conflit de planning', description: 'Incompatibilité avec d\'autres missions' },
+  { value: 'weather', label: 'Conditions météo', description: 'Conditions météorologiques défavorables' },
+  { value: 'other', label: 'Autre motif', description: 'Spécifiez le motif ci-dessous' },
 ];
 
 export default function CancelMissionModal({ isOpen, onClose, onConfirm, mission }: CancelMissionModalProps) {
@@ -39,14 +39,14 @@ export default function CancelMissionModal({ isOpen, onClose, onConfirm, mission
 
     if (selectedReason === 'other') {
       if (!customReason.trim()) {
-        setError('Veuillez specifier le motif d\'annulation');
+        setError('Veuillez spécifier le motif d\'annulation');
         return;
       }
       reason = customReason.trim();
     } else {
       const selected = CANCELLATION_REASONS.find(r => r.value === selectedReason);
       if (!selected) {
-        setError('Veuillez selectionner un motif d\'annulation');
+        setError('Veuillez sélectionner un motif d\'annulation');
         return;
       }
       reason = selected.label;
@@ -147,9 +147,9 @@ export default function CancelMissionModal({ isOpen, onClose, onConfirm, mission
             <div className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: '#FEF3C7' }}>
               <Bell className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#D97706' }} />
               <div>
-                <p className="font-semibold text-amber-800">Notification conducteur</p>
+                <p className="font-semibold text-amber-800">Notification chauffeur</p>
                 <p className="text-sm text-amber-700 mt-1">
-                  Le conducteur {mission.driver_name} sera automatiquement notifie de l'annulation de cette mission.
+                  Le chauffeur {mission.driver_name} sera automatiquement notifié de l'annulation de cette mission.
                 </p>
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function CancelMissionModal({ isOpen, onClose, onConfirm, mission
           {selectedReason === 'other' && (
             <div>
               <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                Preciser le motif *
+                Préciser le motif *
               </label>
               <textarea
                 value={customReason}
@@ -213,7 +213,7 @@ export default function CancelMissionModal({ isOpen, onClose, onConfirm, mission
             <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-gray-600" />
             <div>
               <p className="text-sm text-gray-600">
-                <strong>Attention:</strong> L'annulation liberera automatiquement le vehicule et le conducteur s'ils sont assignes a cette mission.
+                <strong>Attention :</strong> L'annulation libérera automatiquement le véhicule et le chauffeur s'ils sont assignés à cette mission.
               </p>
             </div>
           </div>

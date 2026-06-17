@@ -104,9 +104,9 @@ export default function DriversPage() {
   };
 
   const statsDisplay = [
-    { label: 'Total Chauffeurs', value: stats.total.toString(), color: '#6A8A82' },
+    { label: 'Total chauffeurs', value: stats.total.toString(), color: '#6A8A82' },
     { label: 'Disponibles', value: stats.available.toString(), color: '#6A8A82' },
-    { label: 'En Mission', value: stats.on_mission.toString(), color: '#B87333' },
+    { label: 'En mission', value: stats.on_mission.toString(), color: '#B87333' },
     { label: 'Indisponibles', value: (stats.on_break + stats.off_duty).toString(), color: '#DC2626' },
   ];
 
@@ -201,9 +201,9 @@ export default function DriversPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#1f2937' }}>
-              Conducteur
+              Chauffeurs
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-1">Gérez votre équipe de conducteur</p>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Gérez votre équipe de chauffeurs</p>
           </div>
           <button
             onClick={() => setIsAddModalOpen(true)}

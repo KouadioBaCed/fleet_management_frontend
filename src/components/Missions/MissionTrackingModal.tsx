@@ -164,7 +164,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                 backgroundColor: isAutoRefresh ? '#E8EFED' : '#F3F4F6',
                 color: isAutoRefresh ? '#6A8A82' : '#6B7280',
               }}
-              title={isAutoRefresh ? 'Desactiver actualisation auto' : 'Activer actualisation auto'}
+              title={isAutoRefresh ? 'Désactiver l\'actualisation auto' : 'Activer l\'actualisation auto'}
             >
               <RefreshCw className={`w-5 h-5 ${isAutoRefresh ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
             </button>
@@ -192,7 +192,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                 onClick={fetchTrackingData}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
               >
-                Reessayer
+                Réessayer
               </button>
             </div>
           ) : trackingData ? (
@@ -211,9 +211,9 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold" style={{ color: severityConfig.color }}>
-                      {trackingData.delay_status.delay_type === 'start' && 'Retard au demarrage'}
-                      {trackingData.delay_status.delay_type === 'progress' && 'Mission accompli'}
-                      {trackingData.delay_status.delay_type === 'arrival' && 'Retard a l\'arrivee'}
+                      {trackingData.delay_status.delay_type === 'start' && 'Retard au démarrage'}
+                      {trackingData.delay_status.delay_type === 'progress' && 'Mission accomplie'}
+                      {trackingData.delay_status.delay_type === 'arrival' && 'Retard à l\'arrivée'}
                     </h3>
                     <p className="text-sm" style={{ color: severityConfig.color }}>
                       Retard de {trackingData.delay_status.delay_minutes} minutes
@@ -243,7 +243,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                         <span className="font-semibold text-gray-900">{trackingData.mission.title}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Priorite</span>
+                        <span className="text-sm text-gray-600">Priorité</span>
                         <span
                           className="px-3 py-1 rounded-full text-sm font-medium"
                           style={{ backgroundColor: priority.bgColor, color: priority.color }}
@@ -259,7 +259,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Vehicule</span>
+                        <span className="text-sm text-gray-600">Véhicule</span>
                         <div className="flex items-center gap-2">
                           <Car className="w-4 h-4 text-gray-400" />
                           <span className="font-mono font-bold text-gray-900">{trackingData.mission.vehicle_plate}</span>
@@ -340,7 +340,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                       </h3>
                       {trackingData.last_update && (
                         <span className="text-xs text-gray-500">
-                          Mis a jour il y a {formatTimeAgo(trackingData.last_update)}
+                          Mis à jour il y a {formatTimeAgo(trackingData.last_update)}
                         </span>
                       )}
                     </div>
@@ -443,7 +443,7 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
                         <p className="font-bold" style={{ color: '#6A8A82' }}>
                           {trackingData.delay_status.is_delayed
                             ? `+${trackingData.delay_status.delay_minutes} min`
-                            : 'A l\'heure'}
+                            : 'À l\'heure'}
                         </p>
                       </div>
                     </div>
@@ -522,8 +522,8 @@ export default function MissionTrackingModal({ isOpen, onClose, mission }: Missi
               {lastRefresh && (
                 <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
                   <RefreshCw className="w-4 h-4" />
-                  Derniere actualisation: {lastRefresh.toLocaleTimeString('fr-FR')}
-                  {isAutoRefresh && ' (actualisation auto activee)'}
+                  Dernière actualisation : {lastRefresh.toLocaleTimeString('fr-FR')}
+                  {isAutoRefresh && ' (actualisation auto activée)'}
                 </div>
               )}
             </div>

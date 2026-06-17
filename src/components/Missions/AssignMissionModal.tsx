@@ -31,8 +31,8 @@ interface AssignMissionModalProps {
 
 const STEPS = [
   { id: 1, title: 'Mission', icon: ClipboardList },
-  { id: 2, title: 'Conducteur', icon: User },
-  { id: 3, title: 'Vehicule', icon: Car },
+  { id: 2, title: 'Chauffeur', icon: User },
+  { id: 3, title: 'Véhicule', icon: Car },
   { id: 4, title: 'Confirmation', icon: CheckCircle },
 ];
 
@@ -115,15 +115,15 @@ export default function AssignMissionModal({
 
   const handleNext = () => {
     if (currentStep === 1 && !selectedMission) {
-      setError('Veuillez selectionner une mission');
+      setError('Veuillez sélectionner une mission');
       return;
     }
     if (currentStep === 2 && !selectedDriver) {
-      setError('Veuillez selectionner un conducteur');
+      setError('Veuillez sélectionner un chauffeur');
       return;
     }
     if (currentStep === 3 && !selectedVehicle) {
-      setError('Veuillez selectionner un vehicule');
+      setError('Veuillez sélectionner un véhicule');
       return;
     }
     setError(null);
@@ -216,7 +216,7 @@ export default function AssignMissionModal({
               <h2 className="text-xl font-bold" style={{ color: '#191919' }}>
                 Assigner une mission
               </h2>
-              <p className="text-sm text-gray-500">Etape {currentStep} sur 4</p>
+              <p className="text-sm text-gray-500">Étape {currentStep} sur 4</p>
             </div>
           </div>
           <button
@@ -275,7 +275,7 @@ export default function AssignMissionModal({
           {isLoadingData ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="w-10 h-10 animate-spin text-gray-400 mb-4" />
-              <p className="text-gray-500">Chargement des donnees...</p>
+              <p className="text-gray-500">Chargement des données...</p>
             </div>
           ) : (
             <>
@@ -284,7 +284,7 @@ export default function AssignMissionModal({
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-700">
-                      Selectionner une mission en attente
+                      Sélectionner une mission en attente
                     </h3>
                     <span className="text-sm text-gray-500">
                       {filteredMissions.length} mission(s) disponible(s)
@@ -373,10 +373,10 @@ export default function AssignMissionModal({
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-700">
-                      Choisir un conducteur disponible
+                      Choisir un chauffeur disponible
                     </h3>
                     <span className="text-sm text-gray-500">
-                      {filteredDrivers.length} conducteur(s) disponible(s)
+                      {filteredDrivers.length} chauffeur(s) disponible(s)
                     </span>
                   </div>
 
@@ -385,7 +385,7 @@ export default function AssignMissionModal({
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Rechercher un conducteur..."
+                      placeholder="Rechercher un chauffeur..."
                       value={driverSearch}
                       onChange={(e) => setDriverSearch(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
@@ -398,7 +398,7 @@ export default function AssignMissionModal({
                     {filteredDrivers.length === 0 ? (
                       <div className="text-center py-8 text-gray-500">
                         <User className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                        <p>Aucun conducteur disponible</p>
+                        <p>Aucun chauffeur disponible</p>
                       </div>
                     ) : (
                       filteredDrivers.map((driver) => {
@@ -473,10 +473,10 @@ export default function AssignMissionModal({
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-700">
-                      Choisir un vehicule disponible
+                      Choisir un véhicule disponible
                     </h3>
                     <span className="text-sm text-gray-500">
-                      {filteredVehicles.length} vehicule(s) disponible(s)
+                      {filteredVehicles.length} véhicule(s) disponible(s)
                     </span>
                   </div>
 
@@ -485,7 +485,7 @@ export default function AssignMissionModal({
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Rechercher un vehicule..."
+                      placeholder="Rechercher un véhicule..."
                       value={vehicleSearch}
                       onChange={(e) => setVehicleSearch(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
@@ -498,7 +498,7 @@ export default function AssignMissionModal({
                     {filteredVehicles.length === 0 ? (
                       <div className="text-center py-8 text-gray-500">
                         <Car className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                        <p>Aucun vehicule disponible</p>
+                        <p>Aucun véhicule disponible</p>
                       </div>
                     ) : (
                       filteredVehicles.map((vehicle) => {
@@ -615,7 +615,7 @@ export default function AssignMissionModal({
                   <div className="bg-gray-50 rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <User className="w-5 h-5" style={{ color: '#6A8A82' }} />
-                      <span className="font-semibold text-gray-700">Conducteur</span>
+                      <span className="font-semibold text-gray-700">Chauffeur</span>
                     </div>
                     {selectedDriver && (() => {
                       const name = selectedDriver.full_name || `${selectedDriver.user?.first_name || ''} ${selectedDriver.user?.last_name || ''}`.trim() || 'Inconnu';
@@ -655,7 +655,7 @@ export default function AssignMissionModal({
                   <div className="bg-gray-50 rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Car className="w-5 h-5" style={{ color: '#6A8A82' }} />
-                      <span className="font-semibold text-gray-700">Vehicule</span>
+                      <span className="font-semibold text-gray-700">Véhicule</span>
                     </div>
                     {selectedVehicle && (
                       <div className="flex items-center gap-4">
@@ -704,7 +704,7 @@ export default function AssignMissionModal({
                     <div className="text-sm" style={{ color: '#B87333' }}>
                       <p className="font-semibold">Attention</p>
                       <p>
-                        Une fois assignes, le conducteur et le vehicule seront marques comme "En mission" et ne
+                        Une fois assignés, le chauffeur et le véhicule seront marqués comme « En mission » et ne
                         seront plus disponibles pour d'autres assignations.
                       </p>
                     </div>

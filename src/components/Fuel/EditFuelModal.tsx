@@ -195,7 +195,7 @@ export default function EditFuelModal({ isOpen, onClose, onSubmit, record }: Edi
               <Fuel className="w-5 h-5" style={{ color: '#B87333' }} />
             </div>
             <div>
-              <h2 className="text-xl font-bold" style={{ color: '#191919' }}>Modifier le Ravitaillement</h2>
+              <h2 className="text-xl font-bold" style={{ color: '#191919' }}>Modifier le ravitaillement</h2>
               <p className="text-sm text-gray-500">{record.station_name} - {record.vehicle_plate}</p>
             </div>
           </div>
@@ -323,7 +323,7 @@ export default function EditFuelModal({ isOpen, onClose, onSubmit, record }: Edi
                   type="text"
                   value={stationAddress}
                   onChange={(e) => setStationAddress(e.target.value)}
-                  placeholder="Adresse (optionnel)"
+                  placeholder="Adresse (facultatif)"
                   className="w-full px-4 py-2.5 rounded-xl border-2 text-sm focus:ring-2 focus:ring-sage/20 outline-none transition-all mt-2 text-gray-900 placeholder-gray-400"
                   style={{ borderColor: '#E8ECEC' }}
                 />

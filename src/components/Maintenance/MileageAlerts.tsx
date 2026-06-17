@@ -75,7 +75,7 @@ export default function MileageAlerts({ alerts, isLoading, onScheduleMaintenance
           </div>
           <div>
             <h3 className="text-lg font-bold" style={{ color: '#191919' }}>
-              Alertes Kilométrage
+              Alertes kilométrage
             </h3>
             <p className="text-sm text-gray-500">
               {alerts.length} véhicule{alerts.length > 1 ? 's' : ''} nécessite{alerts.length > 1 ? 'nt' : ''} une maintenance

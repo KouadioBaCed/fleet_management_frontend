@@ -212,7 +212,7 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
               <Wrench className="w-6 h-6" style={{ color: '#6A8A82' }} />
             </div>
             <div>
-              <h2 className="text-xl font-bold" style={{ color: '#191919' }}>Nouvelle Maintenance</h2>
+              <h2 className="text-xl font-bold" style={{ color: '#191919' }}>Nouvelle maintenance</h2>
               <p className="text-sm text-gray-600">Planifier une intervention sur un véhicule</p>
             </div>
           </div>
@@ -624,7 +624,7 @@ export default function AddMaintenanceModal({ isOpen, onClose, onSubmit, presele
                 value={formData.notes}
                 onChange={handleChange}
                 rows={2}
-                placeholder="Informations supplémentaires (optionnel)..."
+                placeholder="Informations supplémentaires (facultatif)..."
                 className="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all resize-none text-gray-900 placeholder-gray-400"
                 style={{ borderColor: '#E8ECEC' }}
                 onFocus={(e) => e.target.style.borderColor = '#6A8A82'}

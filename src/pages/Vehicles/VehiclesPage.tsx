@@ -30,7 +30,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; label: string; d
 const FUEL_TYPE_LABELS: Record<string, string> = {
   gasoline: 'Essence',
   diesel: 'Diesel',
-  electric: 'Electrique',
+  electric: 'Électrique',
   hybrid: 'Hybride',
 };
 
@@ -96,19 +96,19 @@ export default function VehiclesPage() {
         setError(
           backendDetail
             ? `Erreur serveur (500) — ${backendDetail}`
-            : 'Erreur serveur (500). Verifiez les logs du backend ou contactez l\'administrateur.'
+            : 'Erreur serveur (500). Vérifiez les logs du backend ou contactez l\'administrateur.'
         );
       } else if (status === 401) {
-        setError('Session expiree. Reconnectez-vous.');
+        setError('Session expirée. Reconnectez-vous.');
       } else if (status === 403) {
-        setError('Acces refuse a cette ressource.');
+        setError('Accès refusé à cette ressource.');
       } else if (err?.code === 'ERR_NETWORK') {
-        setError('Impossible de joindre le serveur. Verifiez votre connexion.');
+        setError('Impossible de joindre le serveur. Vérifiez votre connexion.');
       } else {
         setError(
           status
-            ? `Impossible de charger les vehicules (HTTP ${status})`
-            : 'Impossible de charger les vehicules'
+            ? `Impossible de charger les véhicules (HTTP ${status})`
+            : 'Impossible de charger les véhicules'
         );
       }
     } finally {
@@ -219,7 +219,7 @@ export default function VehiclesPage() {
               disabled={loading}
               className="p-2.5 sm:p-3 rounded-lg sm:rounded-xl border-2 hover:shadow-sm transition-all"
               style={{ borderColor: '#E8ECEC' }}
-              title="Rafraichir"
+              title="Rafraîchir"
             >
               <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-500 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -248,7 +248,7 @@ export default function VehiclesPage() {
             {[
               { label: 'Total', value: stats.total, color: '#6A8A82' },
               { label: 'Disponibles', value: stats.available, color: '#6A8A82' },
-              { label: 'En Mission', value: stats.in_use, color: '#B87333' },
+              { label: 'En mission', value: stats.in_use, color: '#B87333' },
               { label: 'Maintenance', value: stats.maintenance, color: '#6B7280' },
             ].map((stat, index) => (
               <div
@@ -387,7 +387,7 @@ export default function VehiclesPage() {
         {/* Active filters */}
         {(searchQuery || statusFilter !== 'all') && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs sm:text-sm text-gray-500">Filtres:</span>
+            <span className="text-xs sm:text-sm text-gray-500">Filtres :</span>
             {searchQuery && (
               <span className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-blue-50 text-blue-600">
                 <span className="truncate max-w-[100px] sm:max-w-none">"{searchQuery}"</span>

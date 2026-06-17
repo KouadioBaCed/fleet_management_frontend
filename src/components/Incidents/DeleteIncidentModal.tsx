@@ -50,7 +50,7 @@ export default function DeleteIncidentModal({ isOpen, onClose, onConfirm, incide
               <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-bold text-red-900 mb-2">
-                  Attention : Cette action est irréversible
+                  Attention : Cette action est irréversible
                 </h3>
                 <p className="text-sm text-red-800">
                   Vous êtes sur le point de supprimer définitivement cet incident.
@@ -61,7 +61,7 @@ export default function DeleteIncidentModal({ isOpen, onClose, onConfirm, incide
           </div>
 
           <div className="bg-gray-50 rounded-xl p-5 border-2 mb-6" style={{ borderColor: '#E8ECEC' }}>
-            <p className="text-sm font-medium text-gray-600 mb-3">Incident à supprimer :</p>
+            <p className="text-sm font-medium text-gray-600 mb-3">Incident à supprimer :</p>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Code</span>

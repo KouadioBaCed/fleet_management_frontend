@@ -13,7 +13,7 @@ const STATUS_OPTIONS = [
   {
     value: 'available',
     label: 'Disponible',
-    description: 'Le vehicule est pret a etre utilise',
+    description: 'Le véhicule est prêt à être utilisé',
     icon: CheckCircle,
     color: '#6A8A82',
     bgColor: '#E8EFED',
@@ -21,7 +21,7 @@ const STATUS_OPTIONS = [
   {
     value: 'in_use',
     label: 'En mission',
-    description: 'Le vehicule est actuellement en cours d\'utilisation',
+    description: 'Le véhicule est actuellement en cours d\'utilisation',
     icon: Car,
     color: '#B87333',
     bgColor: '#F5E8DD',
@@ -29,7 +29,7 @@ const STATUS_OPTIONS = [
   {
     value: 'maintenance',
     label: 'En maintenance',
-    description: 'Le vehicule est en cours de reparation ou d\'entretien',
+    description: 'Le véhicule est en cours de réparation ou d\'entretien',
     icon: Wrench,
     color: '#6B7280',
     bgColor: '#F3F4F6',
@@ -37,7 +37,7 @@ const STATUS_OPTIONS = [
   {
     value: 'out_of_service',
     label: 'Hors service',
-    description: 'Le vehicule n\'est pas disponible pour utilisation',
+    description: 'Le véhicule n\'est pas disponible pour utilisation',
     icon: XCircle,
     color: '#DC2626',
     bgColor: '#FEE2E2',
@@ -146,7 +146,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, vehicle 
         {/* Status Options */}
         <div className="p-6 space-y-3">
           <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-            Selectionner le nouveau statut
+            Sélectionner le nouveau statut
           </p>
           {STATUS_OPTIONS.map((status) => {
             const Icon = status.icon;
@@ -225,7 +225,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, vehicle 
             {isSubmitting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Mise a jour...</span>
+                <span>Mise à jour...</span>
               </>
             ) : (
               <>

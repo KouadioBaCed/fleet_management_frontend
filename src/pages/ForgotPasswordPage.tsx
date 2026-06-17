@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
     // Validation basique de l'email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError('Veuillez entrer une adresse email valide');
+      setError('Veuillez entrer une adresse e-mail valide');
       setLoading(false);
       return;
     }
@@ -54,11 +54,11 @@ export default function ForgotPasswordPage() {
               </div>
 
               <h2 className="text-2xl font-bold mb-3" style={{ color: '#191919' }}>
-                Email envoyé !
+                E-mail envoyé !
               </h2>
 
               <p className="text-sm text-gray-600 mb-6">
-                Si un compte existe avec l'adresse :
+                Si un compte existe avec l'adresse :
               </p>
 
               <div className="bg-gray-50 rounded-xl p-4 mb-6">
@@ -69,12 +69,12 @@ export default function ForgotPasswordPage() {
 
               <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-6">
                 <p className="text-sm text-gray-700">
-                  Vous recevrez un email avec un lien pour réinitialiser votre mot de passe.
+                  Vous recevrez un e-mail avec un lien pour réinitialiser votre mot de passe.
                 </p>
               </div>
 
               <p className="text-xs text-gray-500 mb-6">
-                Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam ou{' '}
+                Vous n'avez pas reçu l'e-mail ? Vérifiez votre dossier spam ou{' '}
                 <button
                   onClick={() => setEmailSent(false)}
                   className="font-semibold hover:underline"
@@ -122,10 +122,10 @@ export default function ForgotPasswordPage() {
           <div className="p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
-                Mot de passe oublié ?
+                Mot de passe oublié ?
               </h2>
               <p className="text-sm text-gray-600">
-                Pas de problème ! Entrez votre email pour réinitialiser votre mot de passe
+                Pas de problème ! Entrez votre e-mail pour réinitialiser votre mot de passe
               </p>
             </div>
 
@@ -133,7 +133,7 @@ export default function ForgotPasswordPage() {
               {/* Email field */}
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Adresse email
+                  Adresse e-mail
                 </label>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -202,7 +202,7 @@ export default function ForgotPasswordPage() {
         {/* Version info */}
         <div className="text-center mt-6">
           <p className="text-xs text-gray-500">
-            D-Fleet CI Fleet Management v1.0
+            D-Fleet CI — Gestion de flotte v1.0
           </p>
         </div>
       </div>

@@ -16,7 +16,7 @@ export default function DeleteConfirmModal({
   onConfirm,
   isDeleting = false,
   title = 'Confirmer la suppression',
-  message = 'Êtes-vous sûr de vouloir supprimer cet élément ?',
+  message = 'Êtes-vous sûr de vouloir supprimer cet élément ?',
   itemName,
 }: DeleteConfirmModalProps) {
   if (!isOpen) return null;

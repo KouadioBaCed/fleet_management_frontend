@@ -458,7 +458,7 @@ export default function IncidentAnalytics() {
         <div className="bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-5" style={{ borderColor: '#E8ECEC' }}>
           <div className="flex items-center space-x-2 mb-3 sm:mb-4">
             <User className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
-            <h3 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Conducteurs les Plus Impactés</h3>
+            <h3 className="font-bold text-sm sm:text-base" style={{ color: '#191919' }}>Chauffeurs les Plus Impactés</h3>
           </div>
 
           {data.top_drivers.length > 0 ? (

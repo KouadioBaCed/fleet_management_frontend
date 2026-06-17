@@ -580,7 +580,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
             <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-5 border-2" style={{ borderColor: '#E8EFED' }}>
               <div className="flex items-center space-x-2 mb-4">
                 <Wrench className="w-5 h-5" style={{ color: '#6A8A82' }} />
-                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Frequence de maintenance</h4>
+                <h4 className="text-lg font-bold" style={{ color: '#191919' }}>Fréquence de maintenance</h4>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -626,7 +626,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
               <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
                 <div className="flex items-center space-x-2">
                   <Radio className="w-4 h-4" style={{ color: '#6A8A82' }} />
-                  <span>ID Dispositif GPS (optionnel)</span>
+                  <span>ID Dispositif GPS (facultatif)</span>
                 </div>
               </label>
               <input
@@ -686,7 +686,7 @@ export default function EditVehicleModal({ isOpen, onClose, onSubmit, vehicle }:
             {/* Notes */}
             <div>
               <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                Notes (optionnel)
+                Notes (facultatif)
               </label>
               <textarea
                 name="notes"

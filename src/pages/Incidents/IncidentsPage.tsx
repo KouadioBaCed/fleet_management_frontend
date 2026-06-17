@@ -713,7 +713,7 @@ export default function IncidentsPage() {
                           )}
                           {incident.estimated_cost && (
                             <p className="text-[10px] sm:text-sm font-medium mt-1 sm:mt-2" style={{ color: '#B87333' }}>
-                              Coût estimé: {incident.estimated_cost}
+                              Coût estimé : {incident.estimated_cost}
                             </p>
                           )}
                         </div>

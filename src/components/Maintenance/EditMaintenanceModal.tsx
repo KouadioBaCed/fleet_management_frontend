@@ -168,7 +168,7 @@ export default function EditMaintenanceModal({ isOpen, onClose, onSubmit, mainte
               <Wrench className="w-5 h-5" style={{ color: '#B87333' }} />
             </div>
             <div>
-              <h2 className="text-xl font-bold" style={{ color: '#191919' }}>Modifier la Maintenance</h2>
+              <h2 className="text-xl font-bold" style={{ color: '#191919' }}>Modifier la maintenance</h2>
               <p className="text-sm text-gray-600">{maintenance.vehicle_plate}</p>
             </div>
           </div>
@@ -500,7 +500,7 @@ export default function EditMaintenanceModal({ isOpen, onClose, onSubmit, mainte
               value={formData.notes}
               onChange={handleChange}
               rows={2}
-              placeholder="Informations supplémentaires (optionnel)..."
+              placeholder="Informations supplémentaires (facultatif)..."
               className="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all resize-none text-gray-900 placeholder-gray-400"
               style={{ borderColor: '#E8ECEC' }}
               onFocus={(e) => e.target.style.borderColor = '#6A8A82'}

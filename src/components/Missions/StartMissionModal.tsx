@@ -138,7 +138,7 @@ export default function StartMissionModal({ isOpen, onClose, onStart, mission }:
               <Car className="w-10 h-10" style={{ color: '#6A8A82' }} />
             </div>
             <h3 className="text-2xl font-bold mb-3" style={{ color: '#191919' }}>
-              Prêt à démarrer ?
+              Prêt à démarrer ?
             </h3>
             <p className="text-gray-600 mb-8">
               Vous allez démarrer la mission. Assurez-vous d'avoir vérifié le véhicule avant de partir.

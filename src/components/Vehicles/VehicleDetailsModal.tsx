@@ -27,7 +27,7 @@ const DEFAULT_STATUS_COLORS: Record<string, { bg: string; text: string; label: s
 const FUEL_TYPE_LABELS: Record<string, string> = {
   gasoline: 'Essence',
   diesel: 'Diesel',
-  electric: 'Electrique',
+  electric: 'Électrique',
   hybrid: 'Hybride',
 };
 
@@ -42,9 +42,9 @@ const MAINTENANCE_TYPE_LABELS: Record<string, string> = {
   oil_change: 'Vidange',
   tire_change: 'Changement pneus',
   brake_service: 'Freins',
-  inspection: 'Controle technique',
-  repair: 'Reparation',
-  preventive: 'Maintenance preventive',
+  inspection: 'Contrôle technique',
+  repair: 'Réparation',
+  preventive: 'Maintenance préventive',
   other: 'Autre',
 };
 
@@ -73,7 +73,7 @@ const TABS = [
   { id: 'documents', label: 'Documents', icon: FolderOpen },
   { id: 'trips', label: 'Trajets', icon: MapPin },
   { id: 'maintenance', label: 'Maintenance', icon: Wrench },
-  { id: 'driver', label: 'Conducteur', icon: User },
+  { id: 'driver', label: 'Chauffeur', icon: User },
 ];
 
 export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleProp, statusColors }: VehicleDetailsModalProps) {
@@ -120,7 +120,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
       setCurrentDriver(data.current_driver);
     } catch (err) {
       console.error('Failed to fetch vehicle details:', err);
-      setError('Erreur lors du chargement des details');
+      setError('Erreur lors du chargement des détails');
     } finally {
       setLoading(false);
     }
@@ -153,7 +153,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
       await fetchDetails();
     } catch (err) {
       console.error('Failed to assign driver:', err);
-      setError('Erreur lors de l\'assignation du conducteur');
+      setError('Erreur lors de l\'assignation du chauffeur');
     } finally {
       setAssigningDriver(false);
     }
@@ -167,7 +167,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
       await fetchDetails();
     } catch (err) {
       console.error('Failed to unassign driver:', err);
-      setError('Erreur lors du retrait du conducteur');
+      setError('Erreur lors du retrait du chauffeur');
     } finally {
       setAssigningDriver(false);
     }
@@ -235,7 +235,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
         <div className="p-4 border-b" style={{ borderColor: '#E8ECEC' }}>
           <h4 className="text-sm font-bold uppercase tracking-wide text-gray-500 flex items-center gap-2">
             <ImageIcon className="w-4 h-4" />
-            Photo du vehicule
+            Photo du véhicule
           </h4>
         </div>
         <div className="p-4">
@@ -268,7 +268,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
             <p className="font-bold text-xl font-mono" style={{ color: '#191919' }}>{vehicle.license_plate}</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Numero VIN</p>
+            <p className="text-xs text-gray-500 mb-1">Numéro VIN</p>
             <p className="font-semibold font-mono text-sm" style={{ color: '#191919' }}>{vehicle.vin_number}</p>
           </div>
         </div>
@@ -278,11 +278,11 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
       <div className="bg-white rounded-2xl border-2 p-5" style={{ borderColor: '#E8ECEC' }}>
         <h4 className="text-sm font-bold uppercase tracking-wide text-gray-500 mb-4 flex items-center gap-2">
           <Car className="w-4 h-4" />
-          Caracteristiques
+          Caractéristiques
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-gray-50 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Marque / Modele</p>
+            <p className="text-xs text-gray-500 mb-1">Marque / Modèle</p>
             <p className="font-bold" style={{ color: '#191919' }}>{vehicle.brand} {vehicle.model}</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
@@ -330,17 +330,17 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
           <div className="bg-gray-50 rounded-xl p-4">
             <p className="text-xs text-gray-500 mb-1">Frequence (km)</p>
             <p className="font-bold" style={{ color: '#191919' }}>
-              {vehicle.maintenance_frequency_km ? `${vehicle.maintenance_frequency_km.toLocaleString('fr-FR')} km` : 'Non defini'}
+              {vehicle.maintenance_frequency_km ? `${vehicle.maintenance_frequency_km.toLocaleString('fr-FR')} km` : 'Non défini'}
             </p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
             <p className="text-xs text-gray-500 mb-1">Frequence (mois)</p>
             <p className="font-bold" style={{ color: '#191919' }}>
-              {vehicle.maintenance_frequency_months ? `Tous les ${vehicle.maintenance_frequency_months} mois` : 'Non defini'}
+              {vehicle.maintenance_frequency_months ? `Tous les ${vehicle.maintenance_frequency_months} mois` : 'Non défini'}
             </p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Derniere maintenance</p>
+            <p className="text-xs text-gray-500 mb-1">Dernière maintenance</p>
             <p className="font-bold" style={{ color: '#191919' }}>
               {vehicle.last_maintenance_date ? formatDate(vehicle.last_maintenance_date) : 'Aucune'}
             </p>
@@ -348,7 +348,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
           <div className={`rounded-xl p-4 ${vehicle.needs_maintenance ? 'bg-red-50' : 'bg-gray-50'}`}>
             <p className="text-xs text-gray-500 mb-1">Prochain entretien (km)</p>
             <p className="font-bold" style={{ color: vehicle.needs_maintenance ? '#DC2626' : '#191919' }}>
-              {vehicle.next_maintenance_mileage ? `${parseFloat(vehicle.next_maintenance_mileage).toLocaleString('fr-FR')} km` : 'Non defini'}
+              {vehicle.next_maintenance_mileage ? `${parseFloat(vehicle.next_maintenance_mileage).toLocaleString('fr-FR')} km` : 'Non défini'}
             </p>
           </div>
         </div>
@@ -368,7 +368,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
             </p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Capacite reservoir</p>
+            <p className="text-xs text-gray-500 mb-1">Capacité réservoir</p>
             <p className="font-bold" style={{ color: '#191919' }}>{vehicle.fuel_capacity} L</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
@@ -386,15 +386,15 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
         </h4>
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-gradient-to-br from-sage/10 to-transparent rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Numero d'assurance</p>
+            <p className="text-xs text-gray-500 mb-1">Numéro d'assurance</p>
             <p className="font-bold font-mono" style={{ color: '#191919' }}>
-              {vehicle.insurance_number || <span className="text-gray-400 font-normal">Non renseigne</span>}
+              {vehicle.insurance_number || <span className="text-gray-400 font-normal">Non renseigné</span>}
             </p>
           </div>
           <div className="bg-gray-50 rounded-xl p-4">
             <p className="text-xs text-gray-500 mb-1">Date d'expiration</p>
             <p className="font-bold" style={{ color: '#191919' }}>
-              {vehicle.insurance_expiry ? formatDate(vehicle.insurance_expiry) : <span className="text-gray-400 font-normal">Non renseigne</span>}
+              {vehicle.insurance_expiry ? formatDate(vehicle.insurance_expiry) : <span className="text-gray-400 font-normal">Non renseigné</span>}
             </p>
           </div>
         </div>
@@ -409,7 +409,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
         <div className="bg-gradient-to-br from-copper/10 to-transparent rounded-xl p-4">
           <p className="text-xs text-gray-500 mb-1">ID Dispositif GPS</p>
           <p className="font-bold font-mono" style={{ color: '#191919' }}>
-            {vehicle.gps_device_id || <span className="text-gray-400 font-normal">Non equipe</span>}
+            {vehicle.gps_device_id || <span className="text-gray-400 font-normal">Non équipé</span>}
           </p>
         </div>
       </div>
@@ -435,7 +435,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E8EFED' }}>
             <MapPin className="w-8 h-8" style={{ color: '#6A8A82' }} />
           </div>
-          <p className="text-gray-500">Aucun trajet enregistre</p>
+          <p className="text-gray-500">Aucun trajet enregistré</p>
         </div>
       ) : (
         <>
@@ -477,7 +477,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
                     className="px-2 py-1 rounded-full text-xs font-medium"
                     style={{ backgroundColor: tripStatus.bg, color: tripStatus.text }}
                   >
-                    {trip.status === 'completed' ? 'Termine' : trip.status === 'in_progress' ? 'En cours' : 'Annule'}
+                    {trip.status === 'completed' ? 'Terminé' : trip.status === 'in_progress' ? 'En cours' : 'Annulé'}
                   </span>
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -515,7 +515,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#F5E8DD' }}>
             <Wrench className="w-8 h-8" style={{ color: '#B87333' }} />
           </div>
-          <p className="text-gray-500">Aucune maintenance enregistree</p>
+          <p className="text-gray-500">Aucune maintenance enregistrée</p>
         </div>
       ) : (
         <>
@@ -554,7 +554,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
                     className="px-2 py-1 rounded-full text-xs font-medium"
                     style={{ backgroundColor: maintenanceStatus.bg, color: maintenanceStatus.text }}
                   >
-                    {record.status === 'completed' ? 'Termine' : record.status === 'in_progress' ? 'En cours' : record.status === 'scheduled' ? 'Programme' : 'Annule'}
+                    {record.status === 'completed' ? 'Terminé' : record.status === 'in_progress' ? 'En cours' : record.status === 'scheduled' ? 'Programmé' : 'Annulé'}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 mb-3">{record.description}</p>
@@ -583,7 +583,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
   const renderDriverPicker = () => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-gray-700">Choisir un conducteur</h4>
+        <h4 className="text-sm font-semibold text-gray-700">Choisir un chauffeur</h4>
         <button
           onClick={() => setShowDriverPicker(false)}
           className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
@@ -597,7 +597,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
-          placeholder="Rechercher un conducteur..."
+          placeholder="Rechercher un chauffeur..."
           value={driverSearch}
           onChange={(e) => setDriverSearch(e.target.value)}
           className="soft-input pl-10"
@@ -612,7 +612,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
           </div>
         ) : filteredDrivers.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-500 text-sm">Aucun conducteur disponible</p>
+            <p className="text-gray-500 text-sm">Aucun chauffeur disponible</p>
           </div>
         ) : (
           filteredDrivers.map((driver) => (
@@ -660,14 +660,14 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E8EFED' }}>
             <User className="w-8 h-8" style={{ color: '#6A8A82' }} />
           </div>
-          <p className="text-gray-500 mb-2">Aucun conducteur assigne</p>
-          <p className="text-sm text-gray-400 mb-4">Ce vehicule n'a pas de conducteur actuellement</p>
+          <p className="text-gray-500 mb-2">Aucun chauffeur assigné</p>
+          <p className="text-sm text-gray-400 mb-4">Ce véhicule n'a pas de chauffeur actuellement</p>
           <button
             onClick={handleOpenDriverPicker}
             className="btn-primary inline-flex items-center gap-2"
           >
             <UserPlus className="w-4 h-4" />
-            Assigner un conducteur
+            Assigner un chauffeur
           </button>
         </div>
       ) : (
@@ -718,7 +718,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
               className="btn-secondary inline-flex items-center gap-2 text-sm disabled:opacity-50"
             >
               <RefreshCw className="w-4 h-4" />
-              Changer de conducteur
+              Changer de chauffeur
             </button>
             <button
               onClick={handleUnassignDriver}
@@ -726,7 +726,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
               className="inline-flex items-center gap-2 text-sm px-4 py-2 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition-all disabled:opacity-50"
             >
               {assigningDriver ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserMinus className="w-4 h-4" />}
-              Retirer le conducteur
+              Retirer le chauffeur
             </button>
           </div>
 
@@ -738,7 +738,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
                   <Mail className="w-5 h-5" style={{ color: '#6A8A82' }} />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-xs text-gray-500">E-mail</p>
                   <p className="font-semibold" style={{ color: '#191919' }}>{currentDriver.user.email}</p>
                 </div>
               </div>
@@ -750,7 +750,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
                     <Phone className="w-5 h-5" style={{ color: '#B87333' }} />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Telephone</p>
+                    <p className="text-xs text-gray-500">Téléphone</p>
                     <p className="font-semibold" style={{ color: '#191919' }}>{currentDriver.user.phone_number}</p>
                   </div>
                 </div>
@@ -784,11 +784,11 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
             </h4>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <p className="text-xs text-gray-500">Numero</p>
+                <p className="text-xs text-gray-500">Numéro</p>
                 <p className="font-semibold font-mono" style={{ color: '#191919' }}>{currentDriver.driver_license_number}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Categorie</p>
+                <p className="text-xs text-gray-500">Catégorie</p>
                 <p className="font-semibold" style={{ color: '#191919' }}>{currentDriver.driver_license_category}</p>
               </div>
               <div>
@@ -906,7 +906,7 @@ export default function VehicleDetailsModal({ isOpen, onClose, vehicle: vehicleP
                 onClick={fetchDetails}
                 className="ml-auto text-sm font-medium text-red-600 hover:underline"
               >
-                Reessayer
+                Réessayer
               </button>
             </div>
           ) : (

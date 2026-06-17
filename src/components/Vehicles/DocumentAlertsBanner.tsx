@@ -63,7 +63,7 @@ export default function DocumentAlertsBanner({ onViewVehicle }: DocumentAlertsBa
             <p className="text-xs" style={{ color: hasExpired ? '#DC2626' : '#D97706' }}>
               {expiredAlerts.length > 0 && `${expiredAlerts.length} expire${expiredAlerts.length > 1 ? 's' : ''}`}
               {expiredAlerts.length > 0 && expiringAlerts.length > 0 && ' • '}
-              {expiringAlerts.length > 0 && `${expiringAlerts.length} bientot`}
+              {expiringAlerts.length > 0 && `${expiringAlerts.length} bientôt`}
             </p>
           </div>
         </div>

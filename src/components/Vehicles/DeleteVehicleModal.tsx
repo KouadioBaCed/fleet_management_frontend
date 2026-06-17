@@ -68,7 +68,7 @@ export default function DeleteVehicleModal({ isOpen, onClose, onConfirm, vehicle
               <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-bold text-red-900 mb-2">
-                  Attention : Cette action est irréversible
+                  Attention : Cette action est irréversible
                 </h3>
                 <p className="text-sm text-red-800">
                   Vous êtes sur le point de supprimer définitivement ce véhicule de votre flotte.

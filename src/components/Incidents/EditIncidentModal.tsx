@@ -270,7 +270,7 @@ export default function EditIncidentModal({ isOpen, onClose, onSubmit, incident 
 
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Coût estimé (optionnel)
+                    Coût estimé (facultatif)
                   </label>
                   <input
                     type="number"
@@ -402,17 +402,17 @@ export default function EditIncidentModal({ isOpen, onClose, onSubmit, incident 
                       <span className="font-semibold text-sm" style={{ color: '#6A8A82' }}>Coordonnées détectées</span>
                     </div>
                     <p className="text-sm text-gray-600">
-                      Latitude: <span className="font-mono font-semibold">{parseFloat(formData.latitude).toFixed(6)}</span>
+                      Latitude : <span className="font-mono font-semibold">{parseFloat(formData.latitude).toFixed(6)}</span>
                     </p>
                     <p className="text-sm text-gray-600">
-                      Longitude: <span className="font-mono font-semibold">{parseFloat(formData.longitude).toFixed(6)}</span>
+                      Longitude : <span className="font-mono font-semibold">{parseFloat(formData.longitude).toFixed(6)}</span>
                     </p>
                   </div>
                 )}
 
                 {/* Manual Coordinates (optional) */}
                 <div className="pt-4 border-t" style={{ borderColor: '#E8ECEC' }}>
-                  <p className="text-sm text-gray-500 mb-3">Ou entrez les coordonnées manuellement :</p>
+                  <p className="text-sm text-gray-500 mb-3">Ou entrez les coordonnées manuellement :</p>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
@@ -549,7 +549,7 @@ export default function EditIncidentModal({ isOpen, onClose, onSubmit, incident 
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
                 Finalisation
               </h3>
-              <p className="text-gray-600">Notes de résolution (optionnel)</p>
+              <p className="text-gray-600">Notes de résolution (facultatif)</p>
             </div>
             <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
               <div>
@@ -611,7 +611,7 @@ export default function EditIncidentModal({ isOpen, onClose, onSubmit, incident 
             </div>
             <div>
               <h2 className="text-2xl font-bold" style={{ color: '#191919' }}>
-                Modifier l'Incident
+                Modifier l'incident
               </h2>
               <p className="text-sm text-gray-600">INC-{incident.id} • Étape {currentStep} sur {STEPS.length}</p>
             </div>

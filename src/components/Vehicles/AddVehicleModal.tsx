@@ -328,7 +328,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                     Cliquez pour télécharger une image
                   </p>
                   <p className="text-sm text-gray-500">PNG, JPG, JPEG ou WEBP jusqu'à 10MB</p>
-                  <p className="text-xs text-gray-400 mt-2">(Optionnel - vous pouvez passer cette étape)</p>
+                  <p className="text-xs text-gray-400 mt-2">(Facultatif - vous pouvez passer cette étape)</p>
                 </div>
               )}
               <input
@@ -657,7 +657,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
                       <div className="flex items-center space-x-2">
                         <Radio className="w-4 h-4" style={{ color: '#B87333' }} />
-                        <span>ID Dispositif GPS (optionnel)</span>
+                        <span>ID Dispositif GPS (facultatif)</span>
                       </div>
                     </label>
                     <input
@@ -673,7 +673,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                      Notes (optionnel)
+                      Notes (facultatif)
                     </label>
                     <textarea
                       name="notes"
@@ -718,7 +718,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
             </div>
             <div>
               <h2 className="text-lg sm:text-2xl font-bold" style={{ color: '#191919' }}>
-                Nouveau Véhicule
+                Nouveau véhicule
               </h2>
               <p className="text-xs sm:text-sm text-gray-600">Étape {currentStep} sur {STEPS.length}</p>
             </div>
@@ -820,7 +820,7 @@ export default function AddVehicleModal({ isOpen, onClose, onSubmit }: AddVehicl
                   style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
                 >
                   <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="hidden xs:inline">Precedent</span>
+                  <span className="hidden xs:inline">Précédent</span>
                 </button>
               )}
 

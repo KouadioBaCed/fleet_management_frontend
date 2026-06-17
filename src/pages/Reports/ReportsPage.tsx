@@ -244,7 +244,7 @@ export default function ReportsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-xl sm:text-3xl font-semibold text-gray-800">
-              Rapports & Analyses
+              Rapports et analyses
             </h1>
             <p className="text-xs sm:text-base text-gray-600 mt-0.5 sm:mt-1">Statistiques et analyses de votre flotte</p>
           </div>
@@ -403,7 +403,7 @@ export default function ReportsPage() {
               >
                 <span className="text-sm sm:text-base">{'\uD83D\uDC64'}</span>
                 <span className="font-medium text-xs sm:text-sm max-w-[70px] sm:max-w-none truncate">
-                  {selectedDriver ? selectedDriver.full_name : 'Conducteur'}
+                  {selectedDriver ? selectedDriver.full_name : 'Chauffeur'}
                 </span>
                 {driverFilter ? (
                   <button
@@ -432,7 +432,7 @@ export default function ReportsPage() {
                         !driverFilter ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'
                       }`}
                     >
-                      Tous les conducteurs
+                      Tous les chauffeurs
                     </button>
                     {drivers.map((driver) => (
                       <button
@@ -541,7 +541,7 @@ export default function ReportsPage() {
         {(vehicleFilter || driverFilter) && (
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <Filter className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
-            <span className="text-xs sm:text-sm text-gray-500">Filtres:</span>
+            <span className="text-xs sm:text-sm text-gray-500">Filtres :</span>
             {vehicleFilter && (
               <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium" style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}>
                 {selectedVehicle?.license_plate}
@@ -576,7 +576,7 @@ export default function ReportsPage() {
           <div ref={reportRef} className="space-y-4 sm:space-y-6">
             {/* Period Info */}
             <div className="text-xs sm:text-sm text-gray-500">
-              Période: {new Date(data.period.start).toLocaleDateString('fr-FR')} - {new Date(data.period.end).toLocaleDateString('fr-FR')}
+              Période : {new Date(data.period.start).toLocaleDateString('fr-FR')} - {new Date(data.period.end).toLocaleDateString('fr-FR')}
             </div>
 
             {/* Main Stats */}
@@ -705,7 +705,7 @@ export default function ReportsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {/* Top Drivers */}
               <div className="data-table-container p-4 sm:p-6">
-                <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Top conducteurs</h2>
+                <h2 className="text-sm sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Top chauffeurs</h2>
                 <div className="space-y-2 sm:space-y-3">
                   {data.top_drivers.length > 0 ? (
                     data.top_drivers.map((driver) => (
@@ -810,7 +810,7 @@ export default function ReportsPage() {
                     </div>
                   </div>
                   <div className="data-card p-3 sm:p-4 rounded-lg sm:rounded-xl">
-                    <p className="text-[10px] sm:text-sm text-gray-500 mb-0.5 sm:mb-1 font-medium">Conducteurs actifs</p>
+                    <p className="text-[10px] sm:text-sm text-gray-500 mb-0.5 sm:mb-1 font-medium">Chauffeurs actifs</p>
                     <p className="text-lg sm:text-2xl font-semibold" style={{ color: '#6A8A82' }}>{data.fleet.total_drivers}</p>
                     <p className="text-[9px] sm:text-xs text-gray-400 mt-1.5 sm:mt-2">{data.top_drivers.length} dans le top</p>
                   </div>

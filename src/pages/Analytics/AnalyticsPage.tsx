@@ -130,7 +130,7 @@ export default function AnalyticsPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-xl sm:text-3xl font-semibold text-gray-800">
-              Analyse de Flotte
+              Analyse de la flotte
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mt-1">Consommation par véhicule et coûts totaux</p>
           </div>
@@ -231,7 +231,7 @@ export default function AnalyticsPage() {
           <>
             {/* Period Info */}
             <div className="text-xs sm:text-sm text-gray-500">
-              Période: {new Date(data.period.start).toLocaleDateString('fr-FR')} - {new Date(data.period.end).toLocaleDateString('fr-FR')}
+              Période : {new Date(data.period.start).toLocaleDateString('fr-FR')} - {new Date(data.period.end).toLocaleDateString('fr-FR')}
             </div>
 
             {/* Main Stats Cards */}
@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
                     {Math.abs(totalCost.change).toFixed(1)}%
                   </div>
                 </div>
-                <p className="stat-label">Coûts Totaux</p>
+                <p className="stat-label">Coûts totaux</p>
                 <p className="stat-value" style={{ color: '#D97706' }}>{totalCost.value.toFixed(0)} {currencySymbol}</p>
               </div>
 
@@ -314,7 +314,7 @@ export default function AnalyticsPage() {
                 </div>
                 <p className="stat-label">Autres coûts</p>
                 <p className="stat-value" style={{ color: '#DC2626' }}>{incidentCost.value.toFixed(0)} {currencySymbol}</p>
-                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">{s?.incident_count ?? 0} incident{(s?.incident_count ?? 0) !== 1 ? 's' : ''} / {s?.incident_resolved ?? 0} resolu{(s?.incident_resolved ?? 0) !== 1 ? 's' : ''}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">{s?.incident_count ?? 0} incident{(s?.incident_count ?? 0) !== 1 ? 's' : ''} / {s?.incident_resolved ?? 0} résolu{(s?.incident_resolved ?? 0) !== 1 ? 's' : ''}</p>
               </div>
             </div>
 
@@ -324,7 +324,7 @@ export default function AnalyticsPage() {
               <div className="data-table-container p-4 sm:p-6">
                 <div className="flex items-center space-x-2 mb-4 sm:mb-6">
                   <PieChart className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-                  <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Répartition des Coûts</h3>
+                  <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Répartition des coûts</h3>
                 </div>
 
                 {/* Visual Breakdown */}
@@ -416,13 +416,13 @@ export default function AnalyticsPage() {
 
                 {/* Maintenance Detail */}
                 <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-[rgba(0,0,0,0.06)]">
-                  <p className="text-[10px] sm:text-xs text-gray-500 font-medium mb-1.5 sm:mb-2">Détail Maintenance</p>
+                  <p className="text-[10px] sm:text-xs text-gray-500 font-medium mb-1.5 sm:mb-2">Détail maintenance</p>
                   <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-600">Pièces</span>
                     <span className="font-medium">{cbParts.toFixed(0)} {currencySymbol}</span>
                   </div>
                   <div className="flex justify-between text-xs sm:text-sm mt-1">
-                    <span className="text-gray-600">Main d'œuvre</span>
+                    <span className="text-gray-600">Main-d'œuvre</span>
                     <span className="font-medium">{cbLabor.toFixed(0)} {currencySymbol}</span>
                   </div>
                 </div>
@@ -433,7 +433,7 @@ export default function AnalyticsPage() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
                   <div className="flex items-center space-x-2">
                     <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
-                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Évolution des Coûts</h3>
+                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Évolution des coûts</h3>
                   </div>
                   <div className="flex items-center gap-1 sm:gap-2">
                     {[
@@ -524,7 +524,7 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
               {/* Efficiency Distribution */}
               <div className="data-table-container p-3 sm:p-5">
-                <h4 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-4 text-gray-800">Efficacité Flotte</h4>
+                <h4 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-4 text-gray-800">Efficacité flotte</h4>
                 <div className="space-y-2 sm:space-y-3">
                   {(['efficient', 'warning', 'critical'] as const).map((status) => {
                     const config = STATUS_CONFIG[status];
@@ -547,7 +547,7 @@ export default function AnalyticsPage() {
 
               {/* Quick Stats */}
               <div className="data-table-container p-3 sm:p-5">
-                <h4 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-4 text-gray-800">Distance Totale</h4>
+                <h4 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-4 text-gray-800">Distance totale</h4>
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center" style={{ backgroundColor: '#E8EFED' }}>
                     <MapPin className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: '#6A8A82' }} />
@@ -564,7 +564,7 @@ export default function AnalyticsPage() {
               </div>
 
               <div className="data-table-container p-3 sm:p-5">
-                <h4 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-4 text-gray-800">Carburant Total</h4>
+                <h4 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-4 text-gray-800">Carburant total</h4>
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center" style={{ backgroundColor: '#F5E8DD' }}>
                     <Fuel className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: '#B87333' }} />
@@ -602,7 +602,7 @@ export default function AnalyticsPage() {
             <div className="data-table-container p-4 sm:p-6">
               <div className="flex items-center space-x-2 mb-4 sm:mb-6">
                 <Star className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
-                <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des Chauffeurs</h3>
+                <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des chauffeurs</h3>
               </div>
 
               {/* Driver Status Distribution */}
@@ -682,7 +682,7 @@ export default function AnalyticsPage() {
             <div className="data-table-container p-4 sm:p-6">
               <div className="flex items-center space-x-2 mb-4 sm:mb-6">
                 <Wrench className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-                <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des Véhicules</h3>
+                <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des véhicules</h3>
               </div>
 
               {data.vehicle_analytics && data.vehicle_analytics.length > 0 ? (
@@ -747,7 +747,7 @@ export default function AnalyticsPage() {
               <div className="data-table-container p-4 sm:p-6">
                 <div className="flex items-center space-x-2 mb-4 sm:mb-6">
                   <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#DC2626' }} />
-                  <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des Incidents</h3>
+                  <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Analyse des incidents</h3>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
@@ -810,13 +810,13 @@ export default function AnalyticsPage() {
                 <div className="data-table-container p-4 sm:p-6">
                   <div className="flex items-center space-x-2 mb-4">
                     <Coins className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#6A8A82' }} />
-                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Résumé Financier</h3>
+                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Résumé financier</h3>
                   </div>
                   <div className="space-y-3">
                     {[
                       { label: 'Carburant', value: data.financial.budget_summary.fuel, color: '#6A8A82' },
                       { label: 'Maintenance (pièces)', value: data.financial.budget_summary.maintenance_parts, color: '#B87333' },
-                      { label: 'Maintenance (main d\'oeuvre)', value: data.financial.budget_summary.maintenance_labor, color: '#D97706' },
+                      { label: 'Maintenance (main-d\'œuvre)', value: data.financial.budget_summary.maintenance_labor, color: '#D97706' },
                       { label: 'Autres (incidents)', value: data.financial.budget_summary.incidents, color: '#DC2626' },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center justify-between">
@@ -838,7 +838,7 @@ export default function AnalyticsPage() {
                 <div className="data-table-container p-4 sm:p-6">
                   <div className="flex items-center space-x-2 mb-4">
                     <Star className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#B87333' }} />
-                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Coût par Chauffeur</h3>
+                    <h3 className="font-semibold text-sm sm:text-lg text-gray-800">Coût par chauffeur</h3>
                   </div>
                   {data.financial.cost_per_driver.length > 0 ? (
                     <div className="space-y-2">

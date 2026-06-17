@@ -173,7 +173,7 @@ export default function EditDriverModal({ isOpen, onClose, onSubmit, driver }: E
         return;
       }
       if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-        setErrors(prev => ({ ...prev, photo: 'Format accepté: PNG, JPG ou JPEG' }));
+        setErrors(prev => ({ ...prev, photo: 'Format accepté : PNG, JPG ou JPEG' }));
         return;
       }
       setErrors(prev => {
@@ -220,9 +220,9 @@ export default function EditDriverModal({ isOpen, onClose, onSubmit, driver }: E
       newErrors.last_name = 'Le nom est requis';
     }
     if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis";
+      newErrors.email = "L'adresse e-mail est requise";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Format d'email invalide";
+      newErrors.email = "Format d'adresse e-mail invalide";
     }
     if (!formData.phone_number.trim()) {
       newErrors.phone_number = 'Le téléphone est requis';
@@ -443,7 +443,7 @@ export default function EditDriverModal({ isOpen, onClose, onSubmit, driver }: E
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold mb-1.5" style={{ color: '#191919' }}>
-                  Email <span className="text-red-500">*</span>
+                  E-mail <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

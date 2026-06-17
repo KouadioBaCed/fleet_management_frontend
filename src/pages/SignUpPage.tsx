@@ -33,7 +33,7 @@ export default function SignUpPage() {
     // Validation basique
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setFieldErrors({ email: 'Veuillez entrer une adresse email valide' });
+      setFieldErrors({ email: 'Veuillez entrer une adresse e-mail valide' });
       setLoading(false);
       return;
     }
@@ -107,11 +107,11 @@ export default function SignUpPage() {
               </div>
 
               <h2 className="text-2xl font-bold mb-3" style={{ color: '#191919' }}>
-                Vérifiez votre email
+                Vérifiez votre e-mail
               </h2>
 
               <p className="text-sm text-gray-600 mb-6">
-                Nous avons envoyé un lien de vérification à :
+                Nous avons envoyé un lien de vérification à :
               </p>
 
               <div className="bg-gray-50 rounded-xl p-4 mb-6">
@@ -122,12 +122,12 @@ export default function SignUpPage() {
 
               <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-6">
                 <p className="text-sm text-gray-700">
-                  Cliquez sur le lien dans l'email pour activer votre compte et créer votre mot de passe.
+                  Cliquez sur le lien dans l'e-mail pour activer votre compte et créer votre mot de passe.
                 </p>
               </div>
 
               <p className="text-xs text-gray-500 mb-6">
-                Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam ou{' '}
+                Vous n'avez pas reçu l'e-mail ? Vérifiez votre dossier spam ou{' '}
                 <button
                   onClick={() => setEmailSent(false)}
                   className="font-semibold hover:underline"
@@ -259,7 +259,7 @@ export default function SignUpPage() {
               {/* Email field */}
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Adresse email
+                  Adresse e-mail
                 </label>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -286,7 +286,7 @@ export default function SignUpPage() {
               {/* Info message */}
               <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3">
                 <p className="text-xs text-gray-700">
-                  Un email de vérification sera envoyé à cette adresse. Vous pourrez ensuite créer votre mot de passe.
+                  Un e-mail de vérification sera envoyé à cette adresse. Vous pourrez ensuite créer votre mot de passe.
                 </p>
               </div>
 
@@ -341,7 +341,7 @@ export default function SignUpPage() {
         {/* Version info */}
         <div className="text-center mt-6">
           <p className="text-xs text-gray-500">
-            D-Fleet CI Fleet Management v1.0
+            D-Fleet CI — Gestion de flotte v1.0
           </p>
         </div>
       </div>

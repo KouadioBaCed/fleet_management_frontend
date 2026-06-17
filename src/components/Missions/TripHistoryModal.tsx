@@ -256,7 +256,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                   onClick={loadTripHistory}
                   className="px-4 py-2 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700"
                 >
-                  Reessayer
+                  Réessayer
                 </button>
               </div>
             ) : data ? (
@@ -307,7 +307,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                     >
                       <Popup>
                         <div className="p-2">
-                          <p className="font-bold text-green-700">Depart</p>
+                          <p className="font-bold text-green-700">Départ</p>
                           <p className="text-sm text-gray-600">{data.origin.address}</p>
                           <p className="text-xs text-gray-500 mt-1">{formatDateTime(data.trip.start_time)}</p>
                         </div>
@@ -321,7 +321,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                     >
                       <Popup>
                         <div className="p-2">
-                          <p className="font-bold" style={{ color: '#B87333' }}>Arrivee</p>
+                          <p className="font-bold" style={{ color: '#B87333' }}>Arrivée</p>
                           <p className="text-sm text-gray-600">{data.destination.address}</p>
                           <p className="text-xs text-gray-500 mt-1">{formatDateTime(data.trip.end_time)}</p>
                         </div>
@@ -340,8 +340,8 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                       >
                         <Popup>
                           <div className="p-2">
-                            <p className="font-bold text-gray-700">Arret #{index + 1}</p>
-                            <p className="text-sm text-gray-600">Duree: {formatDuration(stop.duration_minutes)}</p>
+                            <p className="font-bold text-gray-700">Arrêt #{index + 1}</p>
+                            <p className="text-sm text-gray-600">Durée : {formatDuration(stop.duration_minutes)}</p>
                             <p className="text-xs text-gray-500 mt-1">
                               {formatTime(stop.start_time)} - {formatTime(stop.end_time)}
                             </p>
@@ -360,7 +360,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                       }`}
                     >
                       <PauseCircle className="w-4 h-4" />
-                      <span>Arrets ({data.stops.count})</span>
+                      <span>Arrêts ({data.stops.count})</span>
                     </button>
                     <button
                       onClick={() => setRouteColorMode(routeColorMode === 'solid' ? 'speed' : 'solid')}
@@ -377,7 +377,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                   {/* Speed legend */}
                   {routeColorMode === 'speed' && (
                     <div className="absolute bottom-4 left-4 z-[1000] bg-white rounded-lg shadow-lg p-3">
-                      <p className="text-xs font-bold text-gray-500 mb-2">Legende vitesse</p>
+                      <p className="text-xs font-bold text-gray-500 mb-2">Légende vitesse</p>
                       <div className="space-y-1 text-xs">
                         <div className="flex items-center gap-2">
                           <div className="w-4 h-1 rounded" style={{ backgroundColor: '#6B7280' }} />
@@ -420,7 +420,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                       <div className="p-3 rounded-xl" style={{ backgroundColor: '#F5E8DD' }}>
                         <div className="flex items-center gap-2 mb-1">
                           <Timer className="w-4 h-4" style={{ color: '#B87333' }} />
-                          <span className="text-xs text-gray-500">Duree</span>
+                          <span className="text-xs text-gray-500">Durée</span>
                         </div>
                         <p className="text-lg font-bold" style={{ color: '#B87333' }}>
                           {formatDuration(data.trip.total_duration_minutes)}
@@ -480,7 +480,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                           {data.stops.count > 0 && <div className="w-0.5 h-6 bg-gray-200" />}
                         </div>
                         <div className="flex-1 pt-1">
-                          <p className="font-semibold text-sm" style={{ color: '#6A8A82' }}>Depart</p>
+                          <p className="font-semibold text-sm" style={{ color: '#6A8A82' }}>Départ</p>
                           <p className="text-xs text-gray-500">{formatDateTime(data.trip.start_time)}</p>
                         </div>
                       </div>
@@ -504,7 +504,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                             {index < data.stops.count - 1 && <div className="w-0.5 h-6 bg-gray-200" />}
                           </div>
                           <div className="flex-1 pt-1">
-                            <p className="font-semibold text-sm text-gray-700">Arret #{index + 1}</p>
+                            <p className="font-semibold text-sm text-gray-700">Arrêt #{index + 1}</p>
                             <p className="text-xs text-gray-500">
                               {formatDuration(stop.duration_minutes)} - {formatTime(stop.start_time)}
                             </p>
@@ -520,7 +520,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                           </div>
                         </div>
                         <div className="flex-1 pt-1">
-                          <p className="font-semibold text-sm" style={{ color: '#B87333' }}>Arrivee</p>
+                          <p className="font-semibold text-sm" style={{ color: '#B87333' }}>Arrivée</p>
                           <p className="text-xs text-gray-500">{formatDateTime(data.trip.end_time)}</p>
                         </div>
                       </div>
@@ -530,7 +530,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                   {/* Driver & Vehicle info */}
                   <div className="p-4">
                     <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500 mb-3">
-                      Details mission
+                      Détails mission
                     </h3>
                     <div className="space-y-3">
                       {data.mission.driver_name && (
@@ -539,7 +539,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                             <User className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">Conducteur</p>
+                            <p className="text-xs text-gray-500">Chauffeur</p>
                             <p className="font-semibold text-sm">{data.mission.driver_name}</p>
                           </div>
                         </div>
@@ -550,7 +550,7 @@ export default function TripHistoryModal({ isOpen, onClose, mission }: TripHisto
                             <Car className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">Vehicule</p>
+                            <p className="text-xs text-gray-500">Véhicule</p>
                             <p className="font-semibold text-sm">{data.mission.vehicle_plate}</p>
                           </div>
                         </div>

@@ -348,7 +348,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
 
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Coût estimé (optionnel)
+                    Coût estimé (facultatif)
                   </label>
                   <input
                     type="number"
@@ -427,7 +427,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
                 {/* Driver Selection */}
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Chauffeur impliqué (optionnel)
+                    Chauffeur impliqué (facultatif)
                   </label>
                   {isLoadingDrivers ? (
                     <div className="flex items-center justify-center py-4">
@@ -454,7 +454,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
                 {/* Vehicle Selection */}
                 <div>
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                    Véhicule impliqué (optionnel)
+                    Véhicule impliqué (facultatif)
                   </label>
                   {isLoadingVehicles ? (
                     <div className="flex items-center justify-center py-4">
@@ -481,7 +481,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
                 {/* Selected Info Display */}
                 {(formData.driver || formData.vehicle) && (
                   <div className="mt-4 p-4 rounded-xl bg-gray-50 border-2" style={{ borderColor: '#E8ECEC' }}>
-                    <p className="text-sm font-semibold mb-2" style={{ color: '#191919' }}>Sélection actuelle :</p>
+                    <p className="text-sm font-semibold mb-2" style={{ color: '#191919' }}>Sélection actuelle :</p>
                     {formData.driver && getSelectedDriver() && (
                       <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
                         <User className="w-4 h-4" style={{ color: '#6A8A82' }} />
@@ -508,7 +508,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
                 Localisation
               </h3>
-              <p className="text-gray-600">Où l'incident s'est-il produit?</p>
+              <p className="text-gray-600">Où l'incident s'est-il produit ?</p>
             </div>
             <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
               <div className="space-y-5">
@@ -578,7 +578,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
 
                 {/* Manual Coordinates (optional) */}
                 <div className="pt-4 border-t" style={{ borderColor: '#E8ECEC' }}>
-                  <p className="text-sm text-gray-500 mb-3">Ou entrez les coordonnées manuellement :</p>
+                  <p className="text-sm text-gray-500 mb-3">Ou entrez les coordonnées manuellement :</p>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
@@ -625,7 +625,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
               <h3 className="text-2xl font-bold mb-2" style={{ color: '#191919' }}>
                 Photos de l'incident
               </h3>
-              <p className="text-gray-600">Ajoutez jusqu'à 3 photos (optionnel)</p>
+              <p className="text-gray-600">Ajoutez jusqu'à 3 photos (facultatif)</p>
             </div>
 
             {photos.length < 3 && (
@@ -689,7 +689,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
             <div className="bg-gradient-to-br from-sage/5 to-transparent rounded-xl p-6 border-2" style={{ borderColor: '#E8EFED' }}>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: '#191919' }}>
-                  Notes de résolution (optionnel)
+                  Notes de résolution (facultatif)
                 </label>
                 <textarea
                   name="resolution_notes"
@@ -772,7 +772,7 @@ export default function AddIncidentModal({ isOpen, onClose, onSubmit }: AddIncid
             </div>
             <div>
               <h2 className="text-2xl font-bold" style={{ color: '#191919' }}>
-                Déclarer un Incident
+                Déclarer un incident
               </h2>
               <p className="text-sm text-gray-600">Étape {currentStep} sur {STEPS.length}</p>
             </div>

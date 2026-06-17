@@ -590,7 +590,7 @@ export default function SettingsPage() {
                       <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4" style={{ color: '#6A8A82' }}>Canaux de notification</h3>
                       <div className="space-y-3 sm:space-y-4">
                         {[
-                          { key: 'email_notifications', label: 'Notifications par email', description: 'Recevoir des notifications par email', icon: Mail },
+                          { key: 'email_notifications', label: 'Notifications par e-mail', description: 'Recevoir des notifications par e-mail', icon: Mail },
                           { key: 'sms_notifications', label: 'Notifications par SMS', description: 'Recevoir des alertes par SMS', icon: Phone },
                           { key: 'push_notifications', label: 'Notifications push', description: 'Notifications dans le navigateur', icon: Bell },
                         ].map((item) => {
@@ -839,7 +839,7 @@ export default function SettingsPage() {
                         </div>
                         {/* Preview */}
                         <div className="mt-3 sm:mt-4 flex items-center gap-2">
-                          <span className="text-[10px] sm:text-xs text-gray-500">Aperçu:</span>
+                          <span className="text-[10px] sm:text-xs text-gray-500">Aperçu :</span>
                           <button
                             className="px-2 sm:px-3 py-1 sm:py-1.5 text-white text-[10px] sm:text-xs rounded-md sm:rounded-lg font-medium"
                             style={{ backgroundColor: appearance.primary_color }}
@@ -888,7 +888,7 @@ export default function SettingsPage() {
                         </div>
                         {/* Preview */}
                         <div className="mt-3 sm:mt-4 flex items-center gap-2">
-                          <span className="text-[10px] sm:text-xs text-gray-500">Aperçu:</span>
+                          <span className="text-[10px] sm:text-xs text-gray-500">Aperçu :</span>
                           <span
                             className="px-1.5 sm:px-2 py-0.5 text-white text-[10px] sm:text-xs rounded-full font-medium"
                             style={{ backgroundColor: appearance.secondary_color }}

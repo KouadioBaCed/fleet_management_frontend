@@ -603,7 +603,7 @@ export default function LeafletTrackingMap({
                       </div>
 
                       <div style={{ marginTop: '12px', fontSize: '12px', color: '#6B7280' }}>
-                        <strong>Mission:</strong> {vehicle.title}
+                        <strong>Mission :</strong> {vehicle.title}
                       </div>
                       <div style={{ fontSize: '11px', color: '#9CA3AF' }}>
                         {vehicle.mission_code}
@@ -611,7 +611,7 @@ export default function LeafletTrackingMap({
 
                       {isDelayed && (
                         <div className={`vehicle-popup-delay delay-${vehicle.delay_status.severity}`}>
-                          Retard: {vehicle.delay_status.delay_minutes} min
+                          Retard : {vehicle.delay_status.delay_minutes} min
                         </div>
                       )}
                     </div>

@@ -26,8 +26,8 @@ const DOCUMENT_TYPE_ICONS: Record<VehicleDocumentType, string> = {
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string; icon: typeof CheckCircle }> = {
   valid: { bg: '#D1FAE5', text: '#059669', label: 'Valide', icon: CheckCircle },
-  expiring_soon: { bg: '#FEF3C7', text: '#D97706', label: 'Expire bientot', icon: Clock },
-  expired: { bg: '#FEE2E2', text: '#DC2626', label: 'Expire', icon: AlertTriangle },
+  expiring_soon: { bg: '#FEF3C7', text: '#D97706', label: 'Expire bientôt', icon: Clock },
+  expired: { bg: '#FEE2E2', text: '#DC2626', label: 'Expiré', icon: AlertTriangle },
 };
 
 function getDocumentStatus(expiryDate: string): { status: string; daysUntil: number } {
@@ -243,13 +243,13 @@ export default function VehicleDocumentsTab({ vehicleId }: VehicleDocumentsTabPr
                 >
                   {allTypes.map(type => (
                     <option key={type} value={type} disabled={!editingDoc && existingTypes.includes(type)}>
-                      {DOCUMENT_TYPE_LABELS[type]} {!editingDoc && existingTypes.includes(type) ? '(deja ajoute)' : ''}
+                      {DOCUMENT_TYPE_LABELS[type]} {!editingDoc && existingTypes.includes(type) ? '(déjà ajouté)' : ''}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Numero du document</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Numéro du document</label>
                 <input
                   type="text"
                   value={formNumber}
@@ -262,7 +262,7 @@ export default function VehicleDocumentsTab({ vehicleId }: VehicleDocumentsTabPr
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Date de delivrance</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Date de délivrance</label>
                 <input
                   type="date"
                   value={formIssueDate}
@@ -316,7 +316,7 @@ export default function VehicleDocumentsTab({ vehicleId }: VehicleDocumentsTabPr
                 ) : (
                   <div>
                     <Upload className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                    <p className="text-sm text-gray-500">Cliquez pour telecharger un fichier</p>
+                    <p className="text-sm text-gray-500">Cliquez pour télécharger un fichier</p>
                     <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG</p>
                   </div>
                 )}
@@ -336,7 +336,7 @@ export default function VehicleDocumentsTab({ vehicleId }: VehicleDocumentsTabPr
                 className="btn-primary flex items-center gap-2 disabled:opacity-50"
               >
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                {editingDoc ? 'Mettre a jour' : 'Ajouter'}
+                {editingDoc ? 'Mettre à jour' : 'Ajouter'}
               </button>
             </div>
           </form>
@@ -349,8 +349,8 @@ export default function VehicleDocumentsTab({ vehicleId }: VehicleDocumentsTabPr
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E8EFED' }}>
             <FileText className="w-8 h-8" style={{ color: '#6A8A82' }} />
           </div>
-          <p className="text-gray-500 mb-2">Aucun document enregistre</p>
-          <p className="text-sm text-gray-400 mb-4">Ajoutez les documents obligatoires du vehicule</p>
+          <p className="text-gray-500 mb-2">Aucun document enregistré</p>
+          <p className="text-sm text-gray-400 mb-4">Ajoutez les documents obligatoires du véhicule</p>
           <button
             onClick={() => { resetForm(); setShowForm(true); }}
             className="btn-primary inline-flex items-center gap-2"
@@ -403,11 +403,11 @@ export default function VehicleDocumentsTab({ vehicleId }: VehicleDocumentsTabPr
                 <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    Delivre: {formatDate(doc.issue_date)}
+                    Délivré : {formatDate(doc.issue_date)}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    Expire: {formatDate(doc.expiry_date)}
+                    Expire : {formatDate(doc.expiry_date)}
                   </span>
                 </div>
 

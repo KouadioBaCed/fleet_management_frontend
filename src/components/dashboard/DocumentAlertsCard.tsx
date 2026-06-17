@@ -57,8 +57,8 @@ export default function DocumentAlertsCard({ onViewVehicle }: DocumentAlertsCard
             <CheckCircle className="w-5 h-5" style={{ color: '#059669' }} />
           </div>
           <div>
-            <h3 className="font-semibold text-sm" style={{ color: '#191919' }}>Documents vehicules</h3>
-            <p className="text-xs text-gray-500">Tous les documents sont a jour</p>
+            <h3 className="font-semibold text-sm" style={{ color: '#191919' }}>Documents véhicules</h3>
+            <p className="text-xs text-gray-500">Tous les documents sont à jour</p>
           </div>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function DocumentAlertsCard({ onViewVehicle }: DocumentAlertsCard
           )}
           {expiringCount > 0 && (
             <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-600">
-              {expiringCount} bientot
+              {expiringCount} bientôt
             </span>
           )}
         </div>

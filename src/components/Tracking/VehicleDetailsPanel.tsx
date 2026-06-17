@@ -249,7 +249,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                     style={{ backgroundColor: '#E8EFED', color: '#6A8A82' }}
                   >
                     {copiedCoords ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    <span>{copiedCoords ? 'Copie!' : 'Copier coordonnees'}</span>
+                    <span>{copiedCoords ? 'Copié !' : 'Copier coordonnées'}</span>
                   </button>
                   <button
                     onClick={openInMaps}
@@ -261,7 +261,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                   </button>
                 </div>
                 <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t" style={{ borderColor: '#E8ECEC' }}>
-                  <span>Derniere mise a jour: <strong>{formatLastUpdate(vehicle.last_update)}</strong></span>
+                  <span>DerniÃ¨re mise Ã  jour : <strong>{formatLastUpdate(vehicle.last_update)}</strong></span>
                   {position.battery_level !== null && position.battery_level !== undefined && (
                     <span className="flex items-center gap-1">
                       <Battery className="w-3.5 h-3.5" />
@@ -282,7 +282,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 sm:p-6 border-2" style={{ borderColor: '#E8ECEC' }}>
             <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-gray-500 mb-3 sm:mb-4 flex items-center gap-2">
               <User className="w-4 h-4" />
-              Conducteur
+              Chauffeur
             </h3>
             <div className="flex items-center gap-3 sm:gap-4">
               <div
@@ -336,7 +336,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                     <div className="w-0.5 h-6 sm:h-8 my-1" style={{ backgroundColor: '#E8ECEC' }} />
                   </div>
                   <div className="flex-1 pt-0.5 sm:pt-1 min-w-0">
-                    <p className="text-xs text-gray-500 uppercase">Depart</p>
+                    <p className="text-xs text-gray-500 uppercase">Départ</p>
                     <p className="font-medium text-xs sm:text-sm break-words" style={{ color: '#191919' }}>{vehicle.origin.address}</p>
                   </div>
                 </div>
@@ -345,7 +345,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                     <Flag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   </div>
                   <div className="flex-1 pt-0.5 sm:pt-1 min-w-0">
-                    <p className="text-xs text-gray-500 uppercase">Arrivee</p>
+                    <p className="text-xs text-gray-500 uppercase">Arrivée</p>
                     <p className="font-medium text-xs sm:text-sm break-words" style={{ color: '#191919' }}>{vehicle.destination.address}</p>
                   </div>
                 </div>
@@ -362,7 +362,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                   <p className="font-semibold text-xs sm:text-sm" style={{ color: '#B87333' }}>{formatTime(vehicle.scheduled_end)}</p>
                 </div>
                 <div className="text-center p-2 sm:p-3 rounded-lg bg-gray-100">
-                  <p className="text-[10px] sm:text-xs text-gray-500 mb-1">Depart réel</p>
+                  <p className="text-[10px] sm:text-xs text-gray-500 mb-1">Départ réel</p>
                   <p className="font-semibold text-xs sm:text-sm text-gray-700">{formatTime(vehicle.actual_start)}</p>
                 </div>
               </div>
@@ -372,7 +372,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
                 <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
                   <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-red-700">Mission accompli</p>
+                    <p className="font-semibold text-red-700">Mission accomplie</p>
                     <p className="text-sm text-red-600 mt-1">
                       Retard de {vehicle.delay_status.delay_minutes} minutes
                       {vehicle.delay_status.delay_type === 'arrival' && ' sur l\'heure d\'arrivée prévue'}
@@ -388,7 +388,7 @@ export default function VehicleDetailsPanel({ vehicle, onClose }: VehicleDetails
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 sm:p-6 border-2" style={{ borderColor: '#E8ECEC' }}>
               <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-gray-500 mb-3 sm:mb-4 flex items-center gap-2">
                 <Car className="w-4 h-4" />
-                Vehicule
+                Véhicule
               </h3>
               <div className="flex items-center gap-3 sm:gap-4">
                 <div
