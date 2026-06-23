@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Layout from '@/components/Layout/Layout';
-import LeafletTrackingMap, { VehiclePosition } from '@/components/Tracking/LeafletTrackingMap';
+import GoogleTrackingMap from '@/components/Tracking/GoogleTrackingMap';
+import { VehiclePosition } from '@/components/Tracking/LeafletTrackingMap';
 import VehicleDetailsPanel from '@/components/Tracking/VehicleDetailsPanel';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { missionsApi } from '@/api/missions';
@@ -366,7 +367,7 @@ export default function LiveTrackingPage() {
                 </p>
               </div>
             ) : (
-              <LeafletTrackingMap
+              <GoogleTrackingMap
                 vehicles={vehicles}
                 selectedVehicleId={selectedVehicleId}
                 onVehicleSelect={(v) => handleOpenDetails(v)}
